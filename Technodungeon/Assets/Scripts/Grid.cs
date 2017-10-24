@@ -130,7 +130,7 @@ public class Grid : MonoBehaviour {
         }
     }
 
-    /*
+
 	void OnDrawGizmos() {
         if (drawGizmos) {
             for (int x = xDimension-1; x >= 0; x--) {
@@ -149,10 +149,10 @@ public class Grid : MonoBehaviour {
                 for (int x = xDimension-1; x >= 0; x--) {
                     for (int y = yDimension-1; y >= 0; y--) {
                         for (int i = 0; i < 8; i++) {
-                            Block blk = grid [x, y, i];
-                            if (blk != null) {
+                            GameObject gobj = grid [x, y, i];
+                            if (gobj != null) {
 //                                Vector3 offset = new Vector3 (this.transform.position.x + blk.getPosition ().x + bsize, this.transform.position.y + blk.getPosition ().y + bsize, this.transform.position.z + blk.getPosition ().z + bsize);
-                                Vector3 offset = blk.getGlobalPosition();
+                                Vector3 offset = gobj.transform.position;
                                 Gizmos.color = Color.white;
                                 Gizmos.DrawSphere (offset, 0.025f);
                             }
@@ -161,6 +161,6 @@ public class Grid : MonoBehaviour {
                 }
             }
         }
-    }*/
+    }
 
 }

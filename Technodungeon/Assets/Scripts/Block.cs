@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEditor;
+
 
 public class Block {
     private static int blockCount = 0;
+    private static ArrayList<Block> blockbase
     private int blockID;
     private Vector3 position; //position relative to grid origin
     private static float blockSize = Grid.getSize()/2;//meters
