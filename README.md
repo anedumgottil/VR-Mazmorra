@@ -1,4 +1,4 @@
-# VR-Mazmorra
+# TechnoDungeon
 Procedurally generated VR Dungeon
 
 
