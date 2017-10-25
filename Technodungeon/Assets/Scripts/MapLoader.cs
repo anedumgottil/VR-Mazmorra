@@ -41,7 +41,7 @@ public class MapLoader : MonoBehaviour
                 mbxcount = 0;
                 mbycount = 0;
                 mbzcount = 0;
-                current = new Block ();
+                current = new Block (null);
                 lastChar = c;
                 continue;
             } else if (c == 'X') {
@@ -114,7 +114,7 @@ public class MapLoader : MonoBehaviour
                 //package up this block, it's ready to go
                 blockTypes.Add (current);
                 if (generatePrefabsFromFile) {
-                    BlockPrefabGenerator.getPrefab (current, new Vector3(-10f, -10f, -10f));//TODO: CRITICAL! What happens if we don't get our prefabs? Make it load prefabs in from the Assets folder in that case.
+                    BlockPrefabGenerator.generatePrefab (current, new Vector3(-10f, -10f, -10f));//TODO: CRITICAL! What happens if we don't get our prefabs? Make it load prefabs in from the Assets folder in that case.
                 }
                 lastChar = 'A';//reset lastChar
                 mbzcount = 0;
@@ -137,13 +137,10 @@ public class MapLoader : MonoBehaviour
         //since each 2mx2m grid tile is made of 8 blocks, they are reperesented by their block ID number in 2 lists of 4 ID's.
         //we follow the standard ordering LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7
         //their block ID number is just whatever order they are written in the blocks.txt file, I couldve made it an XML file to hardcode this but... meh.
-        //parentGrid.setBlock(blockTypes[0], 0, 0, 0);
-        //parentGrid.setBlock(blockTypes[1], 0, 0, Grid.BlockPos.HiSE);
-        //parentGrid.setBlock(blockTypes[2], 0, 0, Grid.BlockPos.LoSE);
 
         string map = readString(mapPath);
         bool inTile = false;
-        int blockid = 0;
+        int blockpos = 0;
         int numtiles = 0;
         char lastChar = 'A';
         int chars = 0;
@@ -157,14 +154,14 @@ public class MapLoader : MonoBehaviour
                     Debug.LogError ("Error: loading blocks failed, syntax error: tried to begin a grid tile inside a grid tile");
                     return;
                 }
-                blockid = 0;
+                blockpos = 0;
                 lastChar = c;
                 inTile = true;
                 Debug.Log ("Start of tile");
                 continue;
             } else if (c == '}') {
                 //we're done here, wrap up
-                if (!inTile || blockid != 8) {
+                if (!inTile || blockpos != 8) {
                     Debug.LogError ("Error: loading blocks failed, syntax error: attempted to close non-existent/unfinished grid tile");
                     return;
                 }
@@ -183,12 +180,11 @@ public class MapLoader : MonoBehaviour
                 if (lastChar == '{' || lastChar == '}' || (int)lastChar == 10) {
                     continue;//don't pay attention to line endings immediately following start or end of block, or double/triple/etc. newlines
                 }
-                blockid++;
-                if (blockid > 8) {
+                blockpos++;
+                if (blockpos > 8) {
                     Debug.LogError ("Error: loading blocks failed, syntax error: too many blocks for grid tile");
                     return;
                 }
-                //Debug.Log ("line-ending Tile: " + blockid + " lastchar: '" + lastChar + "'");
                 lastChar = (char)10;
                 continue;
             } else {
@@ -207,6 +203,9 @@ public class MapLoader : MonoBehaviour
                     //parsing attempt failed.... skip this char, try again next time...
                     Debug.LogError ("Error: loading blocks warning: couldn't parse characters into Int value... skipping '"+number+"'");
                 }
+                if (x < 0 || x >= blockTypes.Count) {
+                    Debug.LogError ("Error: MapLoader tried to create a block number by an ID that we do not have in the storage");
+                }
                 //success at parse, we need to remove this number from our string so we can continue on...
                 skips = number.Length-1;
                 //create block in world using this data
@@ -217,8 +216,8 @@ public class MapLoader : MonoBehaviour
                     Debug.LogError ("Error: loading blocks failed: Too many blocks on the dance floor!");
                     return;
                 }
-                Debug.Log("Attempting to create Grid Tile at ["+(int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize()+","+(int)calculation*Grid.getSize()+"] at position "+blockid+", Tile Type: "+x+" numTiles="+numtiles);
-                parentGrid.setBlock(blockTypes[x], (int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize(), (int)calculation*Grid.getSize(), (Grid.BlockPos)blockid);
+                Debug.Log("Attempting to create Grid Tile at ["+(int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize()+","+(int)calculation*Grid.getSize()+"] at position "+blockpos+", Tile Type: "+x+" numTiles="+numtiles);
+                parentGrid.setBlock(blockTypes[x], (int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize(), (int)calculation*Grid.getSize(), (GridSpace.GridPos)blockpos);
                 lastChar = c;
             }
                 

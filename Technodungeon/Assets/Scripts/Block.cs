@@ -2,31 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class Block {
+//TODO: Factor out the GameObj and move the prefab to the GridSpace class which will hold this GridObject
+public class Block : GridObject {
     private static int blockCount = 0;
     private int blockID;
-    private Vector3 position; //position relative to grid origin
     private static float blockSize = Grid.getSize()/2;//meters
     public const int mbDivision = 4;
     private MicroBlock[,,] mbs;
-    private Grid parent;
-    private GameObject gameObj;
 
-    public Block(Grid parent, Vector3 position) {
+    //generate a Block right now, creating all primitives and microblocks on the spot, at a specific position:
+    //NOTE: DO NOT USE IN-GAME, INEFFICIENT, ONLY USED BY MAP PRE-GENERATION
+    public Block(GridSpace parent, Vector3 position) : base(parent, position) {
         Block.blockCount++;
         this.blockID = blockCount;
-        this.parent = parent;
-        this.position = position;//set once, never change; defined by its position in the grid...
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
         gameObj = new GameObject("Block ["+position.x+","+position.y+","+position.z+"]");
-        //gameObj.transform.Translate (this.position); TODO: CHECK THIS! Might be a bug, this may be necessary to set proper positions...
+        //this.gameObj.transform.Translate (this.position); //TODO: is this necessary?
     }
+    //generate a Block right now, creating all primitives and microblocks on the spot - used for creating parents to clone from by MapLoader:
+    //NOTE: DO NOT USE IN-GAME, INEFFICIENT, ONLY USED BY MAP PRE-GENERATION
     //Probably shouldn't initiate a game object in this empty constructor: 
     //it tends to spawn em at 0,0,0, because you cant have a non-value vector position
-    public Block() {
-        //create empty block, fill in parent and position later. 
-        //Note: Please don't use a block without a position or parent - it'll break stuff. We assume these are set at instantiation.
+    public Block(GridSpace parent) : base(parent) {
+        //create empty block, fill in position later. 
+        //Note: Please don't use a block without a position - it'll break stuff. We assume these are set at instantiation.
         this.position = new Vector3(-5,-5,-5);//store the prefab parents under the map and out of view, I don't know of an easy way to hide them yet.
         Block.blockCount++;
         this.blockID = blockCount;
@@ -68,44 +67,12 @@ public class Block {
     private static Vector3 calculateMicroBlockPosOffset(int x, int y, int z) {
         return new Vector3 (x * MicroBlock.getSize (), y * MicroBlock.getSize (), z * MicroBlock.getSize ());
     }
-            
-    public Vector3 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector3 position) {
-        this.position = position;
-        //synchronize actual game object position
-        this.gameObj.transform.Translate (this.position);
-    }
-
-    //returns computed worldspace position
-    public Vector3 getGlobalPosition() {
-        Vector3 ret = position;
-        //add Grid global position to our relative-to-grid local position
-        ret.x += parent.transform.position.x;
-        ret.y += parent.transform.position.y;
-        ret.z += parent.transform.position.z;
-        return ret;
-    }
-
-    public void setParent(Grid parent) {
-        this.parent = parent;
-    }
-
-    public Grid getParent() {
-        return parent;
-    }
-
-    public GameObject getGameObj() {
-        return gameObj;
-    }
-
-    public static float getSize() {
+        
+    public new static float getSize() {
         return blockSize;
     }
 
-    public int getBlockID() {
+    public override int getID() {
         return blockID;
     }
 }
