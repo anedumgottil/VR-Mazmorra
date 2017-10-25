@@ -116,9 +116,11 @@ public class MapLoader : MonoBehaviour
                     return;
                 }
                 //package up this block, it's ready to go
-                blockTypes.Add (current);
-                BlockPrefabGenerator.generatePrefab (current, GridObject.DEFAULT_POSITION);//generates a Prefab using the PrefabGenerator and stores it in our Prefab pool. 
-                //TODO: MAKE CERTAIN that the prefab that is stored of this block is of the name Block.PARENT_BLOCK_NAME_PREFIX+BlockID number, even though this may not be necessary with serialization
+                blockTypes.Add (current);//store the block in blocktypes (only useful for editor generation of prefabs)
+                MapLoader.addPrefab(current.getGameObj().name, current.getGameObj());//add GameObject template to Prefab Pool.
+                if (generatePrefabsFromFile) {
+                    BlockPrefabGenerator.generatePrefab (current);//generates a Prefab using the PrefabGenerator and saves it to disk.
+                }
                 lastChar = 'A';//reset lastChar
                 mbzcount = 0;
                 mbycount = 0;
@@ -261,6 +263,12 @@ public class MapLoader : MonoBehaviour
             Debug.LogWarning ("Warn: Tried to make MapLoader get a Prefab parent by a name that doesn't exist");
         }
         return temp;
+    }
+
+    //creates a new instance (clone) of parent prefab upon being given a name. This is the most important Prefab function, and is used to spawn every new block object
+    public static GameObject getPrefabInstance(string name) {
+        GameObject template = getPrefab (name);
+        return Instantiate (template);//clone the template
     }
 
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.
