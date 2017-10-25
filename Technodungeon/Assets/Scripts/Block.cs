@@ -34,8 +34,8 @@ public class Block : GridObject {
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
         gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates. (edit: this might be alleviated by serialization)
         this.gameObj.transform.Translate (this.position);
-        //this is a Parent Block used to generate other blocks, so it need not be shown in the map. turn off it's renderer.
-        this.gameObj.GetComponent<Renderer>().enabled = false;
+        //this is a Parent Block used to generate other blocks, so it need not be shown in the map. turn it off.
+        this.gameObj.SetActive(false);
     }
 
     //sets the microblock at specified position (in integer coordinate indexes, not worldspace positional coordinates. confusing, I know...)
