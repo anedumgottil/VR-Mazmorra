@@ -1,0 +1,19 @@
+Things I will try to get done for this project by Friday
+
+
+Target: --------------------- What was said on our presentation design goals:
+Func. Min. - Map tiles spawned by a script, 2d gridview for the second player that can spawn in the map tiles using said script.
+
+ + We need the current Grid system to be refactored to hold both Map Tiles as well as the current Block system
+	
+ + Try to get the GridSpace class built: Requires us to generate 8 block prefabs or tile prefabs and place/orient them correctly inside this GridSpace, for every section of map
+	- Areas of the map need to make walls if they don't immediately have tiles surrounding them, no holes to outside the map, etc
+	
+ + We need the SteamVR API to be integrated into the application
+	- This may be a pain if we run into any difficulties setting up the rig, might take some time
+	- Will need testing to make sure the player is at the appropriate height and cannot fall through the floor, etc.
+
+ + Close my ticket on the GitHub repo by completing it.
+
+
+ - Andrew Podgorski
