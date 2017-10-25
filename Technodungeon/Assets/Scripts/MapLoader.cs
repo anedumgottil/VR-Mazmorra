@@ -10,14 +10,14 @@ public class MapLoader : MonoBehaviour
     public Grid parentGrid = null;
     public string blocksPath = "Assets/Resources/blocks.txt";
     public string mapPath = "Assets/Resources/map.txt";
-    public bool generatePrefabsFromFile = false; // generates the Block prefabs from the blocks.txt flatfile that outlines their design, and adds them to the game.
-                                                 // if this is false, the script will instead use the pregenerated Block prefabs (whatever is in prefabs directory at this time)
+    public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
     //blockTypes is not populated when we don't use the automatic generator
-    private List<Block> blockTypes = new List<Block>(); //parent blocks, not actually used in game, but used to build the blocks that will be used in game. TODO: delete these after map gen? if necessary? Or at least hide them
+    private List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
+                                                        //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere. 
-                                                                     //In most use cases, you'll feed it to a GridObject constructor to accomplish this task of cloning them, it (will) do it automatically
+    private static GameObject prefabParent;
 
     //generate our Blocks from a text file, and create Prefabs from them to populate our Prefab Pool. This is ran only when the Unity Editor is available, and should only be ran occasionally, as it's time consuming and generates meta commit conflicts
     public void parseBlocks() {
@@ -45,7 +45,7 @@ public class MapLoader : MonoBehaviour
                 mbxcount = 0;
                 mbycount = 0;
                 mbzcount = 0;
-                current = new Block (null);//passing null first param, we don't have a GridSpace to assign it to it, and all parent Block will have NULL parents of their own, to differentiate them 
+                current = new Block ((GridSpace)null);//passing null first param, we don't have a GridSpace to assign it to it, and all parent Block will have NULL parents of their own, to differentiate them 
                 lastChar = c;
                 continue;
             } else if (c == 'X') {
@@ -116,7 +116,7 @@ public class MapLoader : MonoBehaviour
                     return;
                 }
                 //package up this block, it's ready to go
-                blockTypes.Add (current);//store the block in blocktypes (only useful for editor generation of prefabs)
+                blockTypes.Add (current);//store the block in Block Pool
                 MapLoader.addPrefab(current.getGameObj().name, current.getGameObj());//add GameObject template to Prefab Pool.
                 if (generatePrefabsFromFile) {
                     BlockPrefabGenerator.generatePrefab (current);//generates a Prefab using the PrefabGenerator and saves it to disk.
@@ -266,8 +266,10 @@ public class MapLoader : MonoBehaviour
     }
 
     //creates a new instance (clone) of parent prefab upon being given a name. This is the most important Prefab function, and is used to spawn every new block object
+    //dont forget to set the parent!
     public static GameObject getPrefabInstance(string name) {
         GameObject template = getPrefab (name);
+        template.transform.parent = null;
         return Instantiate (template);//clone the template
     }
 
@@ -275,11 +277,13 @@ public class MapLoader : MonoBehaviour
     //note that even though this object might not actually be a prefab, once it's in the pool it'll be used like one - duplicated with Instantiate, and such. So we'll just call it a prefab.
     //if the pool already has one by the same name, nothing occurs.
     public static void addPrefab(string name, GameObject prefab) {
+        prefab.transform.SetParent (prefabParent.transform);
         gamePrefabs.Add (name, prefab);
     }
 
     //this method will actually MODIFY the object pool so you DEFINITELY should not use this unless you're the map generator or have a good reason to modify prefabs
     public static void setPrefab(string name, GameObject prefab) {
+        prefab.transform.SetParent (prefabParent.transform);
         gamePrefabs[name] = prefab;
     }
         
@@ -294,6 +298,9 @@ public class MapLoader : MonoBehaviour
 
     void Start() {
         gamePrefabs = new Dictionary<string, GameObject>();
+        prefabParent = new GameObject ("Prefab Pool");
+        prefabParent.transform.position = Block.DEFAULT_POSITION;
+        prefabParent.SetActive (false);
 
         this.parseBlocks ();
 

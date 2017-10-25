@@ -31,6 +31,18 @@ public class GridObject {
         GridObject.gridObjectCount++;
     }
 
+    //clone constructor (inefficient deep copy because unity serialization is literally pain)
+    //clone constructor sets parent to null and ID's correctly, but otherwise most everything else is copied
+    // DO NOT FORGET to set parent if you use this clone constructor
+    public GridObject(GridObject toClone) {
+        this.gridObjectID = GridObject.gridObjectCount;
+        GridObject.gridObjectCount++;
+        this.parent = null;
+        this.position = toClone.getPosition ();
+        this.gameObj = null;//TODO: copy the gameObj here? Or in child class? we can only instantiate once...
+    }
+        
+
 
     public Vector3 getPosition() {
         return position;

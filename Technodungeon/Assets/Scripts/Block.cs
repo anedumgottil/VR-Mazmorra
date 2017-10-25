@@ -10,6 +10,7 @@ public class Block : GridObject {
     public const int mbDivision = 4;
     private MicroBlock[,,] mbs;
     public const string PARENT_BLOCK_NAME_PREFIX = "Blockfab #";
+    public const string CLONE_BLOCK_NAME_POSTFIX = " (cc)";//cloner constructor postfix
 
     //generate a Block right now, creating all primitives and microblocks on the spot, at a specific position:
     //NOTE: DO NOT USE IN-GAME, INEFFICIENT, ONLY USED BY MAP PRE-GENERATION
@@ -34,9 +35,35 @@ public class Block : GridObject {
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
         gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates. (edit: this might be alleviated by serialization)
         this.gameObj.transform.Translate (this.position);
-        //this is a Parent Block used to generate other blocks, so it need not be shown in the map. turn it off.
-        this.gameObj.SetActive(false);
     }
+
+    //clone constructor (inefficient deep copy because unity serialization is literally ebolavirus)
+    //clone constructor sets parent to null, but otherwise most everything else is copied
+    // DO NOT FORGET to set parent if you use this clone constructor
+    public Block(Block b) : base((GridObject)b) {
+        if (b == null) {
+            Debug.LogWarning ("Warning: Tried to create copy of null Block");
+        }
+        this.position = new Vector3 (b.getPosition ().x, b.getPosition().y, b.getPosition ().z);
+        this.setParent (null);  
+        this.blockID = Block.blockCount;
+        Block.blockCount++; //even though this is a copy, we increment our ID, needs to be unique.
+        this.gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+b.getID()+CLONE_BLOCK_NAME_POSTFIX);
+        mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
+        for (int i = 0; i < mbDivision; i++) {
+            for (int j = 0; j < mbDivision; j++) {
+                for (int k = 0; k < mbDivision; k++) {
+                    MicroBlock mbtemp = b.getMicroBlock (i, j, k);
+                    if (mbtemp != null) {
+                        mbtemp = new MicroBlock (mbtemp);
+                        mbtemp.setParent (this, this.gameObj);
+                        mbs [i, j, k] = mbtemp;
+                    }
+                }
+            }
+        }
+    }
+
 
     //sets the microblock at specified position (in integer coordinate indexes, not worldspace positional coordinates. confusing, I know...)
     public void setMicroBlock(MicroBlock obj, int x, int y, int z) {
