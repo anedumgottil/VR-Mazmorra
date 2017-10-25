@@ -223,6 +223,7 @@ public class MapLoader : MonoBehaviour
                 }
                 //success at parse, we need to remove this number from our string so we can continue on...
                 skips = number.Length - 1;
+                lastChar = c;
                 //create block in GridSpace using this data
                 //current.setBlock (getPrefab (Block.PARENT_BLOCK_NAME_PREFIX + parsedNum));//TODO: CRITICAL: UNCOMMENT THIS AND IMPLEMENT FUNCTION
 
@@ -236,7 +237,6 @@ public class MapLoader : MonoBehaviour
                     }
                     Debug.Log ("Attempting to create GridSpace at [" + (int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize () + "," + (int)calculation * Grid.getSize () + "] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
                     //parentGrid.setGridSpace ((int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize (), (int)calculation * Grid.getSize (), current); //TODO: CRITICAL: UNCOMMENT THIS AND IMPLEMENT FUNCTION
-                    lastChar = c;
                 }
             }
                 
