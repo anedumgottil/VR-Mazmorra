@@ -9,14 +9,16 @@ public class Block : GridObject {
     private static float blockSize = Grid.getSize()/2;//meters
     public const int mbDivision = 4;
     private MicroBlock[,,] mbs;
+    public const string PARENT_BLOCK_NAME_PREFIX = "Blockfab #";
 
     //generate a Block right now, creating all primitives and microblocks on the spot, at a specific position:
     //NOTE: DO NOT USE IN-GAME, INEFFICIENT, ONLY USED BY MAP PRE-GENERATION
     public Block(GridSpace parent, Vector3 position) : base(parent, position) {
+        this.blockID = Block.blockCount;
         Block.blockCount++;
-        this.blockID = blockCount;
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
-        gameObj = new GameObject("Block ["+position.x+","+position.y+","+position.z+"]");
+        gameObj = new GameObject("Generated Block ["+position.x+","+position.y+","+position.z+"]");
+        Debug.LogWarning ("Warn: Deprecated: old autogeneration block constructor called, attempt to remove this if necessary");
         //this.gameObj.transform.Translate (this.position); //TODO: is this necessary?
     }
     //generate a Block right now, creating all primitives and microblocks on the spot - used for creating parents to clone from by MapLoader:
@@ -26,12 +28,14 @@ public class Block : GridObject {
     public Block(GridSpace parent) : base(parent) {
         //create empty block, fill in position later. 
         //Note: Please don't use a block without a position - it'll break stuff. We assume these are set at instantiation.
-        this.position = new Vector3(-5,-5,-5);//store the prefab parents under the map and out of view, I don't know of an easy way to hide them yet.
-        Block.blockCount++;
-        this.blockID = blockCount;
+        this.position = new Vector3(-5,-5,-5);//store the prefab parents under the map and out of view
+        this.blockID = Block.blockCount;
+        Block.blockCount++;//always set ID then increment BlockCount, this means we'll begin indexing at zero and end at blockCount-1
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
-        gameObj = new GameObject("Block Prefab Parent");
+        gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates.
         this.gameObj.transform.Translate (this.position);
+        //this is a Parent Block used to generate other blocks, so it need not be shown in the map. turn off it's renderer.
+        this.gameObj.GetComponent<Renderer>().enabled = false;
     }
 
 

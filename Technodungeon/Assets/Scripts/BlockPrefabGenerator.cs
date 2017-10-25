@@ -10,7 +10,7 @@ public class BlockPrefabGenerator {
 
     public static GameObject generatePrefab(Block bl) {
         GameObject temp = GameObject.Instantiate(PrefabUtility.CreatePrefab ("Assets/Prefabs/Block_" + bl.getID () + ".prefab", bl.getGameObj ()), bl.getPosition(), Quaternion.identity);
-        MapLoader.gamePrefabs.Add ( temp);
+        MapLoader.addPrefab(temp.name, temp);
         return temp;
     }
     public static GameObject generatePrefab(Block bl, Vector3 position) {
@@ -20,7 +20,7 @@ public class BlockPrefabGenerator {
         foreach (Transform microblockPrimitive in temp.transform) {
             microblockPrimitive.GetComponent<Renderer> ().material.color = random;
         }
-        MapLoader.gamePrefabs.Add (temp);
+        MapLoader.addPrefab(temp.name, temp);
         return temp;
     }
 }

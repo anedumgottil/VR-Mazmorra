@@ -2,6 +2,7 @@
 //using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
 public class MapLoader : MonoBehaviour 
@@ -9,13 +10,16 @@ public class MapLoader : MonoBehaviour
     public Grid parentGrid = null;
     public string blocksPath = "Assets/Resources/blocks.txt";
     public string mapPath = "Assets/Resources/map.txt";
-    public bool generatePrefabsFromFile = false; // generates the Grid Tile prefabs from the blocks.txt flatfile that outlines their design, and adds them to the game.
-                                                 // if this is false, the script will instead use the pregenerated prefabs (whatever is in prefabs directory at this time)
+    public bool generatePrefabsFromFile = false; // generates the Block prefabs from the blocks.txt flatfile that outlines their design, and adds them to the game.
+                                                 // if this is false, the script will instead use the pregenerated Block prefabs (whatever is in prefabs directory at this time)
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
-    private List<Block> blockTypes = new List<Block>();
-    public static List<GameObject> gamePrefabs;//the gameObj converted to a prefab for re-instantiation, if necessary.
+    //blockTypes is not populated when we don't use the automatic generator
+    private List<Block> blockTypes = new List<Block>(); //parent blocks, not actually used in game, but used to build the blocks that will be used in game. TODO: delete these after map gen? if necessary? Or at least hide them
+    private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere. 
+                                                                     //In most use cases, you'll feed it to a GridObject constructor to accomplish this task of cloning them, it (will) do it automatically
 
+    //generate our Blocks from a text file, and create Prefabs from them to populate our Prefab Pool. This is ran only when the Unity Editor is available, and should only be ran occasionally, as it's time consuming and generates meta commit conflicts
     public void parseBlocks() {
         //for both TXT files, the matrices are seperated by a single line with a | character, and a block/tile begins with a single line { and vice versa.
         //read in the available blocks for our overall map
@@ -41,7 +45,7 @@ public class MapLoader : MonoBehaviour
                 mbxcount = 0;
                 mbycount = 0;
                 mbzcount = 0;
-                current = new Block (null);
+                current = new Block (null);//passing null first param, we don't have a GridSpace to assign it to it, and all parent Block will have NULL parents of their own, to differentiate them 
                 lastChar = c;
                 continue;
             } else if (c == 'X') {
@@ -113,9 +117,8 @@ public class MapLoader : MonoBehaviour
                 }
                 //package up this block, it's ready to go
                 blockTypes.Add (current);
-                if (generatePrefabsFromFile) {
-                    BlockPrefabGenerator.generatePrefab (current, new Vector3(-10f, -10f, -10f));//TODO: CRITICAL! What happens if we don't get our prefabs? Make it load prefabs in from the Assets folder in that case.
-                }
+                BlockPrefabGenerator.generatePrefab (current, new Vector3(-10f, -10f, -10f));//generates a Prefab using the PrefabGenerator and stores it in our Prefab pool. 
+                //TODO: MAKE CERTAIN that the prefab that is stored of this block is of the name Block.PARENT_BLOCK_NAME_PREFIX+BlockID number, otherwise we cannot lookup any prefabs, e.g. NO (Clone) at the end of names...
                 lastChar = 'A';//reset lastChar
                 mbzcount = 0;
                 mbycount = 0;
@@ -132,8 +135,19 @@ public class MapLoader : MonoBehaviour
         }
     }
 
-    public void parseMaps() {
-        //read in the map itself (ALWAYS RUN PARSEBLOCKS FIRST! - perhaps I should just stick this in that function?)
+    //load block prefabs in from the Resources folder and store them in our Prefab pool. This is used when the game is compiled.
+    public void loadBlocks() {
+        //TODO: fill this out
+    }
+
+    //load tile prefabs in from the Resources folder and store them in our Prefab pool. This is ALWAYS used as Tiles are not procedurally generated.
+    public void loadTiles() {
+        //TODO: fill this out
+    }
+        
+    //This parses the map file to load in the GridSpaces that will be stored in the Grid. It is ALWAYS used as it is meant to run the same regardless of platform.
+    public void parseMap() {
+        //parseblocks or loadblocks needs to be ran first, this function uses the Prefab Pool to generate it's blocks, even if they've been auto-generated by the MapGen, for portability reasons.
         //since each 2mx2m grid tile is made of 8 blocks, they are reperesented by their block ID number in 2 lists of 4 ID's.
         //we follow the standard ordering LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7
         //their block ID number is just whatever order they are written in the blocks.txt file, I couldve made it an XML file to hardcode this but... meh.
@@ -146,6 +160,7 @@ public class MapLoader : MonoBehaviour
         int chars = 0;
         int lines = 0;//dont use chars for debug print purposes, it includes windows linefeeds so we can iterate map more effectively
         int skips = 0;
+        GridSpace current = null;
         foreach (char c in map) {
             chars++;
             if (c == '{') {
@@ -157,6 +172,7 @@ public class MapLoader : MonoBehaviour
                 blockpos = 0;
                 lastChar = c;
                 inTile = true;
+                current = new GridSpace ();//we do not specify a position, as the SetGridSpace function will do it for us! :)
                 Debug.Log ("Start of tile");
                 continue;
             } else if (c == '}') {
@@ -195,30 +211,33 @@ public class MapLoader : MonoBehaviour
                 }
                 //we have some other character... probably a number, which is what we want. So we must parse it.
                 //strip the number off the string with regex
-                string number = Regex.Match(map.Substring(chars-1), @"^\d+").ToString();
-                int x = 0;
+                string number = Regex.Match (map.Substring (chars - 1), @"^\d+").ToString ();
+                int parsedNum = 0;//minor TODO: should we sanitize parsedNum somehow? it's technically 'user input'
 
-                if (!System.Int32.TryParse(number, out x))
-                {
+                if (!System.Int32.TryParse (number, out parsedNum)) {
                     //parsing attempt failed.... skip this char, try again next time...
-                    Debug.LogError ("Error: loading blocks warning: couldn't parse characters into Int value... skipping '"+number+"'");
+                    Debug.LogError ("Error: loading blocks warning: couldn't parse characters into Int value... skipping '" + number + "'");
                 }
-                if (x < 0 || x >= blockTypes.Count) {
+                if (parsedNum < 0 || parsedNum >= gamePrefabs.Count) {
                     Debug.LogError ("Error: MapLoader tried to create a block number by an ID that we do not have in the storage");
                 }
                 //success at parse, we need to remove this number from our string so we can continue on...
-                skips = number.Length-1;
-                //create block in world using this data
-                //we will generate them x = 0 -> x = parentGrid.xDimension
-                //then roll over 1 on the y and start again.
-                int calculation = (int)numtiles/parentGrid.xDimension;//number of y, basically just floors the value
-                if (calculation > parentGrid.yDimension) {
-                    Debug.LogError ("Error: loading blocks failed: Too many blocks on the dance floor!");
-                    return;
+                skips = number.Length - 1;
+                //create block in GridSpace using this data
+                current.addBlockByPrefab (getPrefab (Block.PARENT_BLOCK_NAME_PREFIX + parsedNum));
+
+                if (blockpos == 7) {//we have a full GridSpace, generate it, then send it off to the Grid.
+                    //we will add GridSpace to map via x:0 -> x:parentGrid.xDimension
+                    //then roll over 1 on the y and start again. 
+                    int calculation = (int)numtiles / parentGrid.xDimension;//number of y, basically just floors the value
+                    if (calculation > parentGrid.yDimension) {
+                        Debug.LogError ("Error: loading blocks failed: Too many GridSpaces on the dance floor!");
+                        return;
+                    }
+                    Debug.Log ("Attempting to create GridSpace at [" + (int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize () + "," + (int)calculation * Grid.getSize () + "] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
+                    parentGrid.setGridSpace ((int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize (), (int)calculation * Grid.getSize (), current);
+                    lastChar = c;
                 }
-                Debug.Log("Attempting to create Grid Tile at ["+(int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize()+","+(int)calculation*Grid.getSize()+"] at position "+blockpos+", Tile Type: "+x+" numTiles="+numtiles);
-                parentGrid.setBlock(blockTypes[x], (int)(numtiles-(calculation*parentGrid.xDimension))*Grid.getSize(), (int)calculation*Grid.getSize(), (GridSpace.GridPos)blockpos);
-                lastChar = c;
             }
                 
         }
@@ -235,6 +254,27 @@ public class MapLoader : MonoBehaviour
     }
 */
 
+    //gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
+    public static GameObject getPrefab(string name) {
+        GameObject temp = gamePrefabs[name];
+        if (temp == null) {
+            Debug.LogWarning ("Warn: Tried to make MapLoader get a Prefab parent by a name that doesn't exist");
+        }
+        return temp;
+    }
+
+    //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.
+    //note that even though this object might not actually be a prefab, once it's in the pool it'll be used like one - duplicated with Instantiate, and such. So we'll just call it a prefab.
+    //if the pool already has one by the same name, nothing occurs.
+    public static void addPrefab(string name, GameObject prefab) {
+        gamePrefabs.Add (name, prefab);
+    }
+
+    //this method will actually MODIFY the object pool so you DEFINITELY should not use this unless you're the map generator or have a good reason to modify prefabs
+    public static void setPrefab(string name, GameObject prefab) {
+        gamePrefabs[name] = prefab;
+    }
+        
 
     private static string readString(string path) {
         //Read the text from directly from the blocks.txt file
@@ -245,7 +285,7 @@ public class MapLoader : MonoBehaviour
     }
 
     void Start() {
-        gamePrefabs = new List<GameObject>();
+        gamePrefabs = new Dictionary<string, GameObject>();
 
         this.parseBlocks ();
 
