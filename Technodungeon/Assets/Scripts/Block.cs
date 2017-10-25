@@ -28,41 +28,45 @@ public class Block : GridObject {
     public Block(GridSpace parent) : base(parent) {
         //create empty block, fill in position later. 
         //Note: Please don't use a block without a position - it'll break stuff. We assume these are set at instantiation.
-        this.position = new Vector3(-5,-5,-5);//store the prefab parents under the map and out of view
+        this.position = DEFAULT_POSITION;//store the prefab parents under the map and out of view
         this.blockID = Block.blockCount;
         Block.blockCount++;//always set ID then increment BlockCount, this means we'll begin indexing at zero and end at blockCount-1
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
-        gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates.
+        gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates. (edit: this might be alleviated by serialization)
         this.gameObj.transform.Translate (this.position);
         //this is a Parent Block used to generate other blocks, so it need not be shown in the map. turn off it's renderer.
         this.gameObj.GetComponent<Renderer>().enabled = false;
     }
 
-
-    //sets the microblock at specified position
+    //sets the microblock at specified position (in integer coordinate indexes, not worldspace positional coordinates. confusing, I know...)
     public void setMicroBlock(MicroBlock obj, int x, int y, int z) {
         if (x >= mbDivision || x < 0 || y >= mbDivision || y < 0 || z >= mbDivision || z < 0) {
-            Debug.LogError ("tried to set a microblock that doesn't exist (out of bounds)");
+            Debug.LogError ("tried to set a microblock that cannot exist (out of bounds)");
             return;
         }
         mbs [x, y, z] = obj;
     }
 
-    //gets the microblock at this position, if it exists
-    //if it does not, creates a new one and registers it
+    //gets the microblock at this position, if it exists, o/w returns null
     public MicroBlock getMicroBlock(int x, int y, int z) {
-        if (mbs [x, y, z] == null) {
-            return newMicroBlock (x, y, z);
+        if (x >= mbDivision || x < 0 || y >= mbDivision || y < 0 || z >= mbDivision || z < 0) {
+            Debug.LogError ("tried to get a microblock that cannot exist (out of bounds)");
+            return null;
         }
         return mbs [x, y, z];
     }
 
     //makes a new microblock at this position and registers it into the array
     public MicroBlock newMicroBlock(int x, int y, int z) {
+        if (x >= mbDivision || x < 0 || y >= mbDivision || y < 0 || z >= mbDivision || z < 0) {
+            Debug.LogError ("tried to create a microblock that doesn't exist (out of bounds)");
+            return null;
+        }
         Vector3 offset = calculateMicroBlockPosOffset (x, y, z);
-        //we don't have to add any relative offsets here? I think?
-        mbs [x, y, z] = new MicroBlock (this, offset);
-        return mbs [x, y, z];//TODO: make a temp var here so we dont have to do this array access, but i'm leaving it here to make sure the array gets generated for debug purposes
+        //we don't have to add any relative offsets, as they are children to a Block and inherit it's coordinate system
+        MicroBlock temp = new MicroBlock (this, offset);
+        mbs [x, y, z] = temp;
+        return temp;
     }
 
     //returns a position offset for a MicroBlock relative to the origin of it's parent Block, based on it's array coordinates.

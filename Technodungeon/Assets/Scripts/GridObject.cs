@@ -12,6 +12,7 @@ public class GridObject {
     private static float gridObjectSize = Grid.getSize()/2;//meters
     private GridSpace parent;
     protected GameObject gameObj;//this is either an actual gameObject parent for a Block or Tile if it was just generated, OR a prefab, if it was cloned
+    public static readonly Vector3 DEFAULT_POSITION = new Vector3 (-5, -5, -5);
 
     public GridObject(GridSpace parent, Vector3 position) {
         this.gridObjectID = GridObject.gridObjectCount;//always set ID then increment GridObjectCount, this means we'll begin indexing at zero and end at GridObjectCount-1
@@ -25,10 +26,9 @@ public class GridObject {
         //Note: Please don't use a object without a position like this - it'll break stuff. It defaults to a bad location.
         //So if you do, set these values later.
         this.parent = parent;
-        this.position = new Vector3(-5,-5,-5);//store the prefab parents under the map and out of view, I don't know of an easy way to hide them yet.
+        this.position = DEFAULT_POSITION;//store the prefab parents under the map and out of view, I don't know of an easy way to hide them yet.
         this.gridObjectID = GridObject.gridObjectCount;//always set ID then increment GridObjectCount, this means we'll begin indexing at zero and end at GridObjectCount-1
         GridObject.gridObjectCount++;
-
     }
 
 

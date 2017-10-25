@@ -7,6 +7,7 @@ public class MicroBlock {
     private Vector3 position; //position relative to block origin
     private static float microblockSize = Block.getSize()/Block.mbDivision;//meters
     private Block parent;
+    public const string PARENT_MICROBLOCK_NAME_PREFIX = "Microfab #";
 
     public MicroBlock(Block parent, Vector3 position) {
         this.parent = parent;
@@ -14,9 +15,10 @@ public class MicroBlock {
         microblockPrimitive = GameObject.CreatePrimitive(PrimitiveType.Cube);
         microblockPrimitive.transform.position = this.position;
         microblockPrimitive.transform.localScale = new Vector3(microblockSize, microblockSize, microblockSize);
+        microblockPrimitive.name = PARENT_MICROBLOCK_NAME_PREFIX + position.ToString ();//set name so that it can be parsed when we stick this Prefab into a GridSpace. (edit: this may be alleviated by serialization)
         //random colors for prefab template
         Color random = Random.ColorHSV ();
-        microblockPrimitive.GetComponent<Renderer>().material.color = random; //<--- why doesnt this work???
+        microblockPrimitive.GetComponent<Renderer>().material.color = random;
         //set this microblock as a child of it's parent block, declutter the inspector, maintain a rigid heirarchy
         microblockPrimitive.transform.SetParent (this.parent.getGameObj ().transform);
     }

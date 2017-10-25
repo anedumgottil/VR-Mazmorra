@@ -10,12 +10,16 @@ public class GridSpace {
     //we need two arrays because sometimes a Block or Tile will exist on the same block
     private GridObject[] blocks = new GridObject[8];
     private GridObject[] tiles = new GridObject[8];
-    private Grid parentGrid;
+    private Grid parentGrid;//TODO: set parent.
     protected Vector3 position; //position relative to grid origin
 
     //create empty GridSpace, fill up later.
     public GridSpace(Vector3 position) {
         this.position = position;
+    }
+
+    public GridSpace() {
+        //do nothing
     }
 
     public enum GridPos : byte {LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7};//8 blocks per grid, with cardinal positions defined here
@@ -30,7 +34,7 @@ public class GridSpace {
     }
 
     /*//sets the specified Block
-    public void setBlock(Block obj, int x, int y, GridPos bpos) {
+    public void setBlock(Block obj, int gridx, int gridy, GridPos bpos) {
         if (obj.getParent () == null) {
             obj.setParent (this.parent);
         }
@@ -47,7 +51,7 @@ public class GridSpace {
 
     //returns the specified Block, if it exists
     //if it does not exist, makes a new one and registers it to the grid <-- why?
-    public Block getBlock(int x, int y, BlockPos position) {
+    public Block getBlock(int gridx, int gridy, BlockPos position) {
         Block ret = grid [x, y,(byte)position];
         if (ret == null) {
             ret = newBlock (x, y, position);
@@ -57,7 +61,7 @@ public class GridSpace {
 
     //makes a new Block and registers it to the grid
     //if the block already exists, does nothing, returns NULL
-    public Block newBlock(int x, int y, GridPos bpos) {
+    public Block newBlock(int gridx, int gridy, GridPos bpos) {
         if (grid [x, y,(byte)bpos] == null) {
             Vector3 offset = calculateBlockPosOffset (bpos);
             offset.x += x;
