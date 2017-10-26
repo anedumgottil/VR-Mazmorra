@@ -7,6 +7,7 @@ public class MicroBlock {
     private Vector3 position; //position relative to block origin
     private static float microblockSize = Block.getSize()/Block.mbDivision;//meters
     private Block parent;
+    public const string PARENT_MICROBLOCK_NAME_PREFIX = "Microfab #";
 
     public MicroBlock(Block parent, Vector3 position) {
         this.parent = parent;
@@ -14,12 +15,27 @@ public class MicroBlock {
         microblockPrimitive = GameObject.CreatePrimitive(PrimitiveType.Cube);
         microblockPrimitive.transform.position = this.position;
         microblockPrimitive.transform.localScale = new Vector3(microblockSize, microblockSize, microblockSize);
+        microblockPrimitive.name = PARENT_MICROBLOCK_NAME_PREFIX + position.ToString ();//set name so that it can be parsed when we stick this Prefab into a GridSpace. (edit: this may be alleviated by serialization)
         //random colors for prefab template
         Color random = Random.ColorHSV ();
-        microblockPrimitive.GetComponent<Renderer>().material.color = random; //<--- why doesnt this work???
+        microblockPrimitive.GetComponent<Renderer>().material.color = random;
         //set this microblock as a child of it's parent block, declutter the inspector, maintain a rigid heirarchy
         microblockPrimitive.transform.SetParent (this.parent.getGameObj ().transform);
     }
+
+    //clone constructor (inefficient deep copy because unity serialization is literally cancer)
+    //don't forget to update the parent! I set it to null on a copy for bug prevention reasons
+    public MicroBlock(MicroBlock mb) {
+        if (mb == null) {
+            Debug.LogWarning ("Warning: Tried to create copy of null MicroBlock");
+        }
+        this.parent = null;
+        this.position = new Vector3(mb.getPosition ().x, mb.getPosition().y, mb.getPosition ().z);//TODO: is there a copy constructor or something for Vector3? Object Copy Constructors all do it this way for now
+        microblockPrimitive = MonoBehaviour.Instantiate(mb.getPrimitive());//we have to copy the other primitive, not refer to it
+        microblockPrimitive.transform.position = this.position;
+        microblockPrimitive.name = PARENT_MICROBLOCK_NAME_PREFIX + position.ToString ();//not affixing clone tag to this, names are used for MicroBlock ID so they must be uniform.
+    }
+
 
     public GameObject getPrimitive() {
         //gets the registered primitive for this MicroBlock
@@ -40,15 +56,24 @@ public class MicroBlock {
         ret.z += parent.getPosition().z;
 
         //add Grid global position to our relative-to-grid Block local position
-        ret.x += parent.getParent().transform.position.x;
-        ret.y += parent.getParent().transform.position.y;
-        ret.z += parent.getParent().transform.position.z;
+        ret.x += Grid.getInstance().transform.position.x;
+        ret.y += Grid.getInstance().transform.position.y;
+        ret.z += Grid.getInstance().transform.position.z;
 
         return ret;
     }
 
     public Block getParent() {
         return parent;
+    }
+
+    public void setParent(Block parent) {
+        this.parent = parent;
+    }
+
+    public void setParent(Block parentBlock, GameObject parentBlockGameObject) {
+        this.parent = parentBlock;
+        this.microblockPrimitive.transform.SetParent (parentBlockGameObject.transform);
     }
 
     public static float getSize() {
