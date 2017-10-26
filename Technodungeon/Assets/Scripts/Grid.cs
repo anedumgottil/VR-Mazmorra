@@ -9,8 +9,9 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour {
 	
-    public bool shouldRender = true;//TODO:
-    public bool generateBlocksOnStart = false;//debug setting to pregenerate blocks, wastes memory
+    private static Grid instance = null;//now with 100% more singleton!
+    public bool shouldRender = true;//TODO: what is shouldRender?
+    public Vector3 position;
     public static int gridSize = 2;//meters
 	public int xDimension = 20;
 	public int yDimension = 20;
@@ -18,38 +19,53 @@ public class Grid : MonoBehaviour {
 	public bool drawIconGizmos = true;
     public bool drawBlockGizmos = false; //gizmos will be drawn for instantiated blocks that exist in memory (thusly, only during game run)
 	public Texture2D icon;
-    private GameObject[,,] grid;
+    private GridSpace[,] grid;//TODO: make this not 2 dimensional, Unity serializer is literal suffering it can't handle simple multidimensional arrays (which are stored linearly in memory ffs)
 
-    public Grid() {
+    private Grid() {
         //for our 8-block array, we'll have Y be up, Z be forward, and X be lateral.
         //forward direction is northern/southern movement, lateral is east/west.
-        grid = new GameObject[xDimension, yDimension, 8];
+        grid = new GridSpace[xDimension, yDimension];
     }
-	
+
     void Awake() {
-        //some code to help debug blocks:
-        if (generateBlocksOnStart) {
-            pregenerateBlocks ();
-        }
+        //Check if instance already exists
+        if (instance == null)
+            instance = this;
+
+        //If instance already exists and it's not this:
+        else if (instance != this)
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a Grid.
+            Destroy (gameObject); 
+    }
+
+    //use this to get da grid
+    public static Grid getInstance() {
+        //grid tha new wave now. grid the tsunami
+        return instance;
     }
         
     public static int getSize() {
         return gridSize;
     }
 
-    //loads all blocks in for testing purposes
-    private void pregenerateBlocks() {
-        /*Debug.LogWarning ("WARNING! You've left the debug setting ' Pregenerate Blocks ' on. This is only used for testing the grid block generation and storing algorithm, and is essentially useless at this point, so turn it off as it severely wastes memory.");
-        for (int i = 0; i < xDimension; i++) {
-            for (int j = 0; j < yDimension; j++) {
-                for (int p = 0; p < 8; p++) {
-                    newBlock (i, j, (BlockPos)p);
-                    //Debug.Log ("Created new block at [" + i + ", " + j + ", " + p + "]: " + blk);
-                }
-            }
-        }*/
+    public void registerSpace(int x, int y, GridSpace gs) {
+        if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
+            Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+"), destroying GridSpace!");
+            gs.destroy ();
+            return;
+        }
+        gs.setPosition (new Vector2 (x, y));
+        gs.setParents (this);
+        grid [x, y] = gs;
     }
 
+    public GridSpace getSpace(int x, int y) {
+        if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
+            Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+")");
+            return null;
+        }
+        return grid [x, y];
+    }
 
 	void OnDrawGizmos() {
         if (drawGizmos) {
@@ -62,21 +78,6 @@ public class Grid : MonoBehaviour {
                     } else {
                         Gizmos.color = Color.white;
                         Gizmos.DrawSphere (new Vector3 (dimensionPos (transform.position.x, x), transform.position.y, dimensionPos (transform.position.z, y)), 0.025f);
-                    }
-                }
-            }
-            if (drawBlockGizmos) {
-                for (int x = xDimension-1; x >= 0; x--) {
-                    for (int y = yDimension-1; y >= 0; y--) {
-                        for (int i = 0; i < 8; i++) {
-                            GameObject gobj = grid [x, y, i];
-                            if (gobj != null) {
-//                                Vector3 offset = new Vector3 (this.transform.position.x + blk.getPosition ().x + bsize, this.transform.position.y + blk.getPosition ().y + bsize, this.transform.position.z + blk.getPosition ().z + bsize);
-                                Vector3 offset = gobj.transform.position;
-                                Gizmos.color = Color.white;
-                                Gizmos.DrawSphere (offset, 0.025f);
-                            }
-                        }
                     }
                 }
             }

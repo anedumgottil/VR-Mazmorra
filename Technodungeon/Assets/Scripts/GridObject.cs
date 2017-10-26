@@ -51,16 +51,16 @@ public class GridObject {
     public void setPosition(Vector3 position) {
         this.position = position;
         //synchronize actual game object position
-        this.gameObj.transform.Translate (this.position);
+        this.gameObj.transform.localPosition = position;
     }
 
     //returns computed worldspace position
     public Vector3 getGlobalPosition() {
         Vector3 ret = position;
         //add Grid global position to our relative-to-grid local position
-        ret.x += parent.getGrid().transform.position.x;
-        ret.y += parent.getGrid().transform.position.y;
-        ret.z += parent.getGrid().transform.position.z;
+        ret.x += Grid.getInstance().transform.position.x;
+        ret.y += Grid.getInstance().transform.position.y;
+        ret.z += Grid.getInstance().transform.position.z;
         return ret;
     }
 

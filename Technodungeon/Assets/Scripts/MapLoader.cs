@@ -7,14 +7,13 @@ using System.Text.RegularExpressions;
 
 public class MapLoader : MonoBehaviour 
 {
-    public Grid parentGrid = null;
     public string blocksPath = "Assets/Resources/blocks.txt";
     public string mapPath = "Assets/Resources/map.txt";
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
     //blockTypes is not populated when we don't use the automatic generator
-    private List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
+    private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere. 
     private static GameObject prefabParent;
@@ -162,6 +161,8 @@ public class MapLoader : MonoBehaviour
         int chars = 0;
         int lines = 0;//dont use chars for debug print purposes, it includes windows linefeeds so we can iterate map more effectively
         int skips = 0;
+        int x = 0;
+        int y = 0;
         GridSpace current = null;
         foreach (char c in map) {
             chars++;
@@ -227,18 +228,25 @@ public class MapLoader : MonoBehaviour
                 skips = number.Length - 1;
                 lastChar = c;
                 //create block in GridSpace using this data
-                //current.setBlock (getPrefab (Block.PARENT_BLOCK_NAME_PREFIX + parsedNum));//TODO: CRITICAL: UNCOMMENT THIS AND IMPLEMENT FUNCTION
+                current.setBlock (getBlockInstance (parsedNum), (GridSpace.GridPos) blockpos);
 
                 if (blockpos == 7) {//we have a full GridSpace, generate it, then send it off to the Grid.
                     //we will add GridSpace to map via x:0 -> x:parentGrid.xDimension
                     //then roll over 1 on the y and start again. 
-                    int calculation = (int)numtiles / parentGrid.xDimension;//number of y, basically just floors the value
-                    if (calculation > parentGrid.yDimension) {
+                    int calculation = (int)numtiles / Grid.getInstance().xDimension;//number of y, basically just floors the value
+                    if (calculation > Grid.getInstance().yDimension) {
                         Debug.LogError ("Error: loading blocks failed: Too many GridSpaces on the dance floor!");
                         return;
                     }
-                    Debug.Log ("Attempting to create GridSpace at [" + (int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize () + "," + (int)calculation * Grid.getSize () + "] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
-                    //parentGrid.setGridSpace ((int)(numtiles - (calculation * parentGrid.xDimension)) * Grid.getSize (), (int)calculation * Grid.getSize (), current); //TODO: CRITICAL: UNCOMMENT THIS AND IMPLEMENT FUNCTION
+                    if (x >= Grid.getInstance ().xDimension) {
+                        y++;
+                        x = Grid.getInstance().xDimension-1;
+                    }
+                    Debug.Log ("Attempting to create GridSpace at [" + /*(int)(numtiles - (calculation * Grid.getInstance().xDimension)) * Grid.getSize () +*/ "("+x+")," + /*(int)calculation * Grid.getSize () +*/ "("+y+")] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
+//                    Grid.getInstance().registerSpace((int)(numtiles - (calculation * Grid.getInstance().xDimension)) * Grid.getSize (), (int)calculation * Grid.getSize (), current);
+                    Grid.getInstance().registerSpace(x, y, current);
+                    x++;
+                    current = null;
                 }
             }
                 
@@ -257,6 +265,7 @@ public class MapLoader : MonoBehaviour
 */
 
     //gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
+    //Does not clone the prefab with Instantiate.
     public static GameObject getPrefab(string name) {
         GameObject temp = gamePrefabs[name];
         if (temp == null) {
@@ -271,6 +280,15 @@ public class MapLoader : MonoBehaviour
         GameObject template = getPrefab (name);
         template.transform.parent = null;
         return Instantiate (template);//clone the template
+    }
+
+    //gets a clone of a Block in our block pool
+    public static Block getBlockInstance(int id) {
+        if (id < 0 || id >= blockTypes.Count) {
+            Debug.Log ("Error: getBlockInstance fed out of range id");
+            return null;
+        }
+        return new Block(blockTypes [id]);
     }
 
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.

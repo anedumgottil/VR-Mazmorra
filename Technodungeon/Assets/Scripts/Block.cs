@@ -34,7 +34,7 @@ public class Block : GridObject {
         Block.blockCount++;//always set ID then increment BlockCount, this means we'll begin indexing at zero and end at blockCount-1
         mbs = new MicroBlock[mbDivision, mbDivision, mbDivision];
         gameObj = new GameObject(PARENT_BLOCK_NAME_PREFIX+this.blockID);//PARENT block, used for cloning, needs an ID to make sure we don't store duplicates. (edit: this might be alleviated by serialization)
-        this.gameObj.transform.Translate (this.position);
+        this.gameObj.transform.Translate (this.position, Space.World);
     }
 
     //clone constructor (inefficient deep copy because unity serialization is literally ebolavirus)
@@ -110,4 +110,6 @@ public class Block : GridObject {
     public override int getID() {
         return blockID;
     }
+
+        
 }

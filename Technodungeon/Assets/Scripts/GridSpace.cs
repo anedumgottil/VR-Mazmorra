@@ -10,16 +10,16 @@ public class GridSpace {
     //we need two arrays because sometimes a Block or Tile will exist on the same block
     private GridObject[] blocks = new GridObject[8];
     private GridObject[] tiles = new GridObject[8];
-    private Grid parentGrid;//TODO: set parent.
-    protected Vector3 position; //position relative to grid origin
+    protected Vector2 position; //technically worldspace coords relative grid origin, but 2D this time, so... more like grid coords. (NOTE: should be equal to it's INTEGER grid coordinates!!!)
 
     //create empty GridSpace, fill up later.
-    public GridSpace(Vector3 position) {
-        this.position = position;
+    public GridSpace(Vector2 gridcoords) {
+        this.position = gridcoords;
     }
 
     public GridSpace() {
-        //do nothing
+        //do nothing?
+        this.position = (Vector2)Block.DEFAULT_POSITION;
     }
 
     public enum GridPos : byte {LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7};//8 blocks per grid, with cardinal positions defined here
@@ -27,52 +27,57 @@ public class GridSpace {
     //               index % 2 == 0, guaranteed to be northern block
     //               and vice versa.
 
-
-    //gets the parent grid of a given GridSpace
-    public Grid getGrid() {
-        return parentGrid;
-    }
-
-    /*//sets the specified Block
-    public void setBlock(Block obj, int gridx, int gridy, GridPos bpos) {
+    //sets the specified Block to this GridSpace in the appropriate position
+    public void setBlock(Block obj, GridPos bpos) {
+        if ((int)bpos >= 8 || (int)bpos < 0) {
+            Debug.LogError ("Error: setBlock was passed an incorrectly formed GridPos: "+bpos);
+            return;
+        }
         if (obj.getParent () == null) {
-            obj.setParent (this.parent);
+            obj.setParent (this);
         }
         Vector3 offset = calculateBlockPosOffset (bpos);
-        offset.x += x;
+        offset.x += this.position.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
-        offset.z += y;
-        if (x >= Grid.xDimension || y >= Grid.yDimension) {
-            return;//TODO: SOLVE THIS PROBLEM!
+        offset.z += this.position.y;
+        if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
+            Debug.LogError ("Error: setBlock() generated out of bounds range offset");
+            return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
-        Debug.Log ("setblock offset: "+offset.ToString ());
-        grid [(byte)bpos] = BlockPrefabGenerator.getPrefab(obj, offset);
+        obj.setPosition (offset);//set offset
+        blocks [(int)bpos] = obj;
     }
 
     //returns the specified Block, if it exists
-    //if it does not exist, makes a new one and registers it to the grid <-- why?
-    public Block getBlock(int gridx, int gridy, BlockPos position) {
-        Block ret = grid [x, y,(byte)position];
-        if (ret == null) {
-            ret = newBlock (x, y, position);
+    public Block getBlock(GridPos bpos) {
+        if ((int)bpos >= 8 || (int)bpos < 0) {
+            Debug.LogError ("Error: getBlock was passed an incorrectly formed GridPos: "+bpos);
+            return null;
         }
-        return ret;
+        return (Block) blocks[(int)bpos];
     }
 
-    //makes a new Block and registers it to the grid
-    //if the block already exists, does nothing, returns NULL
-    public Block newBlock(int gridx, int gridy, GridPos bpos) {
-        if (grid [x, y,(byte)bpos] == null) {
-            Vector3 offset = calculateBlockPosOffset (bpos);
-            offset.x += x;
-            //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
-            offset.z += y;
-            Block newBlock = new Block (this, offset);
-            setBlock (newBlock, x, y, bpos);
-            return newBlock;
+    public void setParents(Grid g) {
+        foreach (Block b in blocks) {
+            if (b != null) {
+                b.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
+            }
         }
-        return null;
-    }*/
+        /*foreach (Tile t in tiles) {
+            if (t != null) {
+                t.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
+            }
+        }*/
+    }
+
+    public void destroy() {
+        foreach (Block b in blocks) {
+            if (b != null) {
+                MonoBehaviour.Destroy (b.getGameObj ());
+            }
+        }
+        //TODO: set up for tiles too
+    }
 
     //calculates the position offset of a block from its gridpoint origin based on it's position in the array
     private static Vector3 calculateBlockPosOffset(GridPos bpos) {
@@ -109,5 +114,24 @@ public class GridSpace {
         }
 
         return ret;
+    }
+
+    //also sets position of all the child blocks, since it's not a transform and this doesnt happen automatically
+    public void setPosition(Vector2 pos) {
+        if (position.x != Block.DEFAULT_POSITION.x && position.y != Block.DEFAULT_POSITION.y) {
+            Debug.Log ("Warn: Moving GridSpace to new coordinates (" + this.position.x + ", " + this.position.y + ")");
+        }
+        this.position = pos;
+        for(int i = 0; i < 8; i++) {
+            if (blocks[i] != null) {
+                Vector3 offset = calculateBlockPosOffset ((GridPos)i);
+                blocks[i].setPosition (new Vector3(pos.x + offset.x, offset.y, pos.y + offset.z));
+            }
+        }
+        //TODO: set up for tiles too
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 }
