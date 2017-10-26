@@ -238,14 +238,14 @@ public class MapLoader : MonoBehaviour
                         Debug.LogError ("Error: loading blocks failed: Too many GridSpaces on the dance floor!");
                         return;
                     }
-                    if (x >= Grid.getInstance ().xDimension) {
-                        y++;
-                        x = Grid.getInstance().xDimension-1;
-                    }
                     Debug.Log ("Attempting to create GridSpace at [" + /*(int)(numtiles - (calculation * Grid.getInstance().xDimension)) * Grid.getSize () +*/ "("+x+")," + /*(int)calculation * Grid.getSize () +*/ "("+y+")] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
 //                    Grid.getInstance().registerSpace((int)(numtiles - (calculation * Grid.getInstance().xDimension)) * Grid.getSize (), (int)calculation * Grid.getSize (), current);
                     Grid.getInstance().registerSpace(x, y, current);
                     x++;
+                    if (x >= Grid.getInstance ().xDimension) {
+                        y++;
+                        x = 0;
+                    }
                     current = null;
                 }
             }

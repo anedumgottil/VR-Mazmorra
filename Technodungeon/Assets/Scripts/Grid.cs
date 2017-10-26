@@ -19,11 +19,11 @@ public class Grid : MonoBehaviour {
 	public bool drawIconGizmos = true;
     public bool drawBlockGizmos = false; //gizmos will be drawn for instantiated blocks that exist in memory (thusly, only during game run)
 	public Texture2D icon;
-    private GridSpace[,] grid;//TODO: make this not 2 dimensional, Unity serializer is literal suffering it can't handle simple multidimensional arrays (which are stored linearly in memory ffs)
+    private GridSpace[,] grid;//TODO: make this not 2 dimensional, Unity serializer is the literal embodiment of human suffering it can't handle simple multidimensional arrays (which are stored linearly in memory ffs)
 
     private Grid() {
         //for our 8-block array, we'll have Y be up, Z be forward, and X be lateral.
-        //forward direction is northern/southern movement, lateral is east/west.
+        //forward direction is northern/southern movement, lateral is east/west. +x = West, +z = North
         grid = new GridSpace[xDimension, yDimension];
     }
 
@@ -54,7 +54,7 @@ public class Grid : MonoBehaviour {
             gs.destroy ();
             return;
         }
-        gs.setPosition (new Vector2 (x, y));
+        gs.setBothPositions (new Vector2 (x, y));
         gs.setParents (this);
         grid [x, y] = gs;
     }

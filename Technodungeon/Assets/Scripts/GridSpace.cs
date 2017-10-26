@@ -10,16 +10,17 @@ public class GridSpace {
     //we need two arrays because sometimes a Block or Tile will exist on the same block
     private GridObject[] blocks = new GridObject[8];
     private GridObject[] tiles = new GridObject[8];
-    protected Vector2 position; //technically worldspace coords relative grid origin, but 2D this time, so... more like grid coords. (NOTE: should be equal to it's INTEGER grid coordinates!!!)
+    private Vector2 gridPosition; //integer positions for grid
+    private Vector3 worldPosition; //world space (scaled by grid size)
 
     //create empty GridSpace, fill up later.
     public GridSpace(Vector2 gridcoords) {
-        this.position = gridcoords;
+        this.gridPosition = gridcoords;
     }
 
     public GridSpace() {
         //do nothing?
-        this.position = (Vector2)Block.DEFAULT_POSITION;
+        this.gridPosition = (Vector2)Block.DEFAULT_POSITION;
     }
 
     public enum GridPos : byte {LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7};//8 blocks per grid, with cardinal positions defined here
@@ -29,6 +30,10 @@ public class GridSpace {
 
     //sets the specified Block to this GridSpace in the appropriate position
     public void setBlock(Block obj, GridPos bpos) {
+        if (obj == null) {
+            Debug.LogError ("Error: setBlock passed null block");
+            return;
+        }
         if ((int)bpos >= 8 || (int)bpos < 0) {
             Debug.LogError ("Error: setBlock was passed an incorrectly formed GridPos: "+bpos);
             return;
@@ -37,9 +42,9 @@ public class GridSpace {
             obj.setParent (this);
         }
         Vector3 offset = calculateBlockPosOffset (bpos);
-        offset.x += this.position.x;
+        offset.x += this.worldPosition.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
-        offset.z += this.position.y;
+        offset.z += this.worldPosition.y;
         if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
             Debug.LogError ("Error: setBlock() generated out of bounds range offset");
             return;//apparently sometimes we get out of bounds ranges for setBlock?
@@ -116,22 +121,50 @@ public class GridSpace {
         return ret;
     }
 
+    //sets grid position, doesn't change world position on this or any child blocks.
+    public void setGridPosition(Vector2 pos) {
+        this.gridPosition = pos;
+    }
+
     //also sets position of all the child blocks, since it's not a transform and this doesnt happen automatically
-    public void setPosition(Vector2 pos) {
-        if (position.x != Block.DEFAULT_POSITION.x && position.y != Block.DEFAULT_POSITION.y) {
-            Debug.Log ("Warn: Moving GridSpace to new coordinates (" + this.position.x + ", " + this.position.y + ")");
+    public void setWorldPosition(Vector3 pos) {
+        if (worldPosition != Block.DEFAULT_POSITION) {
+            Debug.Log ("Warn: Moving GridSpace to new coordinates "+pos.ToString() );
         }
-        this.position = pos;
+        this.worldPosition = pos;
         for(int i = 0; i < 8; i++) {
             if (blocks[i] != null) {
                 Vector3 offset = calculateBlockPosOffset ((GridPos)i);
-                blocks[i].setPosition (new Vector3(pos.x + offset.x, offset.y, pos.y + offset.z));
+                blocks[i].setPosition (offset + worldPosition);
             }
         }
         //TODO: set up for tiles too
     }
 
-    public Vector2 getPosition() {
-        return position;
+    //sets both positions based off of a Vector2 grid coordinate, used to init GridSpaces in world gen.
+    //also sets position of all the child blocks, since it's not a transform and this doesnt happen automatically
+    public void setBothPositions(Vector2 pos) {
+        if (worldPosition != Block.DEFAULT_POSITION) {
+            Debug.Log ("Warn: Moving GridSpace to new coordinates "+pos.ToString() );
+        }
+        this.gridPosition = pos;
+        this.worldPosition = new Vector3 (pos.x, 0.0f, pos.y);
+        this.worldPosition *= Grid.getSize();//non-atomic scale op
+        for(int i = 0; i < 8; i++) {
+            if (blocks[i] != null) {
+                Vector3 offset = calculateBlockPosOffset ((GridPos)i);
+                blocks[i].setPosition (offset + worldPosition);
+            }
+        }
+        //TODO: set up for tiles too
     }
+
+    public Vector2 getGridPosition() {
+        return gridPosition;
+    }
+
+    public Vector3 getWorldPosition() {
+        return worldPosition;
+    }
+        
 }
