@@ -144,9 +144,6 @@ public class GridSpace {
     //sets both positions based off of a Vector2 grid coordinate, used to init GridSpaces in world gen.
     //also sets position of all the child blocks, since it's not a transform and this doesnt happen automatically
     public void setBothPositions(Vector2 pos) {
-        if (worldPosition != Block.DEFAULT_POSITION) {
-            Debug.Log ("Warn: Moving GridSpace to new coordinates "+pos.ToString() );
-        }
         this.gridPosition = pos;
         this.worldPosition = new Vector3 (pos.x, 0.0f, pos.y);
         this.worldPosition *= Grid.getSize();//non-atomic scale op

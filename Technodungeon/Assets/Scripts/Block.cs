@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO: Factor out the GameObj and move the prefab to the GridSpace class which will hold this GridObject
 public class Block : GridObject {
     private static int blockCount = 0;
     private int blockID;

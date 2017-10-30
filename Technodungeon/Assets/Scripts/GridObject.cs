@@ -39,7 +39,7 @@ public class GridObject {
         GridObject.gridObjectCount++;
         this.parent = null;
         this.position = toClone.getPosition ();
-        this.gameObj = null;//TODO: copy the gameObj here? Or in child class? we can only instantiate once...
+        this.gameObj = null;
     }
         
 
@@ -50,8 +50,10 @@ public class GridObject {
         
     public void setPosition(Vector3 position) {
         this.position = position;
-        //synchronize actual game object position
-        this.gameObj.transform.localPosition = position;
+        if (gameObj != null) {
+            //synchronize actual game object position
+            this.gameObj.transform.localPosition = position;
+        }
     }
 
     //returns computed worldspace position
