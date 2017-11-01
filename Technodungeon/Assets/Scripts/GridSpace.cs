@@ -13,6 +13,9 @@ public class GridSpace {
     private Vector2 gridPosition; //integer positions for grid
     private Vector3 worldPosition; //world space (scaled by grid size)
 
+    //below is where references to all immobile entities attached to this GridSpace will be stored
+    List<StationaryEntity> stationaries = new List<StationaryEntity> (1);
+
     //create empty GridSpace, fill up later.
     public GridSpace(Vector2 gridcoords) {
         this.gridPosition = gridcoords;
@@ -82,6 +85,10 @@ public class GridSpace {
             }
         }
         //TODO: set up for tiles too
+        foreach (StationaryEntity se in stationaries) {
+            //remove all stationaryentities from the world that are associated with this gridspace
+            MonoBehaviour.Destroy (se.gameObject);
+        }
     }
 
     //calculates the position offset of a block from its gridpoint origin based on it's position in the array
@@ -162,6 +169,25 @@ public class GridSpace {
 
     public Vector3 getWorldPosition() {
         return worldPosition;
+    }
+
+    //so long as we don't already have a reference to this stationary entity, add it to our reference list.
+    public void addStationary(StationaryEntity se) {
+        //TODO: possibly check for whether or not this stationary gameobject is positionally located within this GridSpace before adding it
+        if (!stationaries.Contains (se)) {
+            stationaries.Add (se);
+        }
+    }
+
+    //pretty self-explanatory. 
+    //Note: you should probably not use this call by itself, you should instead tell the SE to change it's parent with the SE.setGridSpace() command which does this for you.
+    public void removeStationary(StationaryEntity se) {
+        stationaries.Remove (se);
+    }
+
+    //get the list of stationary entities that reside within this GridSpace
+    public List<StationaryEntity> getStationaries() {
+        return stationaries;
     }
         
 }

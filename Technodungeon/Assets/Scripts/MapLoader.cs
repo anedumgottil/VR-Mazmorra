@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
+//This class handles prefab loading, pooling and storage
+//Used to generate the prefab parents that will be used to generate the map with the map generator
+//use this class if you need to create a new object, since it automatically pools objects (or at least, it should. we need an interface for this)
+
 public class MapLoader : MonoBehaviour 
 {
     public string blocksPath = "Assets/Resources/blocks.txt";
@@ -15,7 +19,7 @@ public class MapLoader : MonoBehaviour
     //blockTypes is not populated when we don't use the automatic generator
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
-    private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere. 
+    private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
 
     //generate our Blocks from a text file, and create Prefabs from them to populate our Prefab Pool. This is ran only when the Unity Editor is available, and should only be ran occasionally, as it's time consuming and generates meta commit conflicts
@@ -264,8 +268,8 @@ public class MapLoader : MonoBehaviour
     }
 */
 
-    //gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
-    //Does not clone the prefab with Instantiate.
+    //prefab accessor. gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
+    //Does not clone the prefab with Instantiate. <---------- IMPORTANT! you should probably be using getPrefabInstance because of this. 
     public static GameObject getPrefab(string name) {
         GameObject temp = gamePrefabs[name];
         if (temp == null) {
@@ -307,7 +311,7 @@ public class MapLoader : MonoBehaviour
         
 
     private static string readString(string path) {
-        //Read the text from directly from the blocks.txt file
+        //Read the text from directly from a txt file
         StreamReader reader = new StreamReader(path); 
         string temp = reader.ReadToEnd(); //warning, this code potentially buffers a lot of memory
         reader.Close();
