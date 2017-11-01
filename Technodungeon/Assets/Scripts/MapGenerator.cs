@@ -199,6 +199,17 @@ public sealed class MapGenerator {
                 analyzeNeighbors (x, y + 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y + 1, false));
                 analyzeNeighbors (x, y - 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y - 1, false));
             }
+
+            //////////////////////////////////SURROUNDED/////////////////////////////////
+        } else if (!adjacentWestTile && adjacentEastTile && adjacentNorthTile && adjacentSouthTile) {
+            //EAST AND SOUTH AND NORTH AND WEST TILE
+            applyGridSpaceConfiguration (current, gstype, 1);//west wall
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x + 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x + 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x - 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x - 1, y, false));
+                analyzeNeighbors (x, y + 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y + 1, false));
+                analyzeNeighbors (x, y - 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y - 1, false));
+            }
         }
     }
 
