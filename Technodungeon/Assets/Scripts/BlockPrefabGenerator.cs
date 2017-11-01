@@ -12,7 +12,7 @@ public class BlockPrefabGenerator {
 
     public static void generatePrefab(Block bl) {
         #if UNITY_EDITOR
-        PrefabUtility.CreatePrefab ("Assets/Prefabs/" + Block.PARENT_BLOCK_NAME_PREFIX + bl.getID () + ".prefab", bl.getGameObj ());
+        PrefabUtility.CreatePrefab ("Assets/Prefabs/Blocks/" + Block.PARENT_BLOCK_NAME_PREFIX + bl.getID () + ".prefab", bl.getGameObj ());
         #endif
         /*        //color the blox
         Color random = Random.ColorHSV ();
