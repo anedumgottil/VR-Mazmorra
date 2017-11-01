@@ -78,7 +78,7 @@ public sealed class MapGenerator {
     private void analyzeNeighbors(int x, int y, GridSpace.GridSpaceType gstype, GridSpace current) {
         //this is where the MapGenerator needs to intelligently determine the type of GridSpace to spawn, with the help of it's handy-dandy helper function
         bool adjacentWestTile, adjacentEastTile, adjacentNorthTile, adjacentSouthTile = false; // need an array of variables to store state
-        checkNeighborGridSpaces (x, y, adjacentWestTile, adjacentEastTile, adjacentNorthTile, adjacentSouthTile);
+        checkNeighborGridSpaces (x, y, out adjacentWestTile, out adjacentEastTile, out adjacentNorthTile, out adjacentSouthTile);
         //BEGIN TO DECIDE ON GRIDSPACE LAYOUT:
         if (!adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
             //base case: we have no surrounding tiles. Just make ourselves into a floor and a ceiling. TODO: make this a 4 wall block instead of a no-wall block.
