@@ -70,7 +70,7 @@ public sealed class MapGenerator {
         }//now we will just edit the associated GridObjects for the GridSpace so we do not mess up any of it's associated parameters, just in case it has attached stationaryEntities or whatever
 
         //HERE COMES THE DAT AI
-
+        analyzeNeighbors(x, y, gstype, newGS);
         //Important Note: after this is ran, we have modified the Grid! So do not operate on newGS anymore or it won't be saved.
     }
 
@@ -231,9 +231,6 @@ public sealed class MapGenerator {
         //if we have gstype of 0, just don't edit the gst (it stays the same)
         if (gstype != (GridSpace.GridSpaceType)0) {
             current.setGridSpaceType (gstype);
-        } else {
-            //DEBUG: remove me please
-            Debug.Log ("gridspaceconfig inheriting gst: " + (int)current.getGridSpaceType ());
         }
 
         //get the Grid position of our GridSpace that we are updating
@@ -265,6 +262,22 @@ public sealed class MapGenerator {
         } else {
             adjacentSouthTile = false;
         }
+    }
+
+
+    public void generateStarterMap() {
+        Debug.Log ("GENERATING STARTER BLOCK 1");
+        setGridSpace (5, 5, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING STARTER BLOCK 2");
+        setGridSpace (5, 6, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING STARTER BLOCK 3");
+        setGridSpace (4, 5, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING STARTER BLOCK 4");
+        setGridSpace (8, 8, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING STARTER BLOCK 5");
+        setGridSpace (4, 4, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING STARTER BLOCK 6");
+        setGridSpace (5, 4, (GridSpace.GridSpaceType.Corridor));
     }
 
     //singleton stuff:

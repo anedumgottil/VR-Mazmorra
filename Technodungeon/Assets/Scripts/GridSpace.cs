@@ -41,6 +41,7 @@ public class GridSpace {
 
     //sets the specified Block to this GridSpace in the appropriate position
     //overwrites whatever Block was at that position
+    //IMPORTANT: the original Block object will persist, without it's GameObject, but it'll just be dereferenced from this GridSpace, so make sure no other objects reference this block so GC can get it
     public void setBlock(Block obj, GridPos bpos) {
         if (obj == null) {
             Debug.LogError ("Error: setBlock passed null block");
@@ -49,6 +50,10 @@ public class GridSpace {
         if ((int)bpos >= 8 || (int)bpos < 0) {
             Debug.LogError ("Error: setBlock was passed an incorrectly formed GridPos: "+bpos);
             return;
+        }
+        if (blocks [(int)bpos] != null) {
+            //need to destroy the old one to overwrite it, or it will persist in the GameWorld. hope you won't need it anymore!
+            MonoBehaviour.Destroy (blocks [(int)bpos].getGameObj ());
         }
         if (obj.getParent () == null) {
             obj.setParent (this);
@@ -95,6 +100,7 @@ public class GridSpace {
         gridSpaceType = gst;
     }
 
+    //destroys the whole GridSpace
     public void destroy() {
         foreach (Block b in blocks) {
             if (b != null) {

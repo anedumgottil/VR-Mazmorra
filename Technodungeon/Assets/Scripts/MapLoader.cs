@@ -343,6 +343,7 @@ public class MapLoader : MonoBehaviour
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now
 
         mapResourcesLoadComplete = true;
+        MapGenerator.Instance.generateStarterMap ();
     }
 
 }
