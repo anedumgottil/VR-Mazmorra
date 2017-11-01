@@ -59,9 +59,20 @@ public class Grid : MonoBehaviour {
         grid [x, y] = gs;
     }
 
+    //returns whatever is at that position, may return null if none exists
     public GridSpace getGridSpace(int x, int y) {
         if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
-            Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+")");
+            Debug.LogWarning ("Warn: Attempted to get a GridSpace out of bounds ("+x+", "+y+")");
+            return null;
+        }
+        return grid [x, y];
+    }
+    //returns whatever is at that position, even if it's out of bounds (just returns null in that case) with disabled warning, because the MapGenerator regularly asks for non-existent coordinates. and this is okay in that case.
+    public GridSpace getGridSpace(int x, int y, bool suppressWarning) {
+        if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
+            if (!suppressWarning) {
+                Debug.LogWarning ("Warn: Attempted to get a GridSpace out of bounds (" + x + ", " + y + ")");
+            }
             return null;
         }
         return grid [x, y];

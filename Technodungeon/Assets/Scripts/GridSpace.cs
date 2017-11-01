@@ -12,6 +12,8 @@ public class GridSpace {
     private GridObject[] tiles = new GridObject[8];
     private Vector2 gridPosition; //integer positions for grid
     private Vector3 worldPosition; //world space (scaled by grid size)
+    public int gridSpaceConfiguration = 0;
+    //the above variable is used during map generation to define the configuration of walls/floors/ceilings this GridSpace has //TODO: this index will eventually map to a keyfile ID for GridSpace Configurations.... use flatfile to generate it? hmmm.... see ticket: #17
 
     //below is where references to all immobile entities attached to this GridSpace will be stored
     List<StationaryEntity> stationaries = new List<StationaryEntity> (1);
