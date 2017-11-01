@@ -63,8 +63,8 @@ public class GridSpace {
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
         offset.z += this.worldPosition.y;
         if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
-            Debug.LogError ("Error: setBlock() generated out of bounds range offset");
-            return;//apparently sometimes we get out of bounds ranges for setBlock?
+            Debug.LogWarning ("Error: setBlock() generated out of bounds range offset");
+            //return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
         obj.setPosition (offset);//set offset
         blocks [(int)bpos] = obj;

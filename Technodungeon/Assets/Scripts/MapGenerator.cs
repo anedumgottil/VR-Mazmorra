@@ -277,18 +277,36 @@ public sealed class MapGenerator {
 
 
     public void generateStarterMap() {
-        Debug.Log ("GENERATING STARTER BLOCK 1");
+        Debug.Log ("GENERATING STARTER MAINROOM");
         setGridSpace (5, 5, (GridSpace.GridSpaceType.Corridor));
-        Debug.Log ("GENERATING STARTER BLOCK 2");
         setGridSpace (5, 6, (GridSpace.GridSpaceType.Corridor));
-        Debug.Log ("GENERATING STARTER BLOCK 3");
         setGridSpace (4, 5, (GridSpace.GridSpaceType.Corridor));
-        Debug.Log ("GENERATING STARTER BLOCK 4");
         setGridSpace (8, 8, (GridSpace.GridSpaceType.Corridor));
-        Debug.Log ("GENERATING STARTER BLOCK 5");
         setGridSpace (4, 4, (GridSpace.GridSpaceType.Corridor));
-        Debug.Log ("GENERATING STARTER BLOCK 6");
         setGridSpace (5, 4, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (4, 6, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (3, 6, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (3, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (3, 4, (GridSpace.GridSpaceType.Corridor));
+
+        Debug.Log ("GENERATING STARTER CORRIDOR");
+        setGridSpace (6, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (7, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (8, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (9, 5, (GridSpace.GridSpaceType.Corridor));
+
+        Debug.Log ("GENERATING STARTER ENDROOM");
+        setGridSpace (10, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (10, 4, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (10, 3, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (10, 2, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (11, 5, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (11, 4, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (11, 3, (GridSpace.GridSpaceType.Corridor));
+        setGridSpace (11, 2, (GridSpace.GridSpaceType.Corridor));
+
+        //move player to our map
+        Player.getInstance().teleportToGridCoords (5, 5);
     }
 
     //singleton stuff:
