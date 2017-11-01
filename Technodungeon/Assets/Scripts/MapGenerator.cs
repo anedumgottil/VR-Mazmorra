@@ -83,35 +83,86 @@ public sealed class MapGenerator {
         //BEGIN TO DECIDE ON GRIDSPACE LAYOUT:
         if (!adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
             //base case: we have no surrounding tiles. Just make ourselves into a floor and a ceiling. TODO: make this a 4 wall block instead of a no-wall block.
-            applyGridSpaceConfiguration(current, gstype, 1);
+            applyGridSpaceConfiguration (current, gstype, 1);
+
 
             //////////////////////////////////SINGULAR NEIGHBORS//////////////////////////////////
         } else if (adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
             //WEST TILE
             //we have a just 1 tile to the west. we need to make ourselves into a reversed C shape to accomodate
-            applyGridSpaceConfiguration(current, gstype, 15);
+            applyGridSpaceConfiguration (current, gstype, 15);
             //thankfully, due to us only using cardinal directions here on our graph, we can COMPLETELY eliminate the recursive call flood by just not recursing twice after a change (yay math)
-            if (gstype != (GridSpace.GridSpaceType) 0) {//if this is not a recursive call, we'll need to recurse to update the tile to our west of the changes we just made to ourselves
+            if (gstype != (GridSpace.GridSpaceType)0) {//if this is not a recursive call, we'll need to recurse to update the tile to our west of the changes we just made to ourselves
                 //now we will call this same function over THAT tile, so we force it to update it's configuration to reflect THIS tile
-                analyzeNeighbors(x-1, y, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x-1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x - 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x - 1, y, false));//specify recursive sub-call with gstype 0
             }
         } else if (!adjacentWestTile && adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
             //EAST TILE
-            applyGridSpaceConfiguration(current, gstype, 13);
-            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
-                analyzeNeighbors(x+1, y, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x+1, y, false));//specify recursive sub-call with gstype 0
+            applyGridSpaceConfiguration (current, gstype, 13);
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x + 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x + 1, y, false));//specify recursive sub-call with gstype 0
             }
         } else if (!adjacentWestTile && !adjacentEastTile && adjacentNorthTile && !adjacentSouthTile) {
             //NORTH TILE
-            applyGridSpaceConfiguration(current, gstype, 12);
-            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
-                analyzeNeighbors(x, y+1, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x, y+1, false));//specify recursive sub-call with gstype 0
+            applyGridSpaceConfiguration (current, gstype, 12);
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x, y + 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y + 1, false));//specify recursive sub-call with gstype 0
             }
         } else if (!adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && adjacentSouthTile) {
             //SOUTH TILE
-            applyGridSpaceConfiguration(current, gstype, 14);
-            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
-                analyzeNeighbors(x, y-1, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x, y-1, false));//specify recursive sub-call with gstype 0
+            applyGridSpaceConfiguration (current, gstype, 14);
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x, y - 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y - 1, false));//specify recursive sub-call with gstype 0
+            }
+
+
+            //////////////////////////////////DUAL NEIGHBORS//////////////////////////////////
+            //////////////////////////////////   "TUBES"    //////////////////////////////////
+        } else if (adjacentWestTile && adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
+            //EAST AND WEST TILE
+            applyGridSpaceConfiguration (current, gstype, 7);
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x + 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x + 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x - 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x - 1, y, false));
+            }
+        } else if (!adjacentWestTile && !adjacentEastTile && adjacentNorthTile && adjacentSouthTile) {
+            //NORTH AND SOUTH TILE
+            applyGridSpaceConfiguration (current, gstype, 6);
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x, y+1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y+1, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x, y-1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y-1, false));
+            }
+
+
+            //////////////////////////////////DUAL NEIGHBORS//////////////////////////////////
+            //////////////////////////////////   CORNERS    //////////////////////////////////
+        } else if (adjacentWestTile && !adjacentEastTile && adjacentNorthTile && !adjacentSouthTile) {
+            //WEST AND NORTH TILE
+            applyGridSpaceConfiguration (current, gstype, 11);//s/e corner
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x - 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x - 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x, y + 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y + 1, false));
+            }
+        } else if (!adjacentWestTile && adjacentEastTile && adjacentNorthTile && !adjacentSouthTile) {
+            //EAST AND NORTH TILE
+            applyGridSpaceConfiguration (current, gstype, 10);//s/w corner
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x + 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x + 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x, y + 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y + 1, false));
+            }
+        } else if (adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && adjacentSouthTile) {
+            //WEST AND SOUTH TILE
+            applyGridSpaceConfiguration (current, gstype, 9);//n/e corner
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x - 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x - 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x, y - 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y - 1, false));
+            }
+        } else if (!adjacentWestTile && adjacentEastTile && !adjacentNorthTile && adjacentSouthTile) {
+            //EAST AND SOUTH TILE
+            applyGridSpaceConfiguration (current, gstype, 8);//n/w corner
+            if (gstype != (GridSpace.GridSpaceType)0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors (x + 1, y, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x + 1, y, false));//specify recursive sub-call with gstype 0
+                analyzeNeighbors (x, y - 1, (GridSpace.GridSpaceType)0, Grid.getInstance ().getGridSpace (x, y - 1, false));
             }
         }
     }
