@@ -48,6 +48,8 @@ public class Grid : MonoBehaviour {
         return gridSize;
     }
 
+    //sets the GridSpace at x, y to gs. Updates the positions for gs accordingly, and sets parents.
+    //overwrites whatever was in the spot before it.
     public void registerGridSpace(int x, int y, GridSpace gs) {
         if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
             Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+"), destroying GridSpace!");

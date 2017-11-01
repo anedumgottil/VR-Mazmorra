@@ -12,6 +12,7 @@ public class GridSpace {
     private GridObject[] tiles = new GridObject[8];
     private Vector2 gridPosition; //integer positions for grid
     private Vector3 worldPosition; //world space (scaled by grid size)
+    private GridSpaceType gridSpaceType = GridSpaceType.None;//set to none for now
     public int gridSpaceConfiguration = 0;
     //the above variable is used during map generation to define the configuration of walls/floors/ceilings this GridSpace has //TODO: this index will eventually map to a keyfile ID for GridSpace Configurations.... use flatfile to generate it? hmmm.... see ticket: #17
 
@@ -33,12 +34,13 @@ public class GridSpace {
     //               index % 2 == 0, guaranteed to be northern block
     //               and vice versa.
 
-    public enum GridSpaceType : byte {Empty = 0, Corridor = 1, Room = 2};
+    public enum GridSpaceType : byte {None = 0, Corridor = 1, Room = 2};
     //Empty should never be used and is just there to define an undefined room type for possible future programmatical reasons
     //Corridor is an empty corridor used to connect rooms together. it might not actually be a corridor by the definition of the word (like, it might be shaped like a room, but it's still a corridor type)
     //Room is used for the automatic generation of room areas and should probably not be used manually, it will eventually use a custom tile prefab (rooms will have special floors and walls and stuff)
 
     //sets the specified Block to this GridSpace in the appropriate position
+    //overwrites whatever Block was at that position
     public void setBlock(Block obj, GridPos bpos) {
         if (obj == null) {
             Debug.LogError ("Error: setBlock passed null block");
@@ -83,6 +85,14 @@ public class GridSpace {
                 t.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
             }
         }*/
+    }
+
+    public GridSpaceType getGridSpaceType() {
+        return gridSpaceType;
+    }
+
+    public void setGridSpaceType(GridSpaceType gst) {
+        gridSpaceType = gst;
     }
 
     public void destroy() {

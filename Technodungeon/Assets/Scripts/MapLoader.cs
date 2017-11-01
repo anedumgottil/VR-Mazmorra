@@ -16,6 +16,8 @@ public class MapLoader : MonoBehaviour
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
+    private static bool mapResourcesLoadComplete = false; //TODO: this flag is set to true once loadBlocks()/parseBlocks() and loadTiles()/parseTiles() and parseBlockMap() is complete (not set correctly yet)
+
     //blockTypes is not populated when we don't use the automatic generator
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
@@ -308,6 +310,12 @@ public class MapLoader : MonoBehaviour
         prefab.transform.SetParent (prefabParent.transform);
         gamePrefabs[name] = prefab;
     }
+
+    //returns true if we've correctly loaded all prefabs, and generated all their Blocks and Tiles based on the flatfiles.
+    //This says nothing about the state of other loaded resources, for example, entities.... so be careful.
+    public static bool isMapResourcesLoadComplete() {
+        return mapResourcesLoadComplete;
+    }
         
 
     private static string readString(string path) {
@@ -329,6 +337,12 @@ public class MapLoader : MonoBehaviour
         if (this.generateGridFromFile) {
             this.parseBlockMap ();
         }
+
+        //TODO: load in all prefabs using LoadAllResources... 
+        //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
+        //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now
+
+        mapResourcesLoadComplete = true;
     }
 
 }

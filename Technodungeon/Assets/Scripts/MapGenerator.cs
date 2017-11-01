@@ -203,9 +203,44 @@ public sealed class MapGenerator {
     }
 
     //modifies the GridSpace current's array of GridObjects to reflect the new configuration, then adds the GridSpace current to the Grid properly, overwriting the old one.
+    //NOTE: requires that the MapLoader has completed loading all map resources before running!
     private void applyGridSpaceConfiguration(GridSpace current, GridSpace.GridSpaceType gstype, int configuration) {
-        //TODO: fill this out
-        //if we have gstype of 0, just don't mess with the gst
+        if (current == null) {
+            //severe error/bug
+            Debug.LogError ("Error: Tried to apply a GridSpace configuration to a null GridSpace... this should never happen!");
+        }
+        if (!MapLoader.isMapResourcesLoadComplete ()) {
+            //we don't have the resources required to do any GridSpace generation, so just give up.
+            Debug.LogError ("Error: MapGenerator found that the MapLoader didn't do it's job, the slacker");
+            return;
+        }
+
+        current.gridSpaceConfiguration = configuration;
+        int reggaeton = 0;
+        foreach (int tileID in spaceTemplates[configuration]) {
+            //generate a GridSpace similar to the way that MapLoader does, GridObject by GridObject for each ID.
+            //TODO: CRITICAL: update this function so that instead of generating blocks, it generates tiles!!! we need the Tile prefabs complete before we can do this though.
+            if (reggaeton > 7) {
+                //too many positions, this would happen if we loaded in too many indices to our templates, which should be corrected by the MapLoader in advance so... error.
+                Debug.LogError ("Error: too many MapGenerator GridSpace positions on the dance floor!");
+                return;
+            }
+            current.setBlock (MapLoader.getBlockInstance (tileID), (GridSpace.GridPos)reggaeton);
+            reggaeton++;
+        }
+        //if we have gstype of 0, just don't edit the gst (it stays the same)
+        if (gstype != (GridSpace.GridSpaceType)0) {
+            current.setGridSpaceType (gstype);
+        } else {
+            //DEBUG: remove me please
+            Debug.Log ("gridspaceconfig inheriting gst: " + (int)current.getGridSpaceType ());
+        }
+
+        //get the Grid position of our GridSpace that we are updating
+        Vector2 gridPos = current.getGridPosition ();
+
+        //finally, register our GridSpace to the grid.
+        Grid.getInstance ().registerGridSpace ((int)gridPos.x, (int)gridPos.y, current);
     }
 
     //this function just helps me figure out which of the four cardinal directions around a grid coordinate are occupied.
@@ -253,6 +288,6 @@ public sealed class MapGenerator {
         return instance;
     }
 }
-//this class creation was fueled in a 7-hour code-binge by G-Eazy, Drum and Bass, moombahton and a variety of other somewhat-dangerous things
+//this class creation was fueled in a 7-hour code-binge by G-Eazy, Drum and Bass, reggaeton and a variety of other somewhat-dangerous things
 //I'd like to thank my mom, my buddy Joe Demme, Drake/his producer: 40, and my cat for making it all possible
 //<3
