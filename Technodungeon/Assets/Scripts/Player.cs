@@ -10,6 +10,59 @@ public class Player : MonoBehaviour {
     private int gridPosX = -1;
     private int gridPosY = -1;
 
+    public float clickThresh = 0.3f;//30% of trackpad distance
+    public GameObject rController;
+    public GameObject lController;
+
+    private SteamVR_TrackedController rightController;
+    private SteamVR_TrackedController leftController;
+
+    private void OnEnable()
+    {
+        rightController = rController.gameObject.GetComponent<SteamVR_TrackedController>(); 
+        leftController = lController.gameObject.GetComponent<SteamVR_TrackedController>();
+        rightController.PadClicked += HandleRightPadClicked;
+        leftController.PadClicked += HandleLeftPadClicked;
+    }
+
+    private void OnDisable()
+    {
+        rightController.PadClicked -= HandleRightPadClicked;
+        leftController.PadClicked -= HandleLeftPadClicked;
+    }
+
+    private void HandleRightPadClicked(object sender, ClickedEventArgs e)
+    {
+        if (e.padX < -1 + clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            //left pad click
+        } else if (e.padX > 1 - clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            //right pad click
+        } else if (e.padY < -1 + clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //down pad click
+        } else if (e.padY > 1 - clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //up pad click
+        }
+            
+    }
+
+    private void HandleLeftPadClicked(object sender, ClickedEventArgs e)
+    {
+        if (e.padX < -1 + clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            //left pad click
+            teleportToGridCoords(gridPosX-1, gridPosY);
+        } else if (e.padX > 1 - clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            //right pad click
+            teleportToGridCoords(gridPosX+1, gridPosY);
+        } else if (e.padY < -1 + clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //down pad click
+            teleportToGridCoords(gridPosX, gridPosY-1);
+        } else if (e.padY > 1 - clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //up pad click
+            teleportToGridCoords(gridPosX, gridPosY+1);
+        }
+
+    }
+
     void Awake() {
         //Check if instance already exists
         if (instance == null)
