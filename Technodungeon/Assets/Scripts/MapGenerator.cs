@@ -75,6 +75,7 @@ public sealed class MapGenerator {
     }
 
     //this function is where the AI magic happens
+    //Note: we carefully avoid a race condition here in our recursive subcall to analyzeNeighbors by only checking null values in the Grid, but if someone modifies the Grid during map generation we'll be in trouble
     private void analyzeNeighbors(int x, int y, GridSpace.GridSpaceType gstype, GridSpace current) {
         //this is where the MapGenerator needs to intelligently determine the type of GridSpace to spawn, with the help of it's handy-dandy helper function
         bool adjacentWestTile, adjacentEastTile, adjacentNorthTile, adjacentSouthTile = false; // need an array of variables to store state
@@ -83,13 +84,34 @@ public sealed class MapGenerator {
         if (!adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
             //base case: we have no surrounding tiles. Just make ourselves into a floor and a ceiling. TODO: make this a 4 wall block instead of a no-wall block.
             applyGridSpaceConfiguration(current, gstype, 1);
+
+            //////////////////////////////////SINGULAR NEIGHBORS//////////////////////////////////
         } else if (adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
+            //WEST TILE
             //we have a just 1 tile to the west. we need to make ourselves into a reversed C shape to accomodate
             applyGridSpaceConfiguration(current, gstype, 15);
             //thankfully, due to us only using cardinal directions here on our graph, we can COMPLETELY eliminate the recursive call flood by just not recursing twice after a change (yay math)
             if (gstype != (GridSpace.GridSpaceType) 0) {//if this is not a recursive call, we'll need to recurse to update the tile to our west of the changes we just made to ourselves
                 //now we will call this same function over THAT tile, so we force it to update it's configuration to reflect THIS tile
                 analyzeNeighbors(x-1, y, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x-1, y, false));//specify recursive sub-call with gstype 0
+            }
+        } else if (!adjacentWestTile && adjacentEastTile && !adjacentNorthTile && !adjacentSouthTile) {
+            //EAST TILE
+            applyGridSpaceConfiguration(current, gstype, 13);
+            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors(x+1, y, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x+1, y, false));//specify recursive sub-call with gstype 0
+            }
+        } else if (!adjacentWestTile && !adjacentEastTile && adjacentNorthTile && !adjacentSouthTile) {
+            //NORTH TILE
+            applyGridSpaceConfiguration(current, gstype, 12);
+            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors(x, y+1, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x, y+1, false));//specify recursive sub-call with gstype 0
+            }
+        } else if (!adjacentWestTile && !adjacentEastTile && !adjacentNorthTile && adjacentSouthTile) {
+            //SOUTH TILE
+            applyGridSpaceConfiguration(current, gstype, 14);
+            if (gstype != (GridSpace.GridSpaceType) 0) {//if we're not recursive already, recurse to update neighbors:
+                analyzeNeighbors(x, y-1, (GridSpace.GridSpaceType) 0, Grid.getInstance().getGridSpace(x, y-1, false));//specify recursive sub-call with gstype 0
             }
         }
     }
