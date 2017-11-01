@@ -28,6 +28,20 @@ public sealed class MapGenerator {
         new[]{2, 2, 4, 4, //east wall w/ ceiling and floor
             7, 7, 9, 9}, 
         new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
+            8, 8, 7, 7},
+        new[]{3, 3, 4, 4, //two wall tube pointing n/s w/ ceiling and floor
+            8, 8, 9, 9},
+        new[]{6, 5, 6, 5, //two wall tube pointing e/w w/ ceiling and floor
+            11, 10, 11, 10},
+        new[]{3, 3, 6, 2, //north/west corner w/ ceiling and floor
+            8, 8, 11, 7},
+        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
+            8, 8, 7, 7},
+        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
+            8, 8, 7, 7},
+        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
+            8, 8, 7, 7},
+        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
             8, 8, 7, 7}
     };
 
