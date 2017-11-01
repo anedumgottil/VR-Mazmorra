@@ -31,6 +31,11 @@ public class GridSpace {
     //               index % 2 == 0, guaranteed to be northern block
     //               and vice versa.
 
+    public enum GridSpaceType : byte {Empty = 0, Corridor = 1, Room = 2};
+    //Empty should never be used and is just there to define an undefined room type for possible future programmatical reasons
+    //Corridor is an empty corridor used to connect rooms together. it might not actually be a corridor by the definition of the word (like, it might be shaped like a room, but it's still a corridor type)
+    //Room is used for the automatic generation of room areas and should probably not be used manually, it will eventually use a custom tile prefab (rooms will have special floors and walls and stuff)
+
     //sets the specified Block to this GridSpace in the appropriate position
     public void setBlock(Block obj, GridPos bpos) {
         if (obj == null) {

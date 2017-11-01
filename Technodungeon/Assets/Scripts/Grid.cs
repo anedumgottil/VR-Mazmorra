@@ -48,7 +48,7 @@ public class Grid : MonoBehaviour {
         return gridSize;
     }
 
-    public void registerSpace(int x, int y, GridSpace gs) {
+    public void registerGridSpace(int x, int y, GridSpace gs) {
         if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
             Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+"), destroying GridSpace!");
             gs.destroy ();
@@ -59,7 +59,7 @@ public class Grid : MonoBehaviour {
         grid [x, y] = gs;
     }
 
-    public GridSpace getSpace(int x, int y) {
+    public GridSpace getGridSpace(int x, int y) {
         if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
             Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+")");
             return null;
