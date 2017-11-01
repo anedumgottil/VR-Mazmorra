@@ -33,16 +33,22 @@ public sealed class MapGenerator {
             8, 8, 9, 9},
         new[]{6, 5, 6, 5, //two wall tube pointing e/w w/ ceiling and floor
             11, 10, 11, 10},
-        new[]{3, 3, 6, 2, //north/west corner w/ ceiling and floor
-            8, 8, 11, 7},
-        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
-            8, 8, 7, 7},
-        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
-            8, 8, 7, 7},
-        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
-            8, 8, 7, 7},
-        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
-            8, 8, 7, 7}
+        new[]{17, 3, 6, 2, //north/west corner w/ ceiling and floor
+            13, 8, 11, 7},
+        new[]{6, 2, 19, 4, //north/east corner w/ ceiling and floor
+            11, 7, 15, 9},
+        new[]{3, 16, 2, 5, //south/west corner w/ ceiling and floor
+            8, 12, 7, 10},
+        new[]{2, 5, 4, 18, //south/east corner w/ ceiling and floor
+            7, 10, 9, 14},
+        new[]{3, 16, 4, 18, //south/east/west  deadend w/ ceiling and floor  - looks like: U
+            8, 12, 9, 14},
+        new[]{3, 16, 4, 18, //south/west/north deadend w/ ceiling and floor  - looks like: C
+            8, 12, 9, 14},
+        new[]{17, 3, 19, 4, //north/east/west  deadend w/ ceiling and floor  - looks like: upside-down U
+            13, 8, 15, 9},
+        new[]{6, 5, 19, 18, //north/east/south deadend w/ ceiling and floor  - looks like: backwards C
+            11, 10, 15, 14}
     };
 
     //singleton stuff:
