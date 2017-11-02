@@ -60,18 +60,23 @@ public class Player : MobileEntity {
 
     private void HandleLeftPadClicked(object sender, ClickedEventArgs e)
     {
-        if (e.padX < -1 + clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+        if (e.padX < -1 + clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //left pad click
-            teleportToGridCoords(gridPosX-1, gridPosY);
-        } else if (e.padX > 1 - clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            //teleportToGridCoords(gridPosX-1, gridPosY);
+            this.gameObject.transform.Translate (new Vector3(2,0,0));
+        } else if (e.padX > 1 - clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //right pad click
-            teleportToGridCoords(gridPosX+1, gridPosY);
-        } else if (e.padY < -1 + clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //teleportToGridCoords(gridPosX+1, gridPosY);
+            this.gameObject.transform.Translate (new Vector3(-2,0,0));
+        } else if (e.padY < -1 + clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //down pad click
-            teleportToGridCoords(gridPosX, gridPosY-1);
-        } else if (e.padY > 1 - clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            //teleportToGridCoords(gridPosX, gridPosY-1);
+            this.gameObject.transform.Translate (new Vector3(0,-2,0));
+        } else if (e.padY > 1 - clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //up pad click
-            teleportToGridCoords(gridPosX, gridPosY+1);
+            //teleportToGridCoords(gridPosX, gridPosY+1);
+            this.gameObject.transform.Translate (new Vector3(0,2,0));
+
         }
 
     }
