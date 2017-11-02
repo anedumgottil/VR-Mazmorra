@@ -10,6 +10,9 @@ public class Player : MobileEntity {
     private int gridPosX = -1;
     private int gridPosY = -1;
 
+    private int generatorX = 5;
+    private int generatorY = 5;
+
     public float clickThresh = 0.3f;//30% of trackpad distance
     public GameObject rController;
     public GameObject lController;
@@ -35,14 +38,24 @@ public class Player : MobileEntity {
     {
         if (e.padX < -1 + clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
             //left pad click
+            genTile(--generatorX, generatorY);
         } else if (e.padX > 1 - clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
             //right pad click
+            genTile(++generatorX, generatorY);
         } else if (e.padY < -1 + clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
             //down pad click
+            genTile(generatorX, --generatorY);
         } else if (e.padY > 1 - clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
             //up pad click
+            genTile(generatorX, ++generatorY);
         }
             
+    }
+
+    private void genTile(int x, int y) {
+        if (Grid.getInstance ().getGridSpace (x, y) != null) {
+            MapGenerator.Instance.setGridSpace (x, y, GridSpace.GridSpaceType.Corridor);
+        }
     }
 
     private void HandleLeftPadClicked(object sender, ClickedEventArgs e)

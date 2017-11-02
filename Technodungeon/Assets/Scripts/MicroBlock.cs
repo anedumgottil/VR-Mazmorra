@@ -17,7 +17,7 @@ public class MicroBlock {
         microblockPrimitive.transform.localScale = new Vector3(microblockSize, microblockSize, microblockSize);
         microblockPrimitive.name = PARENT_MICROBLOCK_NAME_PREFIX + position.ToString ();//set name so that it can be parsed when we stick this Prefab into a GridSpace. (edit: this may be alleviated by serialization)
         //random colors for prefab template
-        Color random = Random.ColorHSV ();
+        Color random = Color.black;
         microblockPrimitive.GetComponent<Renderer>().material.color = random;
         //set this microblock as a child of it's parent block, declutter the inspector, maintain a rigid heirarchy
         microblockPrimitive.transform.SetParent (this.parent.getGameObj ().transform);

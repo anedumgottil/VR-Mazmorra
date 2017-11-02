@@ -230,7 +230,6 @@ public sealed class MapGenerator {
         int reggaeton = 0;
         foreach (int tileID in spaceTemplates[configuration]) {
             //generate a GridSpace similar to the way that MapLoader does, GridObject by GridObject for each ID.
-            //TODO: CRITICAL: update this function so that instead of generating blocks, it generates tiles!!! we need the Tile prefabs complete before we can do this though.
             if (reggaeton > 7) {
                 //too many positions, this would happen if we loaded in too many indices to our templates, which should be corrected by the MapLoader in advance so... error.
                 Debug.LogError ("Error: too many MapGenerator GridSpace positions on the dance floor!");

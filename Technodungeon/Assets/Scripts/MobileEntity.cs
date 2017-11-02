@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class MobileEntity : Entity {
 
-    int gridPosX = GridObject.DEFAULT_POSITION.x;
-    int gridPosY = GridObject.DEFAULT_POSITION.y;
+    int gridPosX = (int)GridObject.DEFAULT_POSITION.x;
+    int gridPosY = (int)GridObject.DEFAULT_POSITION.y;
     
     //translates the Entity entirely to a specified Grid Coordinate
     public virtual void teleportToGridCoords(int x, int y) {

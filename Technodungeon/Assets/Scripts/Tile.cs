@@ -34,7 +34,7 @@ public class Tile : GridObject {
         
     //clone constructor sets parent to null, but otherwise most everything else is copied
     // DO NOT FORGET to set parent if you use this clone constructor
-    public Tile(Block b) : base((GridObject)b) {
+    public Tile(Tile b) : base((GridObject)b) {
         if (b == null) {
             Debug.LogWarning ("Warning: Tried to create copy of null Tile");
         }
@@ -42,7 +42,12 @@ public class Tile : GridObject {
         this.setParent (null);  
         this.tileID = Tile.tileCount;
         Tile.tileCount++; //even though this is a copy, we increment our ID, needs to be unique.
-        this.gameObj = new GameObject (PARENT_TILE_NAME_PREFIX + b.getID () + CLONE_TILE_NAME_POSTFIX);
+        this.gameObj = MonoBehaviour.Instantiate(b.getGameObj().gameObject);
+        this.gameObj.name = (PARENT_TILE_NAME_PREFIX + b.getID () + CLONE_TILE_NAME_POSTFIX);
+    }
+
+    public void setGameObj(GameObject go) {
+        gameObj = go;
     }
 
     public new static float getSize() {

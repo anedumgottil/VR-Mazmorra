@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 //using UnityEditor;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 //This class handles prefab loading, pooling and storage
 //Used to generate the prefab parents that will be used to generate the map with the map generator
@@ -13,6 +15,8 @@ public class MapLoader : MonoBehaviour
 {
     public string blocksPath = "Assets/Resources/blocks.txt";
     public string mapPath = "Assets/Resources/map.txt";
+
+    public string tilePrefabsPath = "Assets/Prefabs/Tiles";
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
@@ -21,6 +25,7 @@ public class MapLoader : MonoBehaviour
     //blockTypes is not populated when we don't use the automatic generator
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
+    private static List<Tile> tileTypes = new List<Tile>();
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
 
@@ -149,7 +154,35 @@ public class MapLoader : MonoBehaviour
 
     //load tile prefabs in from the Resources folder and store them in our Prefab pool. This is ALWAYS used as Tiles are not procedurally generated.
     public void loadTiles() {
-        //TODO: fill this out
+        GameObject[] loadedObjects = {};
+        /*
+        try
+        {
+            Debug.Log("Loading with Proper Method...");
+
+            // This is the short hand version and requires that you include the "using System.Linq;" at the top of the file.
+            loadedObjects = Resources.LoadAll(tilePrefabsPath, typeof(GameObject)).Cast<GameObject>();
+            foreach(GameObject go in loadedObjects)
+            {
+                Debug.Log(go.name);
+            }
+                
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Proper Method failed with the following exception: ");
+            Debug.Log(e);
+        }*/
+
+        foreach (GameObject tile in loadedObjects) {
+            Debug.Log ("Got tile: " + tile.name);
+            tile.SetActive (false);
+            addPrefab (tile.name, tile);
+            Tile t = new Tile ((GridSpace)null);
+            t.setGameObj (tile);
+            tileTypes.Add (t);
+        }
+
     }
         
     //This parses the block map file to load in the GridSpaces that will be stored in the Grid. It is ALWAYS used as it is meant to run the same regardless of platform.
@@ -297,6 +330,15 @@ public class MapLoader : MonoBehaviour
         return new Block(blockTypes [id]);
     }
 
+    //gets a clone of a Tile in our tile pool
+    public static Tile getTileInstance(int id) {
+        if (id < 0 || id >= tileTypes.Count) {
+            Debug.Log ("Error: getTileInstance fed out of range id");
+            return null;
+        }
+        return new Tile(tileTypes [id]);
+    }
+
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.
     //note that even though this object might not actually be a prefab, once it's in the pool it'll be used like one - duplicated with Instantiate, and such. So we'll just call it a prefab.
     //if the pool already has one by the same name, nothing occurs.
@@ -338,6 +380,7 @@ public class MapLoader : MonoBehaviour
             this.parseBlockMap ();
         }
 
+        this.loadTiles ();
         //TODO: load in all prefabs using LoadAllResources... 
         //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now

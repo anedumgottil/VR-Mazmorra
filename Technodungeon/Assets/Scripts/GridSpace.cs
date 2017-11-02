@@ -70,6 +70,36 @@ public class GridSpace {
         blocks [(int)bpos] = obj;
     }
 
+    public void setTile(Tile obj, GridPos bpos) {
+        if (obj == null) {
+            Debug.LogError ("Error: setTile passed null tile");
+            return;
+        }
+        if ((int)bpos >= 8 || (int)bpos < 0) {
+            Debug.LogError ("Error: setTile was passed an incorrectly formed GridPos: "+bpos);
+            return;
+        }
+        if (blocks [(int)bpos] != null) {
+            //need to destroy the old one to overwrite it, or it will persist in the GameWorld. hope you won't need it anymore!
+            MonoBehaviour.Destroy (tiles [(int)bpos].getGameObj ());
+        }
+        if (obj.getParent () == null) {
+            obj.setParent (this);
+        }
+        Vector3 offset = calculateBlockPosOffset (bpos);
+        offset.x += this.worldPosition.x;
+        //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
+        offset.z += this.worldPosition.y;
+        if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
+            Debug.LogWarning ("Error: setBlock() generated out of bounds range offset");
+            //return;//apparently sometimes we get out of bounds ranges for setBlock?
+        }
+        obj.setPosition (offset);//set offset
+        tiles [(int)bpos] = obj;
+    }
+
+    //TODO: implement getTile()
+
     //returns the specified Block, if it exists
     public Block getBlock(GridPos bpos) {
         if ((int)bpos >= 8 || (int)bpos < 0) {
@@ -85,11 +115,11 @@ public class GridSpace {
                 b.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
             }
         }
-        /*foreach (Tile t in tiles) {
+        foreach (Tile t in tiles) {
             if (t != null) {
                 t.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
             }
-        }*/
+        }
     }
 
     public GridSpaceType getGridSpaceType() {
@@ -103,6 +133,11 @@ public class GridSpace {
     //destroys the whole GridSpace
     public void destroy() {
         foreach (Block b in blocks) {
+            if (b != null) {
+                MonoBehaviour.Destroy (b.getGameObj ());
+            }
+        }
+        foreach (Tile b in tiles) {
             if (b != null) {
                 MonoBehaviour.Destroy (b.getGameObj ());
             }
@@ -168,7 +203,12 @@ public class GridSpace {
                 blocks[i].setPosition (offset + worldPosition);
             }
         }
-        //TODO: set up for tiles too
+        for(int i = 0; i < 8; i++) {
+            if (tiles[i] != null) {
+                Vector3 offset = calculateBlockPosOffset ((GridPos)i);
+                tiles[i].setPosition (offset + worldPosition);
+            }
+        }
     }
 
     //sets both positions based off of a Vector2 grid coordinate, used to init GridSpaces in world gen.
@@ -183,7 +223,12 @@ public class GridSpace {
                 blocks[i].setPosition (offset + worldPosition);
             }
         }
-        //TODO: set up for tiles too
+        for(int i = 0; i < 8; i++) {
+            if (tiles[i] != null) {
+                Vector3 offset = calculateBlockPosOffset ((GridPos)i);
+                tiles[i].setPosition (offset + worldPosition);
+            }
+        }
     }
 
     public Vector2 getGridPosition() {
