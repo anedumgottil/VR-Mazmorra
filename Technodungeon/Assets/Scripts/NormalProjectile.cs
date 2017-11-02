@@ -1,5 +1,5 @@
 ﻿
-using UnityEngine;
+/*using UnityEngine;
 using System.Collections;
 
 	public class NormalProjectile : BaseProjectile {
@@ -46,4 +46,4 @@ using System.Collections;
 			if(other.gameObject.GetComponent<BaseProjectile>() == null)
 				Destroy(gameObject);
 		}
-	}
+	}*/
