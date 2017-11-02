@@ -36,18 +36,22 @@ public class Player : MobileEntity {
 
     private void HandleRightPadClicked(object sender, ClickedEventArgs e)
     {
-        if (e.padX < -1 + clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+        if (e.padX < -1 + clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //left pad click
-            genTile(--generatorX, generatorY);
-        } else if (e.padX > 1 - clickThresh && (e.padY > -1 + clickThresh && e.padY < 1 - clickThresh)) {
+            generatorX--;
+            genTile(generatorX, generatorY);
+        } else if (e.padX > 1 - clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //right pad click
-            genTile(++generatorX, generatorY);
-        } else if (e.padY < -1 + clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            generatorX++;
+            genTile(generatorX, generatorY);
+        } else if (e.padY < -1 + clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //down pad click
-            genTile(generatorX, --generatorY);
-        } else if (e.padY > 1 - clickThresh && (e.padX > -1 + clickThresh && e.padX < 1 - clickThresh)) {
+            generatorY--;
+            genTile(generatorX, generatorY);
+        } else if (e.padY > 1 - clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //up pad click
-            genTile(generatorX, ++generatorY);
+            generatorY++;
+            genTile(generatorX, generatorY);
         }
             
     }
@@ -63,19 +67,19 @@ public class Player : MobileEntity {
         if (e.padX < -1 + clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //left pad click
             //teleportToGridCoords(gridPosX-1, gridPosY);
-            this.gameObject.transform.Translate (new Vector3(2,0,0));
+            this.gameObject.transform.Translate (new Vector3(1,0,0));
         } else if (e.padX > 1 - clickThresh && (e.padY > (-1 + clickThresh) && e.padY < 1 - clickThresh)) {
             //right pad click
             //teleportToGridCoords(gridPosX+1, gridPosY);
-            this.gameObject.transform.Translate (new Vector3(-2,0,0));
+            this.gameObject.transform.Translate (new Vector3(-1,0,0));
         } else if (e.padY < -1 + clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //down pad click
             //teleportToGridCoords(gridPosX, gridPosY-1);
-            this.gameObject.transform.Translate (new Vector3(0,-2,0));
+            this.gameObject.transform.Translate (new Vector3(0,0,-1));
         } else if (e.padY > 1 - clickThresh && (e.padX > (-1 + clickThresh) && e.padX < 1 - clickThresh)) {
             //up pad click
             //teleportToGridCoords(gridPosX, gridPosY+1);
-            this.gameObject.transform.Translate (new Vector3(0,2,0));
+            this.gameObject.transform.Translate (new Vector3(0,0,1));
 
         }
 
