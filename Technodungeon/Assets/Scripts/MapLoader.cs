@@ -7,8 +7,8 @@ using System.Text.RegularExpressions;
 
 public class MapLoader : MonoBehaviour 
 {
-    public string blocksPath = "Assets/Resources/blocks.txt";
-    public string mapPath = "Assets/Resources/map.txt";
+    public string blocksPath;
+    public string mapPath;
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the Grid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
@@ -315,6 +315,8 @@ public class MapLoader : MonoBehaviour
     }
 
     void Start() {
+        mapPath = Application.dataPath + "/StreamingAssets/" + "map.txt";
+        blocksPath = Application.dataPath + "/StreamingAssets/" + "blocks.txt";
         gamePrefabs = new Dictionary<string, GameObject>();
         prefabParent = new GameObject ("Prefab Pool");
         prefabParent.transform.position = Block.DEFAULT_POSITION;
