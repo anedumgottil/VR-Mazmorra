@@ -103,6 +103,11 @@ public class MapGrid : MonoBehaviour {
             return new Vector3();
         return new Vector3 (x*MapGrid.getSize(), this.gameObject.transform.position.y+(MapGrid.getSize()*1.5f), y*MapGrid.getSize());
     }
+    public Vector3 getWorldCoordsFromGridCoords(Vector2Int v) {
+        if (this.gameObject == null)
+            return new Vector3();
+        return getWorldCoordsFromGridCoords(v.x, v.y);
+    }
 
     public static float getHeading(Transform t) {
         Vector3 forward = t.forward;

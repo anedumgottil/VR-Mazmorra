@@ -70,8 +70,12 @@ public class Player : MobileEntity {
         teleportToGridLocation (gridX + forward.x, gridY + forward.y);
     }
 
-    public Vector2 getGridLocation() {
-        return new Vector2(gridX, gridY);
+    public Vector2Int getGridLocation() {
+        return new Vector2Int(gridX, gridY);
+    }
+
+    public GameObject getHead() {
+        return head;
     }
 
     public static Player getInstance() {

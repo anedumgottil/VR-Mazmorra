@@ -4,34 +4,50 @@ using UnityEngine;
 
 //Base class for the DPad-type Controller in-game. Uses VRTK Events to detect controller Touchpad input, and maps it to four axes. Can be extended.
 public class MapGeneratorController : DPadController {
-    private int generatorX = 5;
-    private int generatorY = 5;
+    Vector2Int gridCoords = new Vector2Int(5,5);
 
     protected override void doRight() {
         //Debug.Log ("Right Touchpad Press");
-        generatorX++;
-        genTile(generatorX, generatorY);
+        Vector2Int forward = MapGrid.roundVectorToCardinalIgnoreY (Player.getInstance().getHead().transform.right);
+        gridCoords = avoidOutOfBounds(gridCoords + forward);
+        genTile(gridCoords.x, gridCoords.y);
     }
     protected override void doLeft() {
         //Debug.Log ("Left Touchpad Press");
-        generatorX--;
-        genTile(generatorX, generatorY);
+        Vector2Int forward = MapGrid.roundVectorToCardinalIgnoreY (-Player.getInstance().getHead().transform.right);
+        gridCoords = avoidOutOfBounds(gridCoords + forward);
+        genTile(gridCoords.x, gridCoords.y);
     }
     protected override void doUp() {
         //Debug.Log ("Up Touchpad Press");
-        generatorY++;
-        genTile(generatorX, generatorY);
+        Vector2Int forward = MapGrid.roundVectorToCardinalIgnoreY (Player.getInstance().getHead().transform.forward);
+        gridCoords = avoidOutOfBounds(gridCoords + forward);
+        genTile(gridCoords.x, gridCoords.y);
     }
     protected override void doDown() {
         //Debug.Log ("Down Touchpad Press");
-        generatorY--;
-        genTile(generatorX, generatorY);
+        Vector2Int forward = MapGrid.roundVectorToCardinalIgnoreY (-Player.getInstance().getHead().transform.forward);
+        gridCoords = avoidOutOfBounds(gridCoords + forward);
+        genTile(gridCoords.x, gridCoords.y);
     }
 
     protected override void doCenter() {
         //Debug.Log ("Touchpad Deadzone Press");
-        generatorX = 5;
-        generatorY = 5;
+        GameObject diamond = GameObject.Find ("Diamondo");
+        if (diamond != null)
+            diamond = Instantiate (diamond);
+
+        Vector3 newpos = MapGrid.getInstance ().getWorldCoordsFromGridCoords (gridCoords);
+        newpos = new Vector3 (newpos.x + (MapGrid.getSize () / 2), newpos.y + (MapGrid.getSize () / 2), newpos.z + (MapGrid.getSize () / 2));
+        diamond.transform.position = newpos;
+    }
+
+    private static Vector2Int avoidOutOfBounds(Vector2Int v) {
+        if (v.x >= MapGrid.getInstance().xDimension || v.x < 0 || v.y >= MapGrid.getInstance().yDimension || v.y < 0) {
+            //if we go out of bounds, just set the current mapgen tile to the player's grid coords (player should never go out of bounds, so its always valid.)
+            return Player.getInstance ().getGridLocation ();
+        }
+        return v;
     }
 
     private void genTile(int x, int y) {
