@@ -305,7 +305,8 @@ public sealed class MapGenerator {
         setGridSpace (11, 2, (GridSpace.GridSpaceType.Corridor));
 
         //move player to our map
-        Player.getInstance().teleportToGridCoords (5, 5);
+        if (Player.getInstance() != null)
+            Player.getInstance().teleportToGridCoords (5, 5);
     }
 
     //singleton stuff:

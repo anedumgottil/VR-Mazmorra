@@ -12,6 +12,8 @@ public class MobileEntity : Entity {
     
     //translates the Entity entirely to a specified Grid Coordinate
     public virtual void teleportToGridCoords(int x, int y) {
+        if (this.gameObject == null)
+            return;
         this.gameObject.transform.Translate (getWorldCoordsFromGridCoords (x, y), Space.World);
         this.gridPosX = x;
         this.gridPosY = y;
@@ -21,6 +23,8 @@ public class MobileEntity : Entity {
     //scales the grid coords accordingly to present world coords according to the Grid transform scale setting
     //WARNING this is broken right now because Grid scale does not inherit to it's objects... s it's useless until we can scale the map up
     public Vector3 getWorldCoordsFromGridCoords(int x, int y) {
+        if (this.gameObject == null)
+            return new Vector3();
         /*Vector3 scale = Grid.getInstance().gameObject.transform.scale;
         return new Vector3 (x * scale.x, this.gameObject.transform.position.y, y * scale.z);*/
         return new Vector3 (x, this.gameObject.transform.position.y, y);

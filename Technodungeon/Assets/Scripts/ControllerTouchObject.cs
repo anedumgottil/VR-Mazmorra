@@ -38,9 +38,6 @@ public class ControllerTouchObject : MonoBehaviour {
     // 1
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name.Contains ("Block")) {
-            Destroy (other.gameObject);
-        }
         //SetCollidingObject(other);
     }
 

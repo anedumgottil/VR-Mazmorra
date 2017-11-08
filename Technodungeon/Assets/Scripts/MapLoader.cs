@@ -13,8 +13,8 @@ using System.Linq;
 
 public class MapLoader : MonoBehaviour 
 {
-    public string blocksPath = "Assets/Resources/blocks.txt";
-    public string mapPath = "Assets/Resources/map.txt";
+    public string blocksPath;
+    public string mapPath;
 
     public string tilePrefabsPath = "Assets/Prefabs/Tiles";
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
@@ -369,6 +369,8 @@ public class MapLoader : MonoBehaviour
     }
 
     void Start() {
+        mapPath = Application.dataPath + "/StreamingAssets/" + "map.txt";
+        blocksPath = Application.dataPath + "/StreamingAssets/" + "blocks.txt";
         gamePrefabs = new Dictionary<string, GameObject>();
         prefabParent = new GameObject ("Prefab Pool");
         prefabParent.transform.position = Block.DEFAULT_POSITION;
