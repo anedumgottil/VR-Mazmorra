@@ -30,12 +30,12 @@ public class FirstState : State<AI>
 
     public override void EnterState(AI _owner)
     {
-        Debug.Log("Entering First State");
+        //Debug.Log("Entering First State");
     }
 
     public override void ExitState(AI _owner)
     {
-        Debug.Log("Exiting First State");
+        //Debug.Log("Exiting First State");
     }
 
     public override void UpdateState(AI _owner)

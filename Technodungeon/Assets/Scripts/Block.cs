@@ -5,7 +5,7 @@ using UnityEngine;
 public class Block : GridObject {
     private static int blockCount = 0;
     private int blockID;
-    private static float blockSize = Grid.getSize()/2;//meters
+    private static float blockSize = MapGrid.getSize()/2;//meters
     public const int mbDivision = 4;
     private MicroBlock[,,] mbs;
     public const string PARENT_BLOCK_NAME_PREFIX = "Blockfab #";

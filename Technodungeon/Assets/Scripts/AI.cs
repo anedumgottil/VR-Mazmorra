@@ -24,7 +24,6 @@ public class AI : MonoBehaviour
         {
             gameTimer = Time.time;
             seconds++;
-            Debug.Log(seconds);
         }
 
         if (seconds == 5)

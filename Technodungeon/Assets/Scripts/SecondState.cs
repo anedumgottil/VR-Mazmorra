@@ -30,12 +30,12 @@ public class SecondState : State<AI>
 
     public override void EnterState(AI _owner)
     {
-        Debug.Log("Entering Second State");
+        //Debug.Log("Entering Second State");
     }
 
     public override void ExitState(AI _owner)
     {
-        Debug.Log("Exiting Second State");
+        //Debug.Log("Exiting Second State");
     }
 
     public override void UpdateState(AI _owner)

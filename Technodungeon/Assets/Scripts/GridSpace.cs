@@ -62,7 +62,7 @@ public class GridSpace {
         offset.x += this.worldPosition.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
         offset.z += this.worldPosition.y;
-        if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
+        if (offset.x >= MapGrid.getInstance().xDimension || offset.z >= MapGrid.getInstance().yDimension) {
             Debug.LogWarning ("Error: setBlock() generated out of bounds range offset");
             //return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
@@ -90,7 +90,7 @@ public class GridSpace {
         offset.x += this.worldPosition.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
         offset.z += this.worldPosition.y;
-        if (offset.x >= Grid.getInstance().xDimension || offset.z >= Grid.getInstance().yDimension) {
+        if (offset.x >= MapGrid.getInstance().xDimension || offset.z >= MapGrid.getInstance().yDimension) {
             Debug.LogWarning ("Error: setBlock() generated out of bounds range offset");
             //return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
@@ -109,15 +109,15 @@ public class GridSpace {
         return (Block) blocks[(int)bpos];
     }
 
-    public void setParents(Grid g) {
+    public void setParents(MapGrid g) {
         foreach (Block b in blocks) {
             if (b != null) {
-                b.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
+                b.getGameObj ().gameObject.transform.SetParent (MapGrid.getInstance ().gameObject.transform);
             }
         }
         foreach (Tile t in tiles) {
             if (t != null) {
-                t.getGameObj ().gameObject.transform.SetParent (Grid.getInstance ().gameObject.transform);
+                t.getGameObj ().gameObject.transform.SetParent (MapGrid.getInstance ().gameObject.transform);
             }
         }
     }
@@ -216,7 +216,7 @@ public class GridSpace {
     public void setBothPositions(Vector2 pos) {
         this.gridPosition = pos;
         this.worldPosition = new Vector3 (pos.x, 0.0f, pos.y);
-        this.worldPosition *= Grid.getSize();//non-atomic scale op
+        this.worldPosition *= MapGrid.getSize();//non-atomic scale op
         for(int i = 0; i < 8; i++) {
             if (blocks[i] != null) {
                 Vector3 offset = calculateBlockPosOffset ((GridPos)i);

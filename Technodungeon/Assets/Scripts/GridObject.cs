@@ -9,7 +9,7 @@ public class GridObject {
     protected static int gridObjectCount = 0;
     private int gridObjectID;
     protected Vector3 position; //position relative to grid origin
-    private static float gridObjectSize = Grid.getSize()/2;//meters
+    private static float gridObjectSize = MapGrid.getSize()/2;//meters
     private GridSpace parent;
     protected GameObject gameObj;//this is either an actual gameObject parent for a Block or Tile if it was just generated, OR a prefab, if it was cloned
     public static readonly Vector3 DEFAULT_POSITION = new Vector3 (-5, -5, -5);
@@ -59,10 +59,10 @@ public class GridObject {
     //returns computed worldspace position
     public Vector3 getGlobalPosition() {
         Vector3 ret = position;
-        //add Grid global position to our relative-to-grid local position
-        ret.x += Grid.getInstance().transform.position.x;
-        ret.y += Grid.getInstance().transform.position.y;
-        ret.z += Grid.getInstance().transform.position.z;
+        //add MapGrid global position to our relative-to-grid local position
+        ret.x += MapGrid.getInstance().transform.position.x;
+        ret.y += MapGrid.getInstance().transform.position.y;
+        ret.z += MapGrid.getInstance().transform.position.z;
         return ret;
     }
 

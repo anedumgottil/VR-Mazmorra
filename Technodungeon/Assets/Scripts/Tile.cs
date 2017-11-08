@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Grid Tile GridObject. This tile is used to represent a tile in the Map, along with all of it's GameObjects and properties. 
+//MapGrid Tile GridObject. This tile is used to represent a tile in the Map, along with all of it's GameObjects and properties. 
 //These will be things like scenery, for example, walls, floors, lights, and other GameObjects.
 //They can coexist simultaneously with Block GridObjects for extra versatility in map design/generation.
 
 public class Tile : GridObject {
     private static int tileCount = 0;
     private int tileID;
-    private static float tileSize = Grid.getSize()/2;//meters
+    private static float tileSize = MapGrid.getSize()/2;//meters
     public const string PARENT_TILE_NAME_PREFIX = "Tile #";
     public const string CLONE_TILE_NAME_POSTFIX = " (cc)";//cloner constructor postfix
 

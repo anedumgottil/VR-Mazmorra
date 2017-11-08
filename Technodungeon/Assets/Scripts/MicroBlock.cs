@@ -55,10 +55,10 @@ public class MicroBlock {
         ret.y += parent.getPosition().y;
         ret.z += parent.getPosition().z;
 
-        //add Grid global position to our relative-to-grid Block local position
-        ret.x += Grid.getInstance().transform.position.x;
-        ret.y += Grid.getInstance().transform.position.y;
-        ret.z += Grid.getInstance().transform.position.z;
+        //add MapGrid global position to our relative-to-grid Block local position
+        ret.x += MapGrid.getInstance().transform.position.x;
+        ret.y += MapGrid.getInstance().transform.position.y;
+        ret.z += MapGrid.getInstance().transform.position.z;
 
         return ret;
     }
