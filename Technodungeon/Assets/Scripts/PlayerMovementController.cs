@@ -7,19 +7,19 @@ public class PlayerMovementController : DPadController {
 
     protected override void doRight() {
         //Debug.Log ("Right Touchpad Press");
-        Player.getInstance().transform.Translate (new Vector3(-1,0,0));
+        Player.getInstance().teleportRight();
     }
     protected override void doLeft() {
         //Debug.Log ("Left Touchpad Press");
-        Player.getInstance().transform.Translate (new Vector3(1,0,0));
+        Player.getInstance().teleportLeft();
     }
     protected override void doUp() {
         //Debug.Log ("Up Touchpad Press");
-        Player.getInstance().transform.Translate (new Vector3(0,0,1));
+        Player.getInstance().teleportForward();
     }
     protected override void doDown() {
         //Debug.Log ("Down Touchpad Press");
-        Player.getInstance().transform.Translate (new Vector3(0,0,-1));
+        Player.getInstance().teleportBack();
     }
 
     protected override void doCenter() {

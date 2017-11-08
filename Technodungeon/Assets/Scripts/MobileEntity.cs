@@ -7,16 +7,10 @@ using UnityEngine;
 
 public class MobileEntity : Entity {
 
-    int gridPosX = (int)GridObject.DEFAULT_POSITION.x;
-    int gridPosY = (int)GridObject.DEFAULT_POSITION.y;
-    
     //translates the Entity entirely to a specified MapGrid Coordinate
-    //TODO: this is broken, why doesn't this work?? FIX IT! then update mapgen to use it.
-    public virtual void teleportToGridCoords(int x, int y) {
+    public virtual void teleportToGridLocation(int x, int y) {
         if (this.gameObject == null)
             return;
-        this.gameObject.transform.Translate (MapGrid.getInstance().getWorldCoordsFromGridCoords (x, y), Space.World);
-        this.gridPosX = x;
-        this.gridPosY = y;
+        this.gameObject.transform.position = MapGrid.getInstance().getWorldCoordsFromGridCoords (x, y);
     }
 }

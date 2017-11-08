@@ -306,8 +306,7 @@ public sealed class MapGenerator {
 
         //move player to our map
         if (Player.getInstance () != null) {
-            //Player.getInstance ().teleportToGridCoords (5, 5); TODO: Switch to TeleportToGridCoords() once it's fixed!!
-            Player.getInstance().transform.Translate(MapGrid.getInstance().getWorldCoordsFromGridCoords(5,5), Space.World);
+            Player.getInstance ().teleportToGridLocation (5, 5);
         } else {
             Debug.LogError ("Error: MapGenerator - Player was null when we tried to move them to the map.");
         }

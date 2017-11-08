@@ -80,13 +80,7 @@ public class MapGrid : MonoBehaviour {
         return grid [x, y];
     }
 
-    public Vector3 getWorldCoordsFromGridCoords(int x, int y) {
-        if (this.gameObject == null)
-            return new Vector3();
-        return new Vector3 (x*MapGrid.getSize(), this.gameObject.transform.position.y+(MapGrid.getSize()*1.5f), y*MapGrid.getSize());
-    }
-
-	void OnDrawGizmos() {
+    void OnDrawGizmos() {
         if (drawGizmos) {
             for (int x = xDimension-1; x >= 0; x--) {
                 for (int y = yDimension-1; y >= 0; y--) {
@@ -103,4 +97,44 @@ public class MapGrid : MonoBehaviour {
         }
     }
 
+    //HELPER FUNCTIONS:
+    public Vector3 getWorldCoordsFromGridCoords(int x, int y) {
+        if (this.gameObject == null)
+            return new Vector3();
+        return new Vector3 (x*MapGrid.getSize(), this.gameObject.transform.position.y+(MapGrid.getSize()*1.5f), y*MapGrid.getSize());
+    }
+
+    public static float getHeading(Transform t) {
+        Vector3 forward = t.forward;
+        forward.y = 0;
+        return Quaternion.LookRotation(forward).eulerAngles.y;
+    }  
+    //gets a vector like (0,0,1) from a vector like (0.2, -0.4, 0.95)
+    public static Vector3Int roundVectorToCardinal(Vector3 v) {
+        //Debug.Log ("Rounding vector " + v.ToString ());
+        int count = 0;
+        float high = 0.0f;
+        int target = 0;
+        for( int i = 0; i < 3; i ++) {
+            if (Mathf.Abs(v[i]) > high) {
+                high = Mathf.Abs(v[i]);
+                target = count;
+            }
+            count++;
+        }
+        Vector3Int toRet = Vector3Int.zero;
+        if (v[target] < 0.0f) {
+            toRet [target] = -1;
+        } else {
+            toRet[target] = 1;
+        }
+        //Debug.Log ("Rounded vector " + toRet.ToString ());
+        return toRet;
+    }
+    //completely ignores the y component.
+    public static Vector2Int roundVectorToCardinalIgnoreY(Vector3 v) {
+        v.y = 0.0f;
+        Vector3Int vround = roundVectorToCardinal (v);
+        return new Vector2Int (vround.x, vround.z);
+    }
 }

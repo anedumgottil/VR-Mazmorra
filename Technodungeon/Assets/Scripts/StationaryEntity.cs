@@ -16,6 +16,10 @@ public abstract class StationaryEntity : Entity {
         return parent;
     }
 
+    public Vector2 getGridLocation() {
+        return parent.getGridPosition ();
+    }
+
     //adjust the GridSpace that this ent is attached to
     //NOTE: this automatically notifies gridspaces of the ownership change, so you don't have to! Convenient!
     public void setGridSpace(GridSpace gs) {
