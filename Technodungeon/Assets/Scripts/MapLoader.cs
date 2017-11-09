@@ -22,7 +22,6 @@ public class MapLoader : MonoBehaviour
     public string blocksPath;
     public string mapPath;
 
-    public string tilePrefabsPath = "Assets/Prefabs/Tiles";
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the MapGrid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
@@ -133,6 +132,7 @@ public class MapLoader : MonoBehaviour
                 }
                 //package up this block, it's ready to go
                 blockTypes.Add (current);//store the block in Block Pool
+                current.getGameObj().transform.SetParent (prefabParent.transform);
                 MapLoader.addPrefab(current.getGameObj().name, current.getGameObj());//add GameObject template to Prefab Pool.
                 if (generatePrefabsFromFile) {
                     BlockPrefabGenerator.generatePrefab (current);//generates a Prefab using the PrefabGenerator and saves it to disk.
@@ -158,35 +158,40 @@ public class MapLoader : MonoBehaviour
         //TODO: fill this out
     }
 
+    /* TODO: Implement MapGrid Tile serialization upon launch so we do not need to generate the Prefabs every time.
+    public void loadBlocks() {
+        //loads pre-generated prefabs from the prefabs folder, and sticks them into the blockTypes array to be used by a later script, or the parseMaps() function.
+        //you can use this to avoid having to generate prefabs on launch, eventually this will be used to allow us to create a build that doesn't require Editor libraries
+        Object[] tempPrefabs = Resources.LoadAll("Prefabs", typeof(PrefabType));
+        foreach (Object a in tempPrefabs) {
+            blockTypes.Add ((Block)a);
+        }
+    }
+*/
+
     //load tile prefabs in from the Resources folder and store them in our Prefab pool. This is ALWAYS used as Tiles are not procedurally generated.
     public void loadTiles() {
-        GameObject[] loadedObjects = {};
-        /*
-        try
-        {
-            Debug.Log("Loading with Proper Method...");
-
-            // This is the short hand version and requires that you include the "using System.Linq;" at the top of the file.
-            loadedObjects = Resources.LoadAll(tilePrefabsPath, typeof(GameObject)).Cast<GameObject>();
-            foreach(GameObject go in loadedObjects)
-            {
-                Debug.Log(go.name);
-            }
-                
+        GameObject[] tilez = {};
+        Debug.Log ("MapLoader - Attempting to load Tile prefabs from Resources folder on disk...");
+        try {
+            tilez = (GameObject[]) Resources.LoadAll<GameObject>("Prefabs/Tiles/SciFiTiles/");
+            Debug.Log ("MapLoader - Loaded "+tilez.Count()+" Tile Prefabs into prefab pool");
         }
         catch (Exception e)
         {
-            Debug.Log("Proper Method failed with the following exception: ");
-            Debug.Log(e);
-        }*/
-
-        foreach (GameObject tile in loadedObjects) {
-            Debug.Log ("Got tile: " + tile.name);
+            Debug.LogError("Error: MapLoader - Loading Tile prefabs from Resources failed with the following exception: ");
+            Debug.LogError(e);
+        }
+        int i = 0;
+        foreach (GameObject tile in tilez) {
+            Debug.Log ("Got tile["+i+"]: " + tile.name);
             tile.SetActive (false);
             addPrefab (tile.name, tile);
+            //tile.transform.SetParent (prefabParent.transform);//TODO: the tiles can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
             Tile t = new Tile ((GridSpace)null);
             t.setGameObj (tile);
             tileTypes.Add (t);
+            i++;
         }
 
     }
@@ -297,17 +302,6 @@ public class MapLoader : MonoBehaviour
                 
         }
     }
-       
-/* TODO: Implement MapGrid Tile serialization upon launch so we do not need to generate the Prefabs every time.
-    public void loadBlocks() {
-        //loads pre-generated prefabs from the prefabs folder, and sticks them into the blockTypes array to be used by a later script, or the parseMaps() function.
-        //you can use this to avoid having to generate prefabs on launch, eventually this will be used to allow us to create a build that doesn't require Editor libraries
-        Object[] tempPrefabs = Resources.LoadAll("Prefabs", typeof(PrefabType));
-        foreach (Object a in tempPrefabs) {
-            blockTypes.Add ((Block)a);
-        }
-    }
-*/
 
     //prefab accessor. gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
     //Does not clone the prefab with Instantiate. <---------- IMPORTANT! you should probably be using getPrefabInstance because of this. 
@@ -348,14 +342,14 @@ public class MapLoader : MonoBehaviour
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.
     //note that even though this object might not actually be a prefab, once it's in the pool it'll be used like one - duplicated with Instantiate, and such. So we'll just call it a prefab.
     //if the pool already has one by the same name, nothing occurs.
+    //Note: We don't set the parent here anymore, it'll set the parent when you get the instance back, due to the fact that Resources.LoadAll objects cannot have their parent set without data corruption.
+    //Because of this, anything that uses AddPrefab in the past has been updated to set the parent itself correctly...
     public static void addPrefab(string name, GameObject prefab) {
-        prefab.transform.SetParent (prefabParent.transform);
         gamePrefabs.Add (name, prefab);
     }
 
     //this method will actually MODIFY the object pool so you DEFINITELY should not use this unless you're the map generator or have a good reason to modify prefabs
     public static void setPrefab(string name, GameObject prefab) {
-        prefab.transform.SetParent (prefabParent.transform);
         gamePrefabs[name] = prefab;
     }
 
