@@ -8,7 +8,7 @@ public class onhit : MonoBehaviour {
 	public ParticleSystem collisionParticlePrefab; //Assign the Particle from the Editor (You can do this from code too)
 	private ParticleSystem tempCollisionParticle;
 
-	void OnCollisionEnter(Collider other)
+	void OnTriggerEnter(Collider other)
 	{
 		if(other.tag == "turret")
 		{
