@@ -12,12 +12,15 @@ public class ShootingSystem : MonoBehaviour {
 
 	List<GameObject> m_lastProjectiles = new List<GameObject>();
 	float m_fireTimer = 0.0f;
-	GameObject m_target;
+	GameObject m_target = null;
 
 	// Update is called once per frame
 	void Update () {
+		
 		if(!m_target)
 		{
+			
+
 			if(beam)
 				RemoveLastProjectiles();
 

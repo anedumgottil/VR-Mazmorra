@@ -10,6 +10,7 @@ public class TrackingSystem : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		m_target = Player.getInstance ().getHead ();
 		if(m_target){
 			if(m_lastKnownPosition != m_target.transform.position){
 				m_lastKnownPosition = m_target.transform.position;
