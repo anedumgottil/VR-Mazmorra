@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 //This class is used to generate all of the GridSpaces and static, unmovable map scenery. The lowest layer of map scenery is created here.
 //It holds ADVANCED, STATE-OF-THE-ART AI to generate Map Objects based on their context within the MapGrid, for example, two hallways created next to each other should automatically merge into one double-wide hallway. This seems like a simple task but is actually a really complicated issue, as you'll see.
@@ -248,6 +249,14 @@ public sealed class MapGenerator {
 
         //finally, register our GridSpace to the grid.
         MapGrid.getInstance ().registerGridSpace ((int)gridPos.x, (int)gridPos.y, current);
+
+        //Update the NavMesh accordingly
+        NavMeshSurface navmesh = MapGrid.getInstance().GetComponent<NavMeshSurface>();
+        if (navmesh != null) {
+            navmesh.BuildNavMesh ();
+        } else {
+            Debug.LogError ("Error: MapGenerator - Tried to build navmesh with non-existent navmesh");
+        }
     }
 
     //this function just helps me figure out which of the four cardinal directions around a grid coordinate are occupied.
