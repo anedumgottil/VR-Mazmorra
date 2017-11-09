@@ -25,7 +25,7 @@ public class Drone : MobileEntity {
 
     void Update()
     {
-        if (!inCoRoutine)
+        if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh)
             StartCoroutine(DoSomething());
     }
 
