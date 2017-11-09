@@ -11,6 +11,7 @@ public class TrackingProjectile : BaseProjectile {
 
 	// Update is called once per frame
 	void Update () {
+		m_target = Player.getInstance ().getHead ();
 		if(m_target){
 			m_lastKnownPosition = m_target.transform.position;
 		}
