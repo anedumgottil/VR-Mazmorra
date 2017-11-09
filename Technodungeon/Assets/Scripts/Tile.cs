@@ -44,6 +44,7 @@ public class Tile : GridObject {
         Tile.tileCount++; //even though this is a copy, we increment our ID, needs to be unique.
         this.gameObj = MonoBehaviour.Instantiate(b.getGameObj().gameObject);
         this.gameObj.name = (PARENT_TILE_NAME_PREFIX + b.getID () + CLONE_TILE_NAME_POSTFIX);
+        this.gameObj.SetActive (true);//activate the gameobj
     }
 
     public void setGameObj(GameObject go) {

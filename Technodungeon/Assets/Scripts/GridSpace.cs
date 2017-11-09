@@ -79,7 +79,7 @@ public class GridSpace {
             Debug.LogError ("Error: setTile was passed an incorrectly formed GridPos: "+bpos);
             return;
         }
-        if (blocks [(int)bpos] != null) {
+        if (tiles [(int)bpos] != null) {
             //need to destroy the old one to overwrite it, or it will persist in the GameWorld. hope you won't need it anymore!
             MonoBehaviour.Destroy (tiles [(int)bpos].getGameObj ());
         }

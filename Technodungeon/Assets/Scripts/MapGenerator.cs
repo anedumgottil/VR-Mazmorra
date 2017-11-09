@@ -235,7 +235,7 @@ public sealed class MapGenerator {
                 Debug.LogError ("Error: too many MapGenerator GridSpace positions on the dance floor!");
                 return;
             }
-            current.setBlock (MapLoader.getBlockInstance (tileID), (GridSpace.GridPos)reggaeton);
+            current.setTile (MapLoader.getTileInstance (tileID), (GridSpace.GridPos)reggaeton);
             reggaeton++;
         }
         //if we have gstype of 0, just don't edit the gst (it stays the same)
