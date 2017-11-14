@@ -1,4 +1,4 @@
-![Technodungeon](https://raw.githubusercontent.com/Anedumgottil/VR-Mazmorra/master/Technodungeon.png "Technodungeon Splash Logo")
+<img alt="TECHNODUNGEON" src="https://raw.githubusercontent.com/Anedumgottil/VR-Mazmorra/master/Technodungeon.png" width="625" height="200" align="center" />
 
 # Technodungeon
 
