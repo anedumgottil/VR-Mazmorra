@@ -10,10 +10,10 @@ public class Room {
     private Dictionary<Vector2Int, int > spaceMap;//collection of 2D Grid Coordinates and GridSpace types
     private Dictionary<Vector2Int, KeyValuePair<string, Vector3> > entityMap;//collection of Entity names with local offset Unity coordinates attached to a GridSpace coordinate to attach them to
     //we need to specify a bounding box so we know how much to translate the gridspacecoords to be ready to import if the user specifies weird coordinates.
-    private int lowX = -1;
-    private int lowY = -1;
-    private int highY = -1;
-    private int highX = -1;
+    private int lowX = 1000;
+    private int lowY = 1000;
+    private int highY = -1000;
+    private int highX = -1000;
     private int height = 0;
     private int width = 0;
     private string name = "default";
@@ -86,7 +86,7 @@ public class Room {
 
     //translates all the coordinates so that none of them are negative, i.e., the Room will have it's lowest coordinate at (0,0)
     //similar to normalization of the coordinate vectors
-    public void translateSpaceMapToOrigin() {
+    public void translateMapsToOrigin() {
         if (isTranslated) {
             Debug.LogWarning ("Room: Translating room twice, this will lead to incorrect translations - cowardly refusing");
             return;
@@ -100,10 +100,32 @@ public class Room {
             return;
         }
 
-        foreach (KeyValuePair<Vector2Int, int> entry in spaceMap) {
-            spaceMap.Remove (entry.Key);
-            Vector2Int newVec = entry.Key + new Vector2Int (adjustX, adjustY);
-            spaceMap.Add (newVec, entry.Value);
+        List<Vector2Int> spaceMapKeys = new List<Vector2Int>(spaceMap.Keys);
+        List<Vector2Int> entityMapKeys = new List<Vector2Int>(entityMap.Keys);
+        //TODO: making a copy of these arrays is inefficient, but necessary to avoid out of sync errors with the for each loops... would be better to iterate using natural for loops, but Dictionary's dont use indices... :/
+
+        //update the gridspaces
+        foreach (Vector2Int key in spaceMapKeys) {
+            int value;
+            if (!spaceMap.TryGetValue (key, out value)) {
+                Debug.LogError ("Room: translateMaps: couldn't get a value from the spacemap, this shouldn't be possible");
+                return;
+            }
+            spaceMap.Remove (key);
+            Vector2Int newVec = key + new Vector2Int (adjustX, adjustY);
+            spaceMap.Add (newVec, value);
+        }
+
+        //update the entities
+        foreach (Vector2Int key in entityMapKeys) {
+            KeyValuePair<string, Vector3> value;
+            if (!entityMap.TryGetValue (key, out value)) {
+                Debug.LogError ("Room: translateMaps: couldn't get a value from the entitymap, this shouldn't be possible");
+                return;
+            }
+            entityMap.Remove (key);
+            Vector2Int newVec = key + new Vector2Int (adjustX, adjustY);
+            entityMap.Add (newVec, value);
         }
         this.isTranslated = true;
     }
@@ -196,5 +218,17 @@ public class Room {
     //return the type of GS that will/should be stored in this Room
     public GridSpace.GridSpaceType getType() {
         return gridSpaceType;
+    }
+
+    public string ToString() {
+        string ret = "Room '" + this.name + "' <" + this.getType () + "> Bounds: "+this.getBoundsLowCoord().ToString()+" -> "+this.getBoundsHighCoord().ToString()+" GridSpaces: ";
+        foreach (KeyValuePair<Vector2Int, int> entry in spaceMap) {
+            ret += "{" + entry.Key.ToString () + ", " + entry.Value + "} ";
+        }
+        ret += "Entities: ";
+        foreach (KeyValuePair<Vector2Int, KeyValuePair<string, Vector3>> entry in entityMap) {
+            ret += "{" + entry.Key.ToString () + ", (" + entry.Value.Key + ", "+ entry.Value.Value +")} ";
+        }
+        return ret;
     }
 }

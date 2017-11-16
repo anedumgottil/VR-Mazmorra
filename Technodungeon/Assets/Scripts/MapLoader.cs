@@ -26,6 +26,7 @@ public class MapLoader : MonoBehaviour
     private string mapPath;
     private string roomsPath;
 
+    public bool debugMode = false; //whether or not to dump information to the Log as we process
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the MapGrid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
 
@@ -179,7 +180,7 @@ public class MapLoader : MonoBehaviour
     //load tile prefabs in from the Resources folder and store them in our Prefab pool. This is ALWAYS used as Tiles are not procedurally generated.
     public void loadTiles() {
         GameObject[] tilez = {};
-        Debug.Log ("MapLoader - Attempting to load Tile prefabs from Resources folder on disk...");
+        if (debugMode) Debug.Log ("MapLoader - Attempting to load Tile prefabs from Resources folder on disk...");
         try {
             tilez = (GameObject[]) Resources.LoadAll<GameObject>("Prefabs/Tiles/SciFiTiles/");
             Debug.Log ("MapLoader - Loaded "+tilez.Count()+" Tile Prefabs into prefab pool");
@@ -191,7 +192,7 @@ public class MapLoader : MonoBehaviour
         }
         int i = 0;
         foreach (GameObject tile in tilez) {
-            Debug.Log ("Got tile["+i+"]: " + tile.name);
+            if (debugMode) Debug.Log ("Got tile["+i+"]: " + tile.name);
             tile.SetActive (false);
             addPrefab (tile.name, tile);
             //tile.transform.SetParent (prefabParent.transform);//TODO: the tiles can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
@@ -233,7 +234,7 @@ public class MapLoader : MonoBehaviour
                 lastChar = c;
                 inTile = true;
                 current = new GridSpace ();//TODO: CRITICAL: we do not specify a position, as the SetGridSpace function will do it for us! :) but it doesn't exist yet :(
-                Debug.Log ("Start of tile");
+                if (debugMode) Debug.Log ("Start of tile");
                 continue;
             } else if (c == '}') {
                 //we're done here, wrap up
@@ -244,7 +245,7 @@ public class MapLoader : MonoBehaviour
                 lastChar = c;
                 inTile = false;
                 numtiles++;
-                Debug.Log ("End of tile");
+                if (debugMode) Debug.Log ("End of tile");
                 continue;
             } else if (c == ' ') {
                 continue; //ignore spaces
@@ -295,7 +296,7 @@ public class MapLoader : MonoBehaviour
                         Debug.LogError ("Error: loading blocks failed: Too many GridSpaces on the dance floor!");
                         return;
                     }
-                    Debug.Log ("Attempting to create GridSpace at [" + /*(int)(numtiles - (calculation * MapGrid.getInstance().xDimension)) * MapGrid.getSize () +*/ "("+x+")," + /*(int)calculation * MapGrid.getSize () +*/ "("+y+")] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
+                    if (debugMode) Debug.Log ("Attempting to create GridSpace at [" + /*(int)(numtiles - (calculation * MapGrid.getInstance().xDimension)) * MapGrid.getSize () +*/ "("+x+")," + /*(int)calculation * MapGrid.getSize () +*/ "("+y+")] at position " + blockpos + ", Tile Type: " + parsedNum + " numTiles=" + numtiles);
 //                    MapGrid.getInstance().registerSpace((int)(numtiles - (calculation * MapGrid.getInstance().xDimension)) * MapGrid.getSize (), (int)calculation * MapGrid.getSize (), current);
                     MapGrid.getInstance().registerGridSpace(x, y, current);
                     x++;
@@ -342,12 +343,15 @@ public class MapLoader : MonoBehaviour
                     }
                     //Try to parse the attributes
                     int type = -1;
-                    if (!int.TryParse (xmlr ["type"],out type) || type < 0) {
-                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Room attribute [type]");
+                    if (!int.TryParse (xmlr ["type"], out type) || type < 0) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Room attribute [type] " + xmlr ["type"]);
                         return;
+                    } else if (type == 0) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found a GridSpaceType of zero for room "+xmlr["name"]+". DO NOT USE A ZERO GST. They are for internal use only. Defaulting to 1.");
+                        type = 1;
                     }
                     current = new Room ((GridSpace.GridSpaceType) type, xmlr ["name"]);
-                    Debug.Log ("starting a new Room block with name: '" + xmlr ["name"] + "' and type: '" + xmlr ["type"] + "'");
+                    if (debugMode) Debug.Log ("starting a new Room block with name: '" + xmlr ["name"] + "' and type: '" + xmlr ["type"] + "'");
                     break;
                 case "gridspace":
                     //we found a gridspace element, these are start elements that are empty, and have attributes specifying coordinates and grid type
@@ -371,7 +375,7 @@ public class MapLoader : MonoBehaviour
                         Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [config]");
                         return;
                     }
-                    Debug.Log ("--- found a gridspace element: (" + xmlr ["x"] + ", " + xmlr ["y"] + ") and config: '" + xmlr ["config"] + "'");
+                    if (debugMode) Debug.Log ("--- found a gridspace element: (" + xmlr ["x"] + ", " + xmlr ["y"] + ") and config: '" + xmlr ["config"] + "'");
                     current.registerSpace (new Vector2Int (x, y), config);
                     break;
                 case "entities":
@@ -381,11 +385,11 @@ public class MapLoader : MonoBehaviour
                         Debug.LogError ("MapLoader: ParseRooms: Found an opening Entities Tag when we haven't started a block yet.");
                         return;
                     }
-                    Debug.Log ("--- found an entities element, beginning to process entities for GridSpace: ");
+                    if (debugMode) Debug.Log ("--- found an entities element, beginning to process entities for GridSpace: ");
                     //parse entities list
                     if (xmlr.ReadToDescendant ("entity")) {
                         do {
-                            Debug.Log ("------ found an entity element: (" + xmlr.GetAttribute ("x") + ", " + xmlr.GetAttribute ("y") + ") and name: '" + xmlr.GetAttribute ("name") + " with offset (" + xmlr.GetAttribute ("offsetx") + ", " + xmlr.GetAttribute ("offsety") + ", " + xmlr.GetAttribute ("offsetz") + ")");
+                            if (debugMode) Debug.Log ("------ found an entity element: (" + xmlr.GetAttribute ("x") + ", " + xmlr.GetAttribute ("y") + ") and name: '" + xmlr.GetAttribute ("name") + " with offset (" + xmlr.GetAttribute ("offsetx") + ", " + xmlr.GetAttribute ("offsety") + ", " + xmlr.GetAttribute ("offsetz") + ")");
                             //Try to parse the attributes
                             x = -1;
                             y = -1;
@@ -415,7 +419,7 @@ public class MapLoader : MonoBehaviour
                             current.registerEntity (new Vector2Int (x, y), xmlr.GetAttribute ("name"), new Vector3 (offsetX, offsetY, offsetZ));
                         } while (xmlr.ReadToNextSibling ("entity"));
                     }
-                    Debug.Log ("--- ran out of entities to process, moving on... ");
+                    if (debugMode) Debug.Log ("--- ran out of entities to process, moving on... ");
                     break;
                 default:
                     Debug.LogWarning ("MapLoader: ParseRooms: Found an unknown element in the Room XML file.");
@@ -426,7 +430,7 @@ public class MapLoader : MonoBehaviour
                 switch (xmlr.Name) {
                 case "entities":
                     //closing entities tag
-                    Debug.Log ("--- </entities> ");
+                    if (debugMode) Debug.Log ("--- </entities> ");
                     break;
                 case "room":
                     //closing room block, we're done
@@ -435,9 +439,9 @@ public class MapLoader : MonoBehaviour
                         return;
                     }
                     //don't forget to correctly translate the roomType so we run the helper function
-                    current.translateSpaceMapToOrigin();
+                    current.translateMapsToOrigin();
                     roomTypes.Add (current);
-                    Debug.Log ("ending Room Block with name: " + current.getName() + "' and type: '" + current.getType() + "'");
+                    if (debugMode) Debug.Log ("ending Room Block with name: " + current.getName() + "' and type: '" + current.getType() + "'");
                     count++;
                     current = null;
                     break;
@@ -448,7 +452,8 @@ public class MapLoader : MonoBehaviour
 
             }//end while
         }//end read
-        Debug.Log("MapLoader: ParseRooms: finished parsing "+count+" Room types.");
+        Debug.Log("MapLoader: ParseRooms: finished parsing "+count+"("+roomTypes.Count+") Room types.");
+        if (debugMode) Debug.Log(roomTypes [0].ToString ());
     }
 
     //prefab accessor. gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
@@ -472,7 +477,7 @@ public class MapLoader : MonoBehaviour
     //gets a clone of a Block in our block pool
     public static Block getBlockInstance(int id) {
         if (id < 0 || id >= blockTypes.Count) {
-            Debug.Log ("Error: getBlockInstance fed out of range id");
+            Debug.LogError ("MapLoader: getBlockInstance: fed out of range id");
             return null;
         }
         return new Block(blockTypes [id]);
@@ -481,7 +486,7 @@ public class MapLoader : MonoBehaviour
     //gets a clone of a Tile in our tile pool
     public static Tile getTileInstance(int id) {
         if (id < 0 || id >= tileTypes.Count) {
-            Debug.Log ("Error: getTileInstance fed out of range id");
+            Debug.LogError ("MapLoader: getTileInstance: fed out of range id");
             return null;
         }
         return new Tile(tileTypes [id]);

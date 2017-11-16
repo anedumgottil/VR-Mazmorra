@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<room name="Test" type="2">
+	<gridspace x="1" y="2" config="1" />
+	<gridspace x="2" y="1" config="2" />
+	<gridspace x="1" y="1" config="0" />
+	<entities>
+		<entity x="-1" y="-1" name="TestEnt" offsetx="1.0" offsety="2.0" offsetz="3.0" />
+		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />
+	</entities>
+</room>
