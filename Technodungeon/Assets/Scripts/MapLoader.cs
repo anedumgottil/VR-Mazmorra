@@ -433,8 +433,8 @@ public class MapLoader : MonoBehaviour
     {
         NavMeshSurface navmesh = MapGrid.getInstance().GetComponent<NavMeshSurface>();
         while (navmesh != null) {
-            yield return wait5s;
             navmesh.BuildNavMesh ();//update navmesh based on whatever is in world at the moment
+            yield return wait5s;
         }
 
     }
