@@ -549,9 +549,13 @@ public class MapLoader : MonoBehaviour
         }
         if (tileBank == GridSpace.GridSpaceType.Room) {
             return new Tile (tileTypes [id]);
-        } else {
+        } else if (tileBank == GridSpace.GridSpaceType.Corridor) {
             return new Tile (altTileTypes [id]);
+        } else {
+            Debug.LogError ("MapLoader: getTileInstance: Got an invalid tileBank type (" + tileBank + ")");
+            return null;
         }
+
     }
 
     public static Room getRoom(int id) {
@@ -559,7 +563,9 @@ public class MapLoader : MonoBehaviour
             Debug.LogError ("MapLoader: getRoom: fed out of range id");
             return null;
         }
-        return roomTypes [id];
+        Room temp = roomTypes [id];
+        temp.translateMapsToOrigin ();//TODO: remove this, and figure out why they're not being translated automatically!!!
+        return temp;
     }
 
     //returns a hashset of the names of the stationary entities we currently have registered
