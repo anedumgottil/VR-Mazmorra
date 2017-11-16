@@ -52,7 +52,7 @@ public class MapGrid : MonoBehaviour {
     //overwrites whatever was in the spot before it.
     public void registerGridSpace(int x, int y, GridSpace gs) {
         if (x >= xDimension || x < 0 || y >= yDimension || y < 0) {
-            Debug.LogError ("Error: Attempted to register a GridSpace out of bounds ("+x+", "+y+"), destroying GridSpace!");
+            Debug.LogWarning ("Warning: Attempted to register a GridSpace out of bounds ("+x+", "+y+"), destroying GridSpace!");
             gs.destroy ();
             return;
         }
@@ -78,6 +78,47 @@ public class MapGrid : MonoBehaviour {
             return null;
         }
         return grid [x, y];
+    }
+
+    public bool isOccupied(Vector2Int low, Vector2Int high) {
+        int lowX = low.x;
+        int lowY = low.y;
+        int highX = high.x;
+        int highY = high.y;
+
+        if (high.x < lowX) {//this case should never happen, but we gotta check for it and fix it because we cant return null
+            lowX = high.x;
+            Debug.LogWarning ("MapGrid: isOccupied: Specified out of order coordinates for low x");
+        }
+        if (high.y < lowY) {//this case should never happen, but we gotta check for it and fix it because we cant return null
+            lowY = high.y;
+            Debug.LogWarning ("MapGrid: isOccupied: Specified out of order coordinates for low y");
+        }
+        if (low.x > highX) {//this case should never happen, but we gotta check for it and fix it because we cant return null
+            highX = low.x;
+            Debug.LogWarning ("MapGrid: isOccupied: Specified out of order coordinates for high x");
+        }
+        if (low.y > highY) {//this case should never happen, but we gotta check for it and fix it because we cant return null
+            highY = low.y;
+            Debug.LogWarning ("MapGrid: isOccupied: Specified out of order coordinates for high y");
+        }
+            
+        //begin meat & potatoes
+        for (int i = lowX; i < highX; i++) {
+            for (int j = lowY; j < highY; j++) {
+                if (isOccupied (i, j))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    //helper wrapper function for getGridSpace
+    public bool isOccupied(int x, int y) {
+        if (getGridSpace (x, y, true) == null) {
+            return false;
+        }
+        return true;
     }
 
     void OnDrawGizmos() {

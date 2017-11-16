@@ -1,8 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify here collections of GridSpaceConfigurations and GridSpace Coordinates that will define the types of GridSpaces in a given Room -->
+<!-- You can specify a GSconfig index in a <gridspace /> element to force a GridSpace to be a certain arrangement in a room, at least until it's updated by a setGridSpace call or something -->
+<!-- A value of -1 for a <gridspace /> config attribute will specify that you would rather have the MapGenerator decide based on context, and you don't care about what it gets set to. useful if you're lazy. -->
+<!-- You can also specify a list of Entity's, with a Grid Coord and a name, as well as a local positional offset (relative to the GridSpace they get assigned to) to spawn in Entities at the start of the game. -->
+
+<!-- We really really really really need a way to automate the generation of these files. That's one of the reason I have switched us to XML. But this may require serialization of our classes. -->
 <room name="Test" type="2">
 	<gridspace x="1" y="2" config="1" />
 	<gridspace x="2" y="1" config="2" />
-	<gridspace x="1" y="1" config="0" />
+	<gridspace x="1" y="1" config="-1" />
 	<entities>
 		<entity x="-1" y="-1" name="TestEnt" offsetx="1.0" offsety="2.0" offsetz="3.0" />
 		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />

@@ -362,7 +362,7 @@ public class MapLoader : MonoBehaviour
                     //Try to parse the attributes
                     int x = -1;
                     int y = -1;
-                    int config = -1;
+                    int config = -1;//IMPORTANT NOTE: a gridspaceconfiguration of -1 can be used to specify no configuration at all, which means the MapGenerator will use the context algorithm to infer the proper GridSpaceConfig for Room GSType
                     if (!int.TryParse (xmlr ["x"],out x)) {
                         Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [x]");
                         return;
@@ -371,7 +371,7 @@ public class MapLoader : MonoBehaviour
                         Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [y]");
                         return;
                     }
-                    if (!int.TryParse (xmlr ["config"],out config) || config < 0) {
+                    if (!int.TryParse (xmlr ["config"],out config) || config < -1) {
                         Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [config]");
                         return;
                     }
