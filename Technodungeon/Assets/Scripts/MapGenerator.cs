@@ -60,16 +60,22 @@ public sealed class MapGenerator {
         }
         List<Vector2Int> entityPos = new List<Vector2Int>(r.getEntityMap ().Keys.Count);
         HashSet<string> stationaryEnts = MapLoader.getStationaryEntities ();
+        HashSet<string> mobileEnts = MapLoader.getMobileEntities ();
 
+        KeyValuePair<string, Vector3> entityInfo;
+        bool hasEntity = false;
         foreach (var entry in r.getSpaceMap()) {
             Vector2Int adjustedCoords = entry.Key + position;
+            if (r.getEntityMap ().TryGetValue (entry.Key, out entityInfo)) {
+                hasEntity = true;
+            }
+
             if (entry.Value == -1) {
                 //the Room doesn't care about the type of this tile, so just use our normal setGridSpace function.
                 setGridSpace (adjustedCoords.x, adjustedCoords.y, r.getType ());
                 //TODO: in this if statement block, we edit the GridSpace after it has been assigned to the grid for us. it could have changed between the last line and this, race condition, needs mutex lock on Grid to prevent.
                 //Process Entities:
-                KeyValuePair<string, Vector3> entityInfo;
-                if (r.getEntityMap ().TryGetValue (entry.Key, out entityInfo) && stationaryEnts.Contains (entityInfo.Key)) {
+                if (hasEntity && stationaryEnts.Contains (entityInfo.Key)) {
                     //the entity corresponds to our GridSpace and is a StationaryEntity
                     Debug.Log ("Registering StationaryEntity: " + entityInfo.Key + " to GridSpace: " + adjustedCoords.ToString ());
                     GridSpace current = MapGrid.getInstance ().getGridSpace (adjustedCoords.x, adjustedCoords.y);
@@ -81,7 +87,7 @@ public sealed class MapGenerator {
                         //prefabInstance.transform.localPosition = entityInfo.Value;
                         stationaryEntityComponent.setGridSpace (current);
                     }
-                } else if (r.getEntityMap ().TryGetValue (entry.Key, out entityInfo) && MapLoader.getMobileEntities ().Contains (entityInfo.Key)) {
+                } else if (hasEntity && mobileEnts.Contains (entityInfo.Key)) {
                     //the entity corresponds to our gridspace and is a MobileEntity
                     GameObject mobileEnt = MapLoader.getPrefabInstance (entityInfo.Key);
                     mobileEnt.transform.position = MapGrid.getInstance ().getWorldCoordsFromGridCoords (adjustedCoords) + entityInfo.Value;
@@ -92,9 +98,31 @@ public sealed class MapGenerator {
                 GridSpace toGrid = new GridSpace (adjustedCoords);
                 toGrid.setGridSpaceType (r.getType ());
                 toGrid.setGridSpaceConfiguration (entry.Value);
-                //TODO: ADD ENTITIES HERE
+                //entities
+                GameObject prefabInstance = null;
+                if (hasEntity) {
+                    prefabInstance = MapLoader.getPrefabInstance (entityInfo.Key);
+                }
+                if (hasEntity && stationaryEnts.Contains (entityInfo.Key)) {
+                    //stationary entity
+                    StationaryEntity stationaryEntityComponent = prefabInstance.GetComponent<StationaryEntity> ();
+                    if (prefabInstance != null && stationaryEntityComponent != null) {
+                        prefabInstance.transform.position = toGrid.getWorldPosition () + entityInfo.Value;
+                        Debug.Log (" setting entity prefab position to " + prefabInstance.transform.position.ToString() + " because adjustedCoords " + adjustedCoords.ToString () + " and toGrid worldpos "+toGrid.getWorldPosition());
+                        prefabInstance.SetActive (true);
+                        //prefabInstance.transform.localPosition = entityInfo.Value;
+                        stationaryEntityComponent.setGridSpace (toGrid);
+                    }
+                } else if (hasEntity && mobileEnts.Contains (entityInfo.Key)) {
+                    //the entity corresponds to our gridspace and is a MobileEntity
+                    prefabInstance.transform.position = toGrid.getWorldPosition () + entityInfo.Value;
+                    prefabInstance.SetActive (true);
+                }
+                //register
+                toGrid.setBothPositions (adjustedCoords);
                 applyGridSpaceConfiguration (toGrid, r.getType(), entry.Value); 
             }
+            hasEntity = false;
         }
     }
 

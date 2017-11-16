@@ -26,6 +26,10 @@ public abstract class StationaryEntity : Entity {
         if (parent != null) {//remove ourselves from our current parent, if we need to:
             parent.removeStationary (this);
         }
+        if (gs == null) {//if we get a null gs, we're trying to unset our parent, so ret.
+            parent = null;
+            return;
+        }
         //add ourselves to the new gridspace
         gs.addStationary(this);
         //update our parent

@@ -22,6 +22,7 @@ public class GridSpace {
     //create empty GridSpace, fill up later.
     public GridSpace(Vector2 gridcoords) {
         this.gridPosition = gridcoords;
+        setBothPositions (gridcoords);
     }
 
     public GridSpace() {

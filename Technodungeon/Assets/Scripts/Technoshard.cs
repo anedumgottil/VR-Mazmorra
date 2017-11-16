@@ -12,6 +12,7 @@ public class Technoshard : StationaryEntity {
     public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name.Contains ("Controller")) {
+            this.setGridSpace (null);
             Destroy (this.gameObject);
         }
         //SetCollidingObject(other);
