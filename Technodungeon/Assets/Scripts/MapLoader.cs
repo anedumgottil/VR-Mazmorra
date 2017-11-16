@@ -37,6 +37,8 @@ public class MapLoader : MonoBehaviour
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
     private static List<Tile> tileTypes = new List<Tile>(20);
     private static List<Room> roomTypes = new List<Room>();
+    private static HashSet<string> stationaryEntitiesInPool = new HashSet<string>();
+    private static HashSet<string> mobileEntitiesInPool = new HashSet<string>();
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
 
@@ -221,6 +223,7 @@ public class MapLoader : MonoBehaviour
         foreach (GameObject ent in ents) {
             if (debugMode) Debug.Log ("Got StationaryEntity["+i+"]: " + ent.name);
             ent.SetActive (false);
+            stationaryEntitiesInPool.Add (ent.name);
             addPrefab (ent.name, ent);
             //ent.transform.SetParent (prefabParent.transform);//TODO: the ents can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
             i++;
@@ -244,6 +247,7 @@ public class MapLoader : MonoBehaviour
         foreach (GameObject ent in ents) {
             if (debugMode) Debug.Log ("Got MobileEntity["+i+"]: " + ent.name);
             ent.SetActive (false);
+            mobileEntitiesInPool.Add (ent.name);
             addPrefab (ent.name, ent);
             //ent.transform.SetParent (prefabParent.transform);//TODO: the ents can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
             i++;
@@ -551,6 +555,16 @@ public class MapLoader : MonoBehaviour
             return null;
         }
         return roomTypes [id];
+    }
+
+    //returns a hashset of the names of the stationary entities we currently have registered
+    public static HashSet<string> getStationaryEntities() {
+        return stationaryEntitiesInPool;
+    }
+
+    //returns a hashset of the names of the stationary entities we currently have registered
+    public static HashSet<string> getMobileEntities() {
+        return mobileEntitiesInPool;
     }
 
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.

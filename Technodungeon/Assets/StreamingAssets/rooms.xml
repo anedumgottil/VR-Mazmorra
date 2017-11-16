@@ -22,8 +22,8 @@
 	<gridspace x="4" y="1" config="-1" />
 	<gridspace x="3" y="1" config="-1" />
 	<entities>
-		<entity x="-1" y="-1" name="TestEnt" offsetx="1.0" offsety="2.0" offsetz="3.0" />
-		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />
+		<entity x="1" y="3" name="Technoshard" offsetx="1.0" offsety="1.0" offsetz="1.0" />
+		<entity x="4" y="1" name="Drone" offsetx="1.0" offsety="1.0" offsetz="1.0" />
 	</entities>
 </room>
 
@@ -42,8 +42,9 @@
 	<gridspace x="4" y="1" config="10" />
 	<gridspace x="3" y="1" config="11" />
 	<entities>
-		<entity x="-1" y="-1" name="TestEnt" offsetx="1.0" offsety="2.0" offsetz="3.0" />
-		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />
+		<entity x="-1" y="-1" name="Grenade-Dummy" offsetx="1.0" offsety="2.0" offsetz="3.0" />
+		<entity x="1" y="2" name="Technoshard" offsetx="2.0" offsety="2.0" offsetz="2.0" />
+		<entity x="4" y="4" name="Grenade-Frag" offsetx="1.0" offsety="2.0" offsetz="3.0" />
 	</entities>
 </room>
 </rooms>

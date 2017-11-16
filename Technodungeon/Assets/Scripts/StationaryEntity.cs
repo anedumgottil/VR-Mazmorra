@@ -26,6 +26,7 @@ public abstract class StationaryEntity : Entity {
         if (parent != null) {//remove ourselves from our current parent, if we need to:
             parent.removeStationary (this);
         }
+        this.gameObject.SetActive (true);
         //add ourselves to the new gridspace
         gs.addStationary(this);
         //update our parent
