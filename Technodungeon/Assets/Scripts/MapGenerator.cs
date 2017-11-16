@@ -77,10 +77,17 @@ public sealed class MapGenerator {
                     StationaryEntity stationaryEntityComponent = prefabInstance.GetComponent<StationaryEntity> ();
                     if (prefabInstance != null && stationaryEntityComponent != null) {
                         prefabInstance.transform.position = current.getWorldPosition () + entityInfo.Value;
+                        prefabInstance.SetActive (true);
                         //prefabInstance.transform.localPosition = entityInfo.Value;
                         stationaryEntityComponent.setGridSpace (current);
                     }
+                } else if (r.getEntityMap ().TryGetValue (entry.Key, out entityInfo) && MapLoader.getMobileEntities ().Contains (entityInfo.Key)) {
+                    //the entity corresponds to our gridspace and is a MobileEntity
+                    GameObject mobileEnt = MapLoader.getPrefabInstance (entityInfo.Key);
+                    mobileEnt.transform.position = MapGrid.getInstance ().getWorldCoordsFromGridCoords (adjustedCoords) + entityInfo.Value;
+                    mobileEnt.SetActive (true);
                 }
+                    
             } else {
                 GridSpace toGrid = new GridSpace (adjustedCoords);
                 toGrid.setGridSpaceType (r.getType ());
