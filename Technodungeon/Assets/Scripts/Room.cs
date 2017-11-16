@@ -213,7 +213,7 @@ public class Room {
         return gridSpaceType;
     }
 
-    public string ToString() {
+    public override string ToString() {
         string ret = "Room '" + this.name + "' <" + this.getType () + "> Bounds: "+this.getBoundsLowCoord().ToString()+" -> "+this.getBoundsHighCoord().ToString()+" GridSpaces: ";
         foreach (KeyValuePair<Vector2Int, int> entry in spaceMap) {
             ret += "{" + entry.Key.ToString () + ", " + entry.Value + "} ";
