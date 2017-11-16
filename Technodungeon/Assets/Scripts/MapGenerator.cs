@@ -58,13 +58,13 @@ public sealed class MapGenerator {
             Debug.Log ("MapGenerator: setRoom: Tried to place a Room, but we have GridSpaces where it would land, ignoring");
             return;
         }
-        List<Vector2Int> entityPos = new List<Vector2Int>(r.getEntityMap ().Keys.Count);
         HashSet<string> stationaryEnts = MapLoader.getStationaryEntities ();
         HashSet<string> mobileEnts = MapLoader.getMobileEntities ();
 
         KeyValuePair<string, Vector3> entityInfo;
         bool hasEntity = false;
-        foreach (var entry in r.getSpaceMap()) {
+        Dictionary<Vector2Int, int> spaceMap = r.getSpaceMap ();
+        foreach (KeyValuePair<Vector2Int, int> entry in spaceMap) {
             Vector2Int adjustedCoords = entry.Key + position;
             if (r.getEntityMap ().TryGetValue (entry.Key, out entityInfo)) {
                 hasEntity = true;
@@ -120,6 +120,7 @@ public sealed class MapGenerator {
                 }
                 //register
                 toGrid.setBothPositions (adjustedCoords);
+                Debug.Log ("Applying specified gridspace config to '" + r.getName () + " toGrid type: " + toGrid.GetType () + " room type: " + r.getType ());
                 applyGridSpaceConfiguration (toGrid, r.getType(), entry.Value); 
             }
             hasEntity = false;
@@ -142,6 +143,7 @@ public sealed class MapGenerator {
         if (newGS == null) {//if we're recursing, this will NEVER happen, since we check above.
             //no GS exists, make a new one.
             newGS = new GridSpace(new Vector2(x, y));
+            newGS.setGridSpaceType (gstype);
         }//now we will just edit the associated GridObjects for the GridSpace so we do not mess up any of it's associated parameters, just in case it has attached stationaryEntities or whatever
 
         //HERE COMES THE DAT AI
@@ -310,7 +312,7 @@ public sealed class MapGenerator {
                 Debug.LogError ("Error: too many MapGenerator GridSpace positions on the dance floor!");
                 return;
             }
-            current.setTile (MapLoader.getTileInstance (tileID), (GridSpace.GridPos)reggaeton);
+            current.setTile (MapLoader.getTileInstance (tileID, current.getGridSpaceType()), (GridSpace.GridPos)reggaeton);
             reggaeton++;
         }
         //if we have gstype of 0, just don't edit the gst (it stays the same)
@@ -359,36 +361,17 @@ public sealed class MapGenerator {
 
 
     public void generateStarterMap() {
-        Debug.Log ("GENERATING STARTER MAINROOM");
-        setGridSpace (5, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (5, 6, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (4, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (8, 8, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (4, 4, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (5, 4, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (4, 6, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (3, 6, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (3, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (3, 4, (GridSpace.GridSpaceType.Corridor));
+        Debug.Log ("GENERATING MAPZ");
 
-        Debug.Log ("GENERATING STARTER CORRIDOR");
-        setGridSpace (6, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (7, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (8, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (9, 5, (GridSpace.GridSpaceType.Corridor));
-
-        Debug.Log ("GENERATING STARTER ENDROOM");
-        setGridSpace (10, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (10, 4, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (10, 3, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (10, 2, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (11, 5, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (11, 4, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (11, 3, (GridSpace.GridSpaceType.Corridor));
-        setGridSpace (11, 2, (GridSpace.GridSpaceType.Corridor));
-
-        setRoom (new Vector2Int(12,12), MapLoader.getRoom (0));
-        setRoom (new Vector2Int(5,12), MapLoader.getRoom (1));
+        setRoom (new Vector2Int(3,4), MapLoader.getRoom (0));
+        setRoom (new Vector2Int(10,4), MapLoader.getRoom (1));
+        setRoom (new Vector2Int(3,7), MapLoader.getRoom (2));
+        setRoom (new Vector2Int(4,3), MapLoader.getRoom (3));
+        setRoom (new Vector2Int(8,3), MapLoader.getRoom (3));
+        setRoom (new Vector2Int(14,4), MapLoader.getRoom (3));
+        setRoom (new Vector2Int(11,8), MapLoader.getRoom (2));
+        setRoom (new Vector2Int(10,12), MapLoader.getRoom (4));
+        setRoom (new Vector2Int(3,11), MapLoader.getRoom (4));
 
         //move player to our map
         if (Player.getInstance () != null) {

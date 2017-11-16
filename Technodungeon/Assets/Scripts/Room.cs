@@ -97,6 +97,7 @@ public class Room {
 
         if (adjustX == 0 && adjustY == 0) {
             //no adjustments necessary
+            this.isTranslated = true;
             return;
         }
 
