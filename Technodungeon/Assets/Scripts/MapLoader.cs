@@ -335,6 +335,9 @@ public class MapLoader : MonoBehaviour
             //begin parse
             if (xmlr.IsStartElement ()) {
                 switch (xmlr.Name) {
+                case "rooms":
+                    //start of document
+                    break;
                 case "room":
                     //we found an opening room tag.
                     if (current != null) {
@@ -444,6 +447,10 @@ public class MapLoader : MonoBehaviour
                     if (debugMode) Debug.Log ("ending Room Block with name: " + current.getName() + "' and type: '" + current.getType() + "'");
                     count++;
                     current = null;
+                    break;
+                case "rooms":
+                    //end of document
+                    xmlr.Close ();
                     break;
                 default:
                     Debug.LogWarning ("MapLoader: ParseRooms: Found an unknown closing tag in the Room XML file.");

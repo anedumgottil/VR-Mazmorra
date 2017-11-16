@@ -6,7 +6,8 @@
 <!-- You can also specify a list of Entity's, with a Grid Coord and a name, as well as a local positional offset (relative to the GridSpace they get assigned to) to spawn in Entities at the start of the game. -->
 
 <!-- We really really really really need a way to automate the generation of these files. That's one of the reason I have switched us to XML. But this may require serialization of our classes. -->
-<room name="Test" type="2">
+<rooms>
+<room name="TestUnspecified" type="2">	
 	<!-- specifies a donut-shaped room with "Don't Care" GridSpaceConfigs -->
 	<gridspace x="1" y="2" config="-1" />
 	<gridspace x="2" y="1" config="-1" />
@@ -25,3 +26,24 @@
 		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />
 	</entities>
 </room>
+
+<room name="TestSpecified" type="2">
+	<!-- specifies a donut-shaped room with actual GridSpaceConfigs -->
+	<gridspace x="1" y="2" config="0" />
+	<gridspace x="2" y="1" config="1" />
+	<gridspace x="1" y="1" config="2" />
+	<gridspace x="1" y="3" config="3" />
+	<gridspace x="1" y="4" config="4" />
+	<gridspace x="2" y="4" config="5" />
+	<gridspace x="3" y="4" config="6" />
+	<gridspace x="4" y="4" config="7" />
+	<gridspace x="4" y="3" config="8" />
+	<gridspace x="4" y="2" config="9" />
+	<gridspace x="4" y="1" config="10" />
+	<gridspace x="3" y="1" config="11" />
+	<entities>
+		<entity x="-1" y="-1" name="TestEnt" offsetx="1.0" offsety="2.0" offsetz="3.0" />
+		<entity x="1" y="1" name="TestEnt2" offsetx="2.0" offsety="2.0" offsetz="2.0" />
+	</entities>
+</room>
+</rooms>

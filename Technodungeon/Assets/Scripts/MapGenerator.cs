@@ -61,9 +61,17 @@ public sealed class MapGenerator {
         Dictionary<Vector2Int, KeyValuePair<string, Vector3>>.KeyCollection entityPos = r.getEntityMap ().Keys;
 
         foreach (var entry in r.getSpaceMap()) {
+            Vector2Int adjustedCoords = entry.Key + position;
             if (entry.Value == -1) {
                 //the Room doesn't care about the type of this tile, so just use our normal setGridSpace function.
-                setGridSpace (entry.Key.x+position.x, entry.Key.y+position.y, r.getType());
+                setGridSpace (adjustedCoords.x, adjustedCoords.y, r.getType ());
+                //TODO: ADD ENTITIES HERE
+            } else {
+                GridSpace toGrid = new GridSpace (adjustedCoords);
+                toGrid.setGridSpaceType (r.getType ());
+                toGrid.setGridSpaceConfiguration (entry.Value);
+                //TODO: ADD ENTITIES HERE
+                applyGridSpaceConfiguration (toGrid, r.getType(), entry.Value); 
             }
         }
     }
@@ -330,6 +338,7 @@ public sealed class MapGenerator {
         setGridSpace (11, 2, (GridSpace.GridSpaceType.Corridor));
 
         setRoom (new Vector2Int(12,12), MapLoader.getRoom (0));
+        setRoom (new Vector2Int(5,12), MapLoader.getRoom (1));
 
         //move player to our map
         if (Player.getInstance () != null) {
