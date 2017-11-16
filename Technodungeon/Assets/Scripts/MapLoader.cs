@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
 using VRTK;
 
 //This class handles prefab loading, pooling and storage

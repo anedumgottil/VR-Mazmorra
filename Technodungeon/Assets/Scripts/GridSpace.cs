@@ -13,7 +13,7 @@ public class GridSpace {
     private Vector2 gridPosition; //integer positions for grid
     private Vector3 worldPosition; //world space (scaled by grid size)
     private GridSpaceType gridSpaceType = GridSpaceType.None;//set to none for now
-    public int gridSpaceConfiguration = 0;
+    private int gridSpaceConfiguration = 0;
     //the above variable is used during map generation to define the configuration of walls/floors/ceilings this GridSpace has //TODO: this index will eventually map to a keyfile ID for GridSpace Configurations.... use flatfile to generate it? hmmm.... see ticket: #17
 
     //below is where references to all immobile entities attached to this GridSpace will be stored
@@ -120,6 +120,14 @@ public class GridSpace {
                 t.getGameObj ().gameObject.transform.SetParent (MapGrid.getInstance ().gameObject.transform);
             }
         }
+    }
+
+    public int getGridSpaceConfiguration() {
+        return gridSpaceConfiguration;
+    }
+    //this is used by the MapGenerator to define the type of GridSpaceConfiguration this is, see top of file for definition
+    public void setGridSpaceConfiguration(int gsc) {
+        gridSpaceConfiguration = gsc;
     }
 
     public GridSpaceType getGridSpaceType() {

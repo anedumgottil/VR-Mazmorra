@@ -227,7 +227,7 @@ public sealed class MapGenerator {
             return;
         }
 
-        current.gridSpaceConfiguration = configuration;
+        current.setGridSpaceConfiguration(configuration);
         int reggaeton = 0;
         foreach (int tileID in spaceTemplates[configuration]) {
             //generate a GridSpace similar to the way that MapLoader does, GridObject by GridObject for each ID.
