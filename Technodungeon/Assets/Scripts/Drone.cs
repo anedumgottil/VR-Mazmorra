@@ -11,7 +11,7 @@ public class Drone : MobileEntity {
     // Use this for initialization
 
     public float inspectTime = 0.5f;
-
+    public Transform player;
     NavMeshAgent navMeshAgent;
     NavMeshPath path;
     public float timeForNewPath;
@@ -62,24 +62,40 @@ public class Drone : MobileEntity {
         target = getNewRandomPosition();
         navMeshAgent.SetDestination(target);
     }
-    /*void Awake () {
-        agent = GetComponent<NavMeshAgent> ();
-	}
-	
-    public void MoveToLocation(Vector3 targetPoint)
-    {
-        agent.destination = targetPoint;
-        agent.isStopped = false;
-    }
 
-    private void Update()
+    //NEW CODE
+    /*void Update()
     {
-        if (transform.position != target[current].position)
+        if(Vector3.Distance(player.position, this.transform.position) < 10)
         {
-            Vector3 pos = Vector3.MoveTowards(transform.position, target[current].position, speed * Time.deltaTime);
-            GetComponent<Rigidbody>().MovePosition(pos);
+            Vector3 direction = player.position - this.transform.position;
+            direction.y = 0;
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(direction), 0.1f);
+            if(direction.magnitude < 3)
+            {
+                this.transform.Translate(0, 0, 0.05f);
+            }
         }
-        else current = (current + 1) % target.Length;
     }*/
+
+    /*void Awake () {
+         agent = GetComponent<NavMeshAgent> ();
+     }
+
+     public void MoveToLocation(Vector3 targetPoint)
+     {
+         agent.destination = targetPoint;
+         agent.isStopped = false;
+     }
+
+     private void Update()
+     {
+         if (transform.position != target[current].position)
+         {
+             Vector3 pos = Vector3.MoveTowards(transform.position, target[current].position, speed * Time.deltaTime);
+             GetComponent<Rigidbody>().MovePosition(pos);
+         }
+         else current = (current + 1) % target.Length;
+     }*/
 
 }
