@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 //using UnityEditor;
 using System;
 using System.IO;
@@ -33,6 +34,8 @@ public class MapLoader : MonoBehaviour
     private static List<Tile> tileTypes = new List<Tile>();
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
+
+    private static WaitForSeconds wait5s;
 
     //generate our Blocks from a text file, and create Prefabs from them to populate our Prefab Pool. This is ran only when the Unity Editor is available, and should only be ran occasionally, as it's time consuming and generates meta commit conflicts
     public void parseBlocks() {
@@ -376,6 +379,7 @@ public class MapLoader : MonoBehaviour
         prefabParent.transform.position = Block.DEFAULT_POSITION;
         prefabParent.SetActive (false);
         VRTKSDKManager = VRTKSDKManagerGO.GetComponent<VRTK_SDKManager> ();
+        wait5s = new WaitForSeconds(5f);
 
         this.parseBlocks ();
 
@@ -416,10 +420,23 @@ public class MapLoader : MonoBehaviour
                 //generate the map, we have a loadedSetup != null
                 Debug.Log("MapLoader: Wait ended. SDK setup found. Generating starter map...");
                 MapGenerator.Instance.generateStarterMap (); //generate immediately.
+                StartCoroutine (navmeshUpdateSequence()); //update the navmesh every 5 seconds, now that mapgen is accomplished.
                 yield break;
             }
 
         }
+    }
+
+    //This function just updates the navmesh every 5 seconds if it is valid, which allows to get past the poor initial state (if nobody auto-generates anything off the bat)
+    //We should probably figure out why the navmesh isn't correct on initial generation instead of doing this, but hey. it is what it is.
+    IEnumerator navmeshUpdateSequence()
+    {
+        NavMeshSurface navmesh = MapGrid.getInstance().GetComponent<NavMeshSurface>();
+        while (navmesh != null) {
+            yield return wait5s;
+            navmesh.BuildNavMesh ();//update navmesh based on whatever is in world at the moment
+        }
+
     }
 
 }
