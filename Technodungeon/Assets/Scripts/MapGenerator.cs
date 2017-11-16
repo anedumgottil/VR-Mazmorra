@@ -58,7 +58,6 @@ public sealed class MapGenerator {
             Debug.Log ("MapGenerator: setRoom: Tried to place a Room, but we have GridSpaces where it would land, ignoring");
             return;
         }
-        List<Vector2Int> entityPos = new List<Vector2Int>(r.getEntityMap ().Keys.Count);
         HashSet<string> stationaryEnts = MapLoader.getStationaryEntities ();
         HashSet<string> mobileEnts = MapLoader.getMobileEntities ();
 
@@ -142,6 +141,7 @@ public sealed class MapGenerator {
         if (newGS == null) {//if we're recursing, this will NEVER happen, since we check above.
             //no GS exists, make a new one.
             newGS = new GridSpace(new Vector2(x, y));
+            newGS.setGridSpaceType (gstype);
         }//now we will just edit the associated GridObjects for the GridSpace so we do not mess up any of it's associated parameters, just in case it has attached stationaryEntities or whatever
 
         //HERE COMES THE DAT AI
@@ -310,7 +310,7 @@ public sealed class MapGenerator {
                 Debug.LogError ("Error: too many MapGenerator GridSpace positions on the dance floor!");
                 return;
             }
-            current.setTile (MapLoader.getTileInstance (tileID), (GridSpace.GridPos)reggaeton);
+            current.setTile (MapLoader.getTileInstance (tileID, gstype), (GridSpace.GridPos)reggaeton);
             reggaeton++;
         }
         //if we have gstype of 0, just don't edit the gst (it stays the same)

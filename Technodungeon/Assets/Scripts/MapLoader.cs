@@ -36,6 +36,7 @@ public class MapLoader : MonoBehaviour
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
     private static List<Tile> tileTypes = new List<Tile>(20);
+    private static List<Tile> altTileTypes = new List<Tile>(20); //TODO: this really needs to be stored better.
     private static List<Room> roomTypes = new List<Room>();
     private static HashSet<string> stationaryEntitiesInPool = new HashSet<string>();
     private static HashSet<string> mobileEntitiesInPool = new HashSet<string>();
@@ -180,11 +181,11 @@ public class MapLoader : MonoBehaviour
 */
 
     //load tile prefabs in from the Resources folder and store them in our Prefab pool. This is ALWAYS used as Tiles are not procedurally generated.
-    public void loadTiles() {
+    public void loadTiles(List<Tile> tilePool, string path) {
         GameObject[] tilez = {};
         if (debugMode) Debug.Log ("MapLoader - Attempting to load Tile prefabs from Resources folder on disk...");
         try {
-            tilez = (GameObject[]) Resources.LoadAll<GameObject>("Prefabs/Tiles/SciFiTiles/");
+            tilez = (GameObject[]) Resources.LoadAll<GameObject>(path);
             Debug.Log ("MapLoader - Loaded "+tilez.Count()+" Tile Prefabs into prefab pool");
         }
         catch (Exception e)
@@ -200,7 +201,7 @@ public class MapLoader : MonoBehaviour
             //tile.transform.SetParent (prefabParent.transform);//TODO: the tiles can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
             Tile t = new Tile ((GridSpace)null);
             t.setGameObj (tile);
-            tileTypes.Add (t);
+            tilePool.Add (t);
             i++;
         }
 
@@ -541,12 +542,16 @@ public class MapLoader : MonoBehaviour
     }
 
     //gets a clone of a Tile in our tile pool
-    public static Tile getTileInstance(int id) {
+    public static Tile getTileInstance(int id, GridSpace.GridSpaceType tileBank) {
         if (id < 0 || id >= tileTypes.Count) {
             Debug.LogError ("MapLoader: getTileInstance: fed out of range id");
             return null;
         }
-        return new Tile(tileTypes [id]);
+        if (tileBank == GridSpace.GridSpaceType.Room) {
+            return new Tile (tileTypes [id]);
+        } else {
+            return new Tile (altTileTypes [id]);
+        }
     }
 
     public static Room getRoom(int id) {
@@ -600,6 +605,8 @@ public class MapLoader : MonoBehaviour
         mapPath = Application.dataPath + "/StreamingAssets/" + "map.txt";
         blocksPath = Application.dataPath + "/StreamingAssets/" + "blocks.txt";
         roomsPath = Application.dataPath + "/StreamingAssets/" + "rooms.xml";
+        string mainTilePath = "Prefabs/Tiles/SciFiTiles/";
+        string altTilePath =  "Prefabs/Tiles/BrickWallTiles/";
         gamePrefabs = new Dictionary<string, GameObject>();
         prefabParent = new GameObject ("Prefab Pool");
         prefabParent.transform.position = Block.DEFAULT_POSITION;
@@ -613,7 +620,8 @@ public class MapLoader : MonoBehaviour
             this.parseBlockMap ();
         }
 
-        this.loadTiles ();
+        this.loadTiles (tileTypes, mainTilePath);
+        this.loadTiles (altTileTypes, altTilePath);
 
         //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now
