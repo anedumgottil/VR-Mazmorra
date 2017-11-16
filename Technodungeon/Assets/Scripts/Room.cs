@@ -100,33 +100,22 @@ public class Room {
             return;
         }
 
-        List<Vector2Int> spaceMapKeys = new List<Vector2Int>(spaceMap.Keys);
-        List<Vector2Int> entityMapKeys = new List<Vector2Int>(entityMap.Keys);
-        //TODO: making a copy of these arrays is inefficient, but necessary to avoid out of sync errors with the for each loops... would be better to iterate using natural for loops, but Dictionary's dont use indices... :/
+        Dictionary<Vector2Int, int > newSpaceMap = new Dictionary<Vector2Int, int >(spaceMap.Count);
+        Dictionary<Vector2Int, KeyValuePair<string, Vector3> > newEntityMap = new Dictionary<Vector2Int, KeyValuePair<string, Vector3>>(entityMap.Count);
 
         //update the gridspaces
-        foreach (Vector2Int key in spaceMapKeys) {
-            int value;
-            if (!spaceMap.TryGetValue (key, out value)) {
-                Debug.LogError ("Room: translateMaps: couldn't get a value from the spacemap, this shouldn't be possible");
-                return;
-            }
-            spaceMap.Remove (key);
-            Vector2Int newVec = key + new Vector2Int (adjustX, adjustY);
-            spaceMap.Add (newVec, value);
+        foreach (var entry in spaceMap) {
+            Vector2Int newVec = entry.Key + new Vector2Int (adjustX, adjustY);
+            newSpaceMap.Add (newVec, entry.Value);
         }
 
         //update the entities
-        foreach (Vector2Int key in entityMapKeys) {
-            KeyValuePair<string, Vector3> value;
-            if (!entityMap.TryGetValue (key, out value)) {
-                Debug.LogError ("Room: translateMaps: couldn't get a value from the entitymap, this shouldn't be possible");
-                return;
-            }
-            entityMap.Remove (key);
-            Vector2Int newVec = key + new Vector2Int (adjustX, adjustY);
-            entityMap.Add (newVec, value);
+        foreach (var entry in entityMap) {
+            Vector2Int newVec = entry.Key + new Vector2Int (adjustX, adjustY);
+            newEntityMap.Add (newVec, entry.Value);
         }
+        spaceMap = newSpaceMap;
+        entityMap = newEntityMap;
         this.isTranslated = true;
     }
 
@@ -180,13 +169,13 @@ public class Room {
 
     //CENTERED ON ORIGIN
     //get a bounding box that will encompass this Room as it was specified in it's original gstype list (xml file, usually)
-    private RectInt getBounds() {
+    public RectInt getBounds() {
         return new RectInt (0, 0, width, height);
     }
 
     //NOT CENTERED ON ORIGIN
     //get a bounding box that will encompass this Room this origin-centered Room (room coordinates have been translated to origin)
-    private RectInt getBoundsRaw() {
+    public RectInt getBoundsRaw() {
         return new RectInt (lowX, lowY, width, height);
     }
 
@@ -200,6 +189,10 @@ public class Room {
     //return lowest most corner of bounding box in grid coordinate system, before they were translated to origin
     private Vector2Int getBoundsLowCoord() {
         return new Vector2Int (lowX, lowY);
+    }
+
+    public Vector2Int getSize() {
+        return new Vector2Int (width, height);
     }
 
     public string getName() {

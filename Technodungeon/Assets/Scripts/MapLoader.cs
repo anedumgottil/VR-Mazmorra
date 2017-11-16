@@ -492,6 +492,14 @@ public class MapLoader : MonoBehaviour
         return new Tile(tileTypes [id]);
     }
 
+    public static Room getRoom(int id) {
+        if (id < 0 || id >= roomTypes.Count) {
+            Debug.LogError ("MapLoader: getRoom: fed out of range id");
+            return null;
+        }
+        return roomTypes [id];
+    }
+
     //Add a GameObject to be used as a template in our object pool.... you should probably not use this unless you're generating the map, we want to keep this pool small.
     //note that even though this object might not actually be a prefab, once it's in the pool it'll be used like one - duplicated with Instantiate, and such. So we'll just call it a prefab.
     //if the pool already has one by the same name, nothing occurs.

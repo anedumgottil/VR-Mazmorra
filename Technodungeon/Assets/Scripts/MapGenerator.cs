@@ -52,6 +52,22 @@ public sealed class MapGenerator {
             11, 10, 15, 14} //15
     };
 
+    //applies a Room to the MapGrid
+    public void setRoom(Vector2Int position, Room r) {
+        if (MapGrid.getInstance ().isOccupied (position, position + r.getSize ())) {
+            Debug.Log ("MapGenerator: setRoom: Tried to place a Room, but we have GridSpaces where it would land, ignoring");
+            return;
+        }
+        Dictionary<Vector2Int, KeyValuePair<string, Vector3>>.KeyCollection entityPos = r.getEntityMap ().Keys;
+
+        foreach (var entry in r.getSpaceMap()) {
+            if (entry.Value == -1) {
+                //the Room doesn't care about the type of this tile, so just use our normal setGridSpace function.
+                setGridSpace (entry.Key.x+position.x, entry.Key.y+position.y, r.getType());
+            }
+        }
+    }
+
     //most important function:
     //NEVER pass a gstype of None=0 for the initial setGridSpace call, it's an undefined operation; None is used to specify the call is a child recursive setGridSpace call, and is only used internally. an improvement may be to allow it if we want to just update the tile based on it's neighbors, but we'd need to handle the null thing below
     public void setGridSpace(int x, int y, GridSpace.GridSpaceType gstype) {
@@ -312,6 +328,8 @@ public sealed class MapGenerator {
         setGridSpace (11, 4, (GridSpace.GridSpaceType.Corridor));
         setGridSpace (11, 3, (GridSpace.GridSpaceType.Corridor));
         setGridSpace (11, 2, (GridSpace.GridSpaceType.Corridor));
+
+        setRoom (new Vector2Int(12,12), MapLoader.getRoom (0));
 
         //move player to our map
         if (Player.getInstance () != null) {
