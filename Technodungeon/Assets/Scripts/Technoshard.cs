@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: set this to stationary...
-public class Technoshard : MobileEntity {
+public class Technoshard : StationaryEntity {
+
+    public Technoshard(GridSpace gs) : base(gs) {
+        //new Technoshard
+    }
 
     public void OnTriggerEnter(Collider other)
     {

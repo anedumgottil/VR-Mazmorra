@@ -203,6 +203,52 @@ public class MapLoader : MonoBehaviour
         }
 
     }
+
+    //load entity prefabs in from the Resources folder and store them in our Prefab pool.
+    public void loadStationaryEntities() {
+        GameObject[] ents = {};
+        if (debugMode) Debug.Log ("MapLoader - Attempting to load StationaryEntity prefabs from Resources folder on disk...");
+        try {
+            ents = (GameObject[]) Resources.LoadAll<GameObject>("Prefabs/Entities/Stationary/");
+            Debug.Log ("MapLoader - Loaded "+ents.Count()+" StationaryEntity Prefabs into prefab pool");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error: MapLoader - Loading StationaryEntity prefabs from Resources failed with the following exception: ");
+            Debug.LogError(e);
+        }
+        int i = 0;
+        foreach (GameObject ent in ents) {
+            if (debugMode) Debug.Log ("Got StationaryEntity["+i+"]: " + ent.name);
+            ent.SetActive (false);
+            addPrefab (ent.name, ent);
+            //ent.transform.SetParent (prefabParent.transform);//TODO: the ents can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
+            i++;
+        }
+    }
+
+    //load entity prefabs in from the Resources folder and store them in our Prefab pool.
+    public void loadMobileEntities() {
+        GameObject[] ents = {};
+        if (debugMode) Debug.Log ("MapLoader - Attempting to load MobileEntity prefabs from Resources folder on disk...");
+        try {
+            ents = (GameObject[]) Resources.LoadAll<GameObject>("Prefabs/Entities/Mobile/");
+            Debug.Log ("MapLoader - Loaded "+ents.Count()+" MobileEntity Prefabs into prefab pool");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error: MapLoader - Loading MobileEntities prefabs from Resources failed with the following exception: ");
+            Debug.LogError(e);
+        }
+        int i = 0;
+        foreach (GameObject ent in ents) {
+            if (debugMode) Debug.Log ("Got MobileEntity["+i+"]: " + ent.name);
+            ent.SetActive (false);
+            addPrefab (ent.name, ent);
+            //ent.transform.SetParent (prefabParent.transform);//TODO: the ents can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
+            i++;
+        }
+    }
         
     //This parses the block map file to load in the GridSpaces that will be stored in the MapGrid. It is ALWAYS used as it is meant to run the same regardless of platform.
     public void parseBlockMap() {
@@ -554,9 +600,12 @@ public class MapLoader : MonoBehaviour
         }
 
         this.loadTiles ();
-        //TODO: load in all prefabs using LoadAllResources... 
+
         //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now
+
+        this.loadStationaryEntities ();
+        this.loadMobileEntities ();
 
         this.parseRooms ();
 
