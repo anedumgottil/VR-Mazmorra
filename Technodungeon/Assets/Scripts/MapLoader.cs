@@ -22,8 +22,9 @@ public class MapLoader : MonoBehaviour
     public int SDKLoaderTimeout = 5;
     private VRTK_SDKManager VRTKSDKManager = null;
 
-    public string blocksPath;
-    public string mapPath;
+    private string blocksPath;
+    private string mapPath;
+    private string roomsPath;
 
     public bool generatePrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
     public bool generateGridFromFile = true; //places the MapGrid Tile prefabs on the grid according to the map file (kind of buggy, difficult to create a map layout in the text file right now)
@@ -33,7 +34,8 @@ public class MapLoader : MonoBehaviour
     //blockTypes is not populated when we don't use the automatic generator
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
-    private static List<Tile> tileTypes = new List<Tile>();
+    private static List<Tile> tileTypes = new List<Tile>(20);
+    private static List<Room> roomTypes = new List<Room>();
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
 
@@ -308,6 +310,147 @@ public class MapLoader : MonoBehaviour
         }
     }
 
+    //loads gridspace configurations from room file into a Room object and stores them in the Room pool
+    public void parseRooms() {
+        //load the rooms flatfile from Resources
+        XmlReader xmlr = null;
+        int count = 0;
+        try {
+            xmlr = XmlReader.Create (roomsPath);
+            if (xmlr == null) {
+                return;
+            }
+        } catch (Exception ex) {
+            if (ex.GetType ().IsAssignableFrom (typeof(System.ArgumentNullException))) {
+                Debug.LogWarning ("MapLoader: Received a null room path argument, not parsing rooms!");
+                return;
+            } else if (ex.GetType ().IsAssignableFrom (typeof(System.IO.FileNotFoundException))) {
+                Debug.LogError ("MapLoader: Couldn't find Rooms at path (" + roomsPath + "). Not parsing rooms!");
+                return;
+            }
+        }
+        Room current = null;
+        while (xmlr.Read ()) {
+            //begin parse
+            if (xmlr.IsStartElement ()) {
+                switch (xmlr.Name) {
+                case "room":
+                    //we found an opening room tag.
+                    if (current != null) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an opening Room Tag when we haven't finished the one we're currently working on.");
+                        return;
+                    }
+                    //Try to parse the attributes
+                    int type = -1;
+                    if (!int.TryParse (xmlr ["type"],out type) || type < 0) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Room attribute [type]");
+                        return;
+                    }
+                    current = new Room ((GridSpace.GridSpaceType) type, xmlr ["name"]);
+                    Debug.Log ("starting a new Room block with name: '" + xmlr ["name"] + "' and type: '" + xmlr ["type"] + "'");
+                    break;
+                case "gridspace":
+                    //we found a gridspace element, these are start elements that are empty, and have attributes specifying coordinates and grid type
+                    if (current == null) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an opening Gridspace Tag when we haven't started a block yet.");
+                        return;
+                    }
+                    //Try to parse the attributes
+                    int x = -1;
+                    int y = -1;
+                    int config = -1;
+                    if (!int.TryParse (xmlr ["x"],out x)) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [x]");
+                        return;
+                    }
+                    if (!int.TryParse (xmlr ["y"],out y)) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [y]");
+                        return;
+                    }
+                    if (!int.TryParse (xmlr ["config"],out config) || config < 0) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an invalid Gridspace attribute [config]");
+                        return;
+                    }
+                    Debug.Log ("--- found a gridspace element: (" + xmlr ["x"] + ", " + xmlr ["y"] + ") and config: '" + xmlr ["config"] + "'");
+                    current.registerSpace (new Vector2Int (x, y), config);
+                    break;
+                case "entities":
+                    //we found an entities tag, this one actually has children tags that contain names of entities to spawn in at Vector3's locally offset from the GridSpace coordinate provided
+                    //if the person specifies an entity at a coordinate that doesn't have a GridSpace specified yet, the MapGenerator will just toss it out when generating a room, so it's not necessary to check it
+                    if (current == null) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found an opening Entities Tag when we haven't started a block yet.");
+                        return;
+                    }
+                    Debug.Log ("--- found an entities element, beginning to process entities for GridSpace: ");
+                    //parse entities list
+                    if (xmlr.ReadToDescendant ("entity")) {
+                        do {
+                            Debug.Log ("------ found an entity element: (" + xmlr.GetAttribute ("x") + ", " + xmlr.GetAttribute ("y") + ") and name: '" + xmlr.GetAttribute ("name") + " with offset (" + xmlr.GetAttribute ("offsetx") + ", " + xmlr.GetAttribute ("offsety") + ", " + xmlr.GetAttribute ("offsetz") + ")");
+                            //Try to parse the attributes
+                            x = -1;
+                            y = -1;
+                            float offsetX = -1f;
+                            float offsetY = -1f;
+                            float offsetZ = -1f;
+                            if (!int.TryParse (xmlr.GetAttribute ("x"),out x)) {
+                                Debug.LogError ("MapLoader: ParseRooms: Found an invalid Entity attribute [x]");
+                                return;
+                            }
+                            if (!int.TryParse (xmlr.GetAttribute ("y"),out y)) {
+                                Debug.LogError ("MapLoader: ParseRooms: Found an invalid Entity attribute [y]");
+                                return;
+                            }
+                            if (!float.TryParse (xmlr.GetAttribute ("offsetx"),out offsetX)) {
+                                Debug.LogError ("MapLoader: ParseRooms: Found an invalid Entity attribute [offsetx]");
+                                return;
+                            }
+                            if (!float.TryParse (xmlr.GetAttribute ("offsety"),out offsetY)) {
+                                Debug.LogError ("MapLoader: ParseRooms: Found an invalid Entity attribute [offsety]");
+                                return;
+                            }
+                            if (!float.TryParse (xmlr.GetAttribute ("offsetz"),out offsetZ)) {
+                                Debug.LogError ("MapLoader: ParseRooms: Found an invalid Entity attribute [offsetz]");
+                                return;
+                            }
+                            current.registerEntity (new Vector2Int (x, y), xmlr.GetAttribute ("name"), new Vector3 (offsetX, offsetY, offsetZ));
+                        } while (xmlr.ReadToNextSibling ("entity"));
+                    }
+                    Debug.Log ("--- ran out of entities to process, moving on... ");
+                    break;
+                default:
+                    Debug.LogWarning ("MapLoader: ParseRooms: Found an unknown element in the Room XML file.");
+                    break;
+                }//end startelem test
+
+            } else if (!xmlr.IsStartElement ()) {
+                switch (xmlr.Name) {
+                case "entities":
+                    //closing entities tag
+                    Debug.Log ("--- </entities> ");
+                    break;
+                case "room":
+                    //closing room block, we're done
+                    if (current == null) {
+                        Debug.LogError ("MapLoader: ParseRooms: Found a closing Room Tag when we haven't even started one.");
+                        return;
+                    }
+                    //don't forget to correctly translate the roomType so we run the helper function
+                    current.translateSpaceMapToOrigin();
+                    roomTypes.Add (current);
+                    Debug.Log ("ending Room Block with name: " + current.getName() + "' and type: '" + current.getType() + "'");
+                    count++;
+                    current = null;
+                    break;
+                default:
+                    Debug.LogWarning ("MapLoader: ParseRooms: Found an unknown closing tag in the Room XML file.");
+                    break;
+                }//end !startelem test
+
+            }//end while
+        }//end read
+        Debug.Log("MapLoader: ParseRooms: finished parsing "+count+" Room types.");
+    }
+
     //prefab accessor. gets prefab if it exists, returns null if it doesn't. If it doesn't exist it also emits a warning message to Debug.
     //Does not clone the prefab with Instantiate. <---------- IMPORTANT! you should probably be using getPrefabInstance because of this. 
     public static GameObject getPrefab(string name) {
@@ -376,6 +519,7 @@ public class MapLoader : MonoBehaviour
     void Start() {
         mapPath = Application.dataPath + "/StreamingAssets/" + "map.txt";
         blocksPath = Application.dataPath + "/StreamingAssets/" + "blocks.txt";
+        roomsPath = Application.dataPath + "/StreamingAssets/" + "rooms.xml";
         gamePrefabs = new Dictionary<string, GameObject>();
         prefabParent = new GameObject ("Prefab Pool");
         prefabParent.transform.position = Block.DEFAULT_POSITION;
@@ -393,6 +537,8 @@ public class MapLoader : MonoBehaviour
         //TODO: load in all prefabs using LoadAllResources... 
         //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now
+
+        this.parseRooms ();
 
         mapResourcesLoadComplete = true;
 

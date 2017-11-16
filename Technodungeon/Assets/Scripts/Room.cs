@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //a collection of GridSpaces, used to define areas of the map that are contiguous
+//doesn't actually store GridSpaces, it stores a collection of GridCoordinate and GridSpaceConfiguration index pairs, for memory efficiency
 public class Room {
 
     private GridSpace.GridSpaceType gridSpaceType = GridSpace.GridSpaceType.None;//set to none for now
     private Dictionary<Vector2Int, int > spaceMap;//collection of 2D Grid Coordinates and GridSpace types
+    private Dictionary<Vector2Int, KeyValuePair<string, Vector3> > entityMap;//collection of Entity names with local offset Unity coordinates attached to a GridSpace coordinate to attach them to
     //we need to specify a bounding box so we know how much to translate the gridspacecoords to be ready to import if the user specifies weird coordinates.
     private int lowX = -1;
     private int lowY = -1;
@@ -14,15 +16,31 @@ public class Room {
     private int highX = -1;
     private int height = 0;
     private int width = 0;
+    private string name = "default";
     private bool isTranslated = false;
+
+    public Room(string name) {
+        this.name = name;
+        spaceMap = new Dictionary<Vector2Int, int> (2);
+        entityMap = new Dictionary<Vector2Int, KeyValuePair<string, Vector3>>();
+    }
+
+    public Room(GridSpace.GridSpaceType gstype, string name) {
+        gridSpaceType = gstype;
+        this.name = name;
+        spaceMap = new Dictionary<Vector2Int, int> (2);
+        entityMap = new Dictionary<Vector2Int, KeyValuePair<string, Vector3>>();
+    }
 
     public Room(GridSpace.GridSpaceType gstype) {
         gridSpaceType = gstype;
         spaceMap = new Dictionary<Vector2Int, int> (2);
+        entityMap = new Dictionary<Vector2Int, KeyValuePair<string, Vector3>>();
     }
 
     public Room() {
         spaceMap = new Dictionary<Vector2Int, int> (2);
+        entityMap = new Dictionary<Vector2Int, KeyValuePair<string, Vector3>>();
     }
 
     //registers a coordinate-config pair to this Room
@@ -56,9 +74,19 @@ public class Room {
         return true;
     }
 
+    //registers an Entity to spawn to this Room, with a GridSpace coord to assign it to, a name to search for, and an offset to specify it's local position relative to the GridSpace origin.
+    public bool registerEntity(Vector2Int gridCoord, string name, Vector3 localPos) {
+        if (name.Trim ().Equals ("")) {
+            Debug.LogWarning ("Room: Tried to register an Entity that didn't have a name");
+            return false;
+        }
+        entityMap.Add (gridCoord, new KeyValuePair<string, Vector3>(name.Trim (), localPos));
+        return true;
+    }
+
     //translates all the coordinates so that none of them are negative, i.e., the Room will have it's lowest coordinate at (0,0)
     //similar to normalization of the coordinate vectors
-    private void translateSpaceMapToOrigin() {
+    public void translateSpaceMapToOrigin() {
         if (isTranslated) {
             Debug.LogWarning ("Room: Translating room twice, this will lead to incorrect translations - cowardly refusing");
             return;
@@ -114,6 +142,15 @@ public class Room {
         return spaceMap;
     }
 
+    //returns a list of Grid Coordinates connected to Entity names and local positional offsets
+    public Dictionary<Vector2Int, KeyValuePair<string, Vector3>> getEntityMap() {
+        if (!isTranslated) {
+            Debug.LogError ("Room: Tried to get a map of Entities before they were properly translated");
+            return null;
+        }
+        return entityMap;
+    }
+
     //remove all GS's from this room. 
     public void clearSpaces() {
         spaceMap.Clear ();
@@ -141,6 +178,14 @@ public class Room {
     //return lowest most corner of bounding box in grid coordinate system, before they were translated to origin
     private Vector2Int getBoundsLowCoord() {
         return new Vector2Int (lowX, lowY);
+    }
+
+    public string getName() {
+        return name;
+    }
+
+    public void setName(string name) {
+        this.name = name;
     }
 
     //set the GridSpaceType
