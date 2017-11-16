@@ -10,6 +10,8 @@ public class Drone : MobileEntity {
     //private NavMeshAgent agent;
     // Use this for initialization
 
+    public float inspectTime = 0.5f;
+
     NavMeshAgent navMeshAgent;
     NavMeshPath path;
     public float timeForNewPath;
@@ -48,7 +50,7 @@ public class Drone : MobileEntity {
 
         while (!validPath)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(inspectTime);
             GetNewPath();
             validPath = navMeshAgent.CalculatePath(target, path);
         }
