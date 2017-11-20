@@ -47,9 +47,14 @@ public class TilePrefabGenerator {
     //Types currently available (and these are how these objects should be labeled in the prefab, or this class will throw errors) are:
     // -Ceiling, -Floor, -Wall S, -Wall E, -Wall N, -Wall W
     //but this function will try to remove whatever type name you give it
-    private static bool removeType(GameObject fabCopy, string tilename, string type) {
+    private static bool removeType(GameObject fabCopy, string type) {
         //remove type of wall/ceiling/floor from object:
-        Transform childTransform = fabCopy.transform.Find (tilename + "-" + type);
+        Transform childTransform = fabCopy.transform.Find (type);
+        /*if (DEBUG) {
+            foreach (Transform c in fabCopy.transform) {
+                Debug.Log ("Found Child: " + c.gameObject.name);
+            }
+        }*/
         if (childTransform != null) {
             GameObject child = childTransform.gameObject;
             if (DEBUG) {Debug.Log("PrefabGenerator: Removing child type "+child.name);}
@@ -57,7 +62,7 @@ public class TilePrefabGenerator {
             return true;
         } else {
             Debug.Log (fabCopy.ToString ());
-            Debug.LogWarning ("PrefabGenerator: removeType: Tried to remove type from GameObject but could not find type ("+ tilename +"-" + type + ") in the given child heirarchy");
+            Debug.LogWarning ("PrefabGenerator: removeType: Tried to remove type from GameObject but could not find type (" + type + ") in the given child heirarchy");
             return false;
         }
     }
@@ -83,203 +88,203 @@ public class TilePrefabGenerator {
 
         case 1://Nothing
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 2://Floor
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 3://Floor West Wall
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 4://Floor East Wall
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 5://Floor South Wall
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 6://Floor North Wall
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 7://Ceiling
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 8://Ceiling West Wall
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 9://Ceiling East Wall
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 10://Ceiling South Wall
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 11://Ceiling North Wall
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 12://Ceiling West/South Corner
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 13://Ceiling West/North Corner
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 14://Ceiling East/South Corner
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 15://Ceiling East/North Corner
             //remove floor from object:
-            if (!removeType(temp, tilename, "Floor")) {break;}
+            if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 16://Floor West/South Corner
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 17://Floor West/North Corner
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
-            if (!removeType(temp, tilename, "Wall E")) {break;}
+            if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
         case 18://Floor East/South Corner
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
-            if (!removeType(temp, tilename, "Wall N")) {break;}
+            if (!removeType(temp, "Wall N")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         case 19://Floor East/North Corner
             //remove ceiling from object:
-            if (!removeType(temp, tilename, "Ceiling")) {break;}
+            if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
-            if (!removeType(temp, tilename, "Wall S")) {break;}
+            if (!removeType(temp, "Wall S")) {break;}
             //remove West Wall from object:
-            if (!removeType(temp, tilename, "Wall W")) {break;}
+            if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
         default://not found
