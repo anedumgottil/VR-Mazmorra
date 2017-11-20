@@ -13,20 +13,13 @@ public class TilePrefabGenerator {
     // into a large number of subsidiary child prefabs (ones with less walls/floors/ceilings and etc., according to the GridObject configuration key flatfile in the Resources folder)
     // I've invented this because updating all of our scenery prefabs is a huge pain to do whenever we want to simply modify a collider or something.
     // Using this - assuming the generation is turned on in the MapLoader and you're in the editor - will greatly simplify scenery creation and make it modular like we set out to do.
-    private Tile parentTile;
-    private GameObject parentPrefab;
+    private GameObject parentFloorPrefab;
+    private GameObject parentCeilingPrefab;
     private string tileName;
 
-    //Note: this class must never modify the parentTile or parentTilePrefab given, since they are parent prefabs in our object pool, and are supposed to be immutable
-    public TilePrefabGenerator(Tile parentTile, string tileName) {
-        this.parentTile = parentTile;
-        this.parentPrefab = parentTile.getGameObj();
-        this.tileName = tileName;
-    }
-
-    public TilePrefabGenerator(GameObject parentTilePrefab, string tileName) {
-        this.parentTile = null;
-        this.parentPrefab = parentTilePrefab;
+    public TilePrefabGenerator(GameObject parentTileFloorPrefab, GameObject parentTileCeilingPrefab, string tileName) {
+        this.parentFloorPrefab = parentTileFloorPrefab;
+        this.parentCeilingPrefab = parentTileCeilingPrefab;
         this.tileName = tileName;
     }
 
@@ -39,7 +32,7 @@ public class TilePrefabGenerator {
         }
         for (int i = indexMin; i < indexMax; i++) {
             Debug.Log ("Generating Prefab Index " + i.ToString ("D2") + " at path \"" + path+"\"...");
-            generatePrefab (parentPrefab, i, path, tileName, shouldOverwrite);
+            generatePrefab (parentFloorPrefab, parentCeilingPrefab, i, path, tileName, shouldOverwrite);
         }
         Debug.Log ("Finished Generating Prefabs for " + tileName + ".\t--------------");
     }
@@ -56,14 +49,34 @@ public class TilePrefabGenerator {
             }
         }*/
         if (childTransform != null) {
+            childTransform.parent = null;
             GameObject child = childTransform.gameObject;
             if (DEBUG) {Debug.Log("PrefabGenerator: Removing child type "+child.name);}
             GameObject.Destroy (child);
             return true;
         } else {
-            Debug.Log (fabCopy.ToString ());
             Debug.LogWarning ("PrefabGenerator: removeType: Tried to remove type from GameObject but could not find type (" + type + ") in the given child heirarchy");
             return false;
+        }
+    }
+
+    private static void generatePrefab(GameObject parentFloorFab, GameObject parentCeilingFab, int gridObjectID, string path, string tilename, bool shouldOverwrite) {
+        if (gridObjectID >= 0 && gridObjectID <= 1) {
+            //if it's tile zero or one, we do not need to generate a prefab from it, it already exists to create this TilePrefabGenerator.
+            //remember that one can simply be a copy of zero, and all of this is for naught, but we aren't going to bother checking for that case since the outcome will be the same anyways.
+            return;
+        } else if (gridObjectID > 1 && gridObjectID <= 6) {
+            //2 - 6? use the floor prefab. we don't want the wall tiling on double-high's to be messed up if we use the ceiling one.
+            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
+        } else if (gridObjectID > 6 && gridObjectID <= 15) {
+            //7- 15, we have a ceiling tile.
+            generatePrefab (parentCeilingFab, gridObjectID, path, tilename, shouldOverwrite);
+        } else if (gridObjectID > 15 && gridObjectID <= 19) {
+            //16-19 we have a floor tile again.
+            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
+        } else {
+            Debug.LogWarning ("TilePrefabGenerator: generatePrefab: passed unknown gridObjectID number, not sure if it's a ceiling or floor-walled tile, assuming floor");
+            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
         }
     }
 
@@ -81,25 +94,15 @@ public class TilePrefabGenerator {
         GameObject temp = (GameObject)GameObject.Instantiate (parentFab); 
         bool removalSuccess = false;
         switch (gridObjectID) {
-        case 0://Full
+        case 0://Master Tile with floor-type walls
             GameObject.Destroy (temp);
             return;
             //if it's tile zero, we do not need to generate a prefab from it, it already exists to create this TilePrefabGenerator.
 
-        case 1://Nothing
-            //remove ceiling from object:
-            if (!removeType(temp, "Ceiling")) {break;}
-            //remove floor from object:
-            if (!removeType(temp, "Floor")) {break;}
-            //remove South Wall from object:
-            if (!removeType(temp, "Wall S")) {break;}
-            //remove North Wall from object:
-            if (!removeType(temp, "Wall N")) {break;}
-            //remove East Wall from object:
-            if (!removeType(temp, "Wall E")) {break;}
-            //remove West Wall from object:
-            if (!removeType(temp, "Wall W")) {break;}
-           removalSuccess = true; break;
+        case 1://Master Tile with ceiling-type walls
+            GameObject.Destroy (temp);
+            return;
+            //same as above
 
         case 2://Floor
             //remove ceiling from object:
@@ -295,7 +298,7 @@ public class TilePrefabGenerator {
 
         #if UNITY_EDITOR
         if (removalSuccess) {
-            PrefabUtility.CreatePrefab (path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab", temp);
+            PrefabUtility.CreatePrefab ("Assets/Resources/"+path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab", temp);
             if (DEBUG) {Debug.Log("TilePrefabGenerator: Generated " + path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab");}
         }
         #else
