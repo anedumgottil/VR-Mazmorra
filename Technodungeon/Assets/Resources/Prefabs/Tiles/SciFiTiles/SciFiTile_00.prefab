@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4941455576705254}
   m_Layer: 8
-  m_Name: SciFi-Wall N
+  m_Name: Wall N
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4468450088103436}
   - component: {fileID: 114075953593647348}
   m_Layer: 8
-  m_Name: SciFi-Ceiling
+  m_Name: Ceiling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4361660829314172}
   m_Layer: 8
-  m_Name: SciFi-Wall W
+  m_Name: Wall W
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,7 +99,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4867123570560654}
   m_Layer: 8
-  m_Name: SciFi-Wall E
+  m_Name: Wall E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,7 +151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4712876395946742}
   m_Layer: 8
-  m_Name: SciFi-Wall S
+  m_Name: Wall S
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,7 +184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4638213793986152}
   m_Layer: 8
-  m_Name: SciFi-Floor
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -233,7 +233,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1460407844713468}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.820314, y: 8.328655, z: -0.39668083}
+  m_LocalPosition: {x: 23.621029, y: 5.643358, z: 2.3804758}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4468450088103436}
