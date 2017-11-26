@@ -74,6 +74,9 @@ public class TilePrefabGenerator {
         } else if (gridObjectID > 15 && gridObjectID <= 19) {
             //16-19 we have a floor tile again.
             generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
+        } else if (gridObjectID > 19 && gridObjectID <= 28) {
+            //20-28 we have the half-sized tiles, always will exist on floor (we'll never have a floating room or "second floor")
+            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
         } else {
             Debug.LogWarning ("TilePrefabGenerator: generatePrefab: passed unknown gridObjectID number, not sure if it's a ceiling or floor-walled tile, assuming floor");
             generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
@@ -289,6 +292,81 @@ public class TilePrefabGenerator {
             //remove West Wall from object:
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
+
+        case 20://Floor and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
+
+        case 21://Floor West Wall and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            removalSuccess = true; break;
+
+        case 22://Floor East Wall and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
+
+        case 23://Floor South Wall and Ceiling
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
+
+        case 24://Floor North Wall and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
+
+        case 25://Floor West/South Corner and Ceiling
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            removalSuccess = true; break;
+
+        case 26://Floor West/North Corner and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove East Wall from object:
+            if (!removeType(temp, "Wall E")) {break;}
+            removalSuccess = true; break;
+
+        case 27://Floor East/South Corner and Ceiling
+            //remove North Wall from object:
+            if (!removeType(temp, "Wall N")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
+
+        case 28://Floor East/North Corner and Ceiling
+            //remove South Wall from object:
+            if (!removeType(temp, "Wall S")) {break;}
+            //remove West Wall from object:
+            if (!removeType(temp, "Wall W")) {break;}
+            removalSuccess = true; break;
 
         default://not found
             Debug.LogError ("PrefabGenerator: gridObjectID given not specified in possible gridObjectID list");
