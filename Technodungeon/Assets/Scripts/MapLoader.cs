@@ -594,7 +594,6 @@ public class MapLoader : MonoBehaviour
             return null;
         }
         Room temp = roomTypes [id];
-        temp.translateMapsToOrigin ();//TODO: remove this, and figure out why they're not being translated automatically!!!
         return temp;
     }
 

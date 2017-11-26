@@ -88,7 +88,6 @@ public class Room {
     //similar to normalization of the coordinate vectors
     public void translateMapsToOrigin() {
         if (isTranslated) {
-            Debug.LogWarning ("Room: Translating room twice, this will lead to incorrect translations - cowardly refusing");
             return;
         }
 
