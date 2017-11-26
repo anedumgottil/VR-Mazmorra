@@ -63,8 +63,8 @@ public class GridSpace {
         offset.x += this.worldPosition.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
         offset.z += this.worldPosition.y;
-        if (offset.x > MapGrid.getInstance().xDimension || offset.z > MapGrid.getInstance().yDimension) {
-            //Debug.LogWarning ("Error: setBlock() generated out of bounds range offset");
+        if (offset.x > (MapGrid.getInstance().xDimension * 2)+MapGrid.getSize() || offset.z > (MapGrid.getInstance().yDimension*2)+MapGrid.getSize()) {
+            Debug.LogWarning ("Error: setBlock() generated out of bounds range offset - pos: "+offset.ToString());
             //return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
         obj.setPosition (offset);//set offset
@@ -91,8 +91,8 @@ public class GridSpace {
         offset.x += this.worldPosition.x;
         //it's weird, but we want the x and y dimensions of our grid to be laid over the x and z dimensions in Unity.
         offset.z += this.worldPosition.y;
-        if (offset.x > MapGrid.getInstance().xDimension || offset.z > MapGrid.getInstance().yDimension) {
-            //Debug.LogWarning ("Error: setTile() generated out of bounds range offset");
+        if (offset.x > (MapGrid.getInstance().xDimension * 2)+MapGrid.getSize() || offset.z > (MapGrid.getInstance().yDimension*2)+MapGrid.getSize()) {
+            Debug.LogWarning ("Error: setTile() generated out of bounds range offset - pos: "+offset.ToString());
             //return;//apparently sometimes we get out of bounds ranges for setBlock?
         }
         obj.setPosition (offset);//set offset
