@@ -230,7 +230,7 @@ public class MapLoader : MonoBehaviour
                 if (debugMode)
                     Debug.Log ("MapLoader: LoadTiles: generating new prefabs for Master Parent Prefab \"" + masterParentFloorPrefab.name + "\":");
                 TilePrefabGenerator tfg = new TilePrefabGenerator (masterParentFloorPrefab, masterParentCeilingPrefab, masterParentFloorPrefab.name.Substring (0, masterParentFloorPrefab.name.Length - 3));//takes name like "SciFiTiles_00" and makes it "SciFiTiles", see why naming convention is so important for Tiles?
-                tfg.generatePrefabs (0, 20, path, overwritePrefabsDuringGeneration);
+                tfg.generatePrefabs (0, 29, path, overwritePrefabsDuringGeneration);
                 Debug.LogWarning ("MapLoader: LoadTiles: Tile Prefabs Overwritten! You'll need to restart the game in order to load the new ones in.");
             }
         }
