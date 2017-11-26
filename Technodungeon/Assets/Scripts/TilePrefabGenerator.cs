@@ -298,6 +298,7 @@ public class TilePrefabGenerator {
 
         #if UNITY_EDITOR
         if (removalSuccess) {
+            temp.SetActive (true);
             PrefabUtility.CreatePrefab ("Assets/Resources/"+path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab", temp);
             if (DEBUG) {Debug.Log("TilePrefabGenerator: Generated " + path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab");}
         }
