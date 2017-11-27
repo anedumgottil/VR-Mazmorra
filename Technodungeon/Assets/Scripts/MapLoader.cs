@@ -356,7 +356,7 @@ public class MapLoader : MonoBehaviour
                 Debug.LogWarning ("MapLoader: Received a null tileConfigsPath path argument, not parsing tile configs!");
                 return;
             } else if (ex.GetType ().IsAssignableFrom (typeof(System.IO.FileNotFoundException))) {
-                Debug.LogError ("MapLoader: Couldn't find tileConfigs at path (" + roomsPath + "). Not parsing rooms!");
+                Debug.LogError ("MapLoader: Couldn't find tileConfigs at path (" + roomsPath + "). Not parsing tileConfigs or rooms!");
                 return;
             }
         }
