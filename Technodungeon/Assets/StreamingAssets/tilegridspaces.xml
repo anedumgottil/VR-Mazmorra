@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify here collections of Tile GridSpace IDs which will be used to build the GridSpaceConfigurations for Tiles used in Room generation -->
+<!-- Each gridobject ID should be specified as it's own element, in standard order of the GridPos enum specified inside the GridSpace class as well as map.key.txt -->
+
+<tileconfigs>
+<config id="0" name="Double All Walls">	
+	<gridobject id="17" />
+	<gridobject id="16" />
+	<gridobject id="19" />
+	<gridobject id="18" />
+	<gridobject id="13" />
+	<gridobject id="12" />
+	<gridobject id="15" />
+	<gridobject id="14" />
+</config>
+<config id="1" name="Double No Walls">	
+	<gridobject id="2" />
+	<gridobject id="2" />
+	<gridobject id="2" />
+	<gridobject id="2" />
+	<gridobject id="7" />
+	<gridobject id="7" />
+	<gridobject id="7" />
+	<gridobject id="7" />
+</config>
+<config id="2" name="Double South Wall">	
+	<gridobject id="2" />
+	<gridobject id="5" />
+	<gridobject id="2" />
+	<gridobject id="5" />
+	<gridobject id="7" />
+	<gridobject id="10" />
+	<gridobject id="7" />
+	<gridobject id="10" />
+</config>
+<config id="3" name="Double North Wall">	
+	<gridobject id="6" />
+	<gridobject id="2" />
+	<gridobject id="6" />
+	<gridobject id="2" />
+	<gridobject id="11" />
+	<gridobject id="7" />
+	<gridobject id="11" />
+	<gridobject id="7" />
+</config>
+<config id="4" name="Double East Wall">	
+	<gridobject id="2" />
+	<gridobject id="2" />
+	<gridobject id="4" />
+	<gridobject id="4" />
+	<gridobject id="7" />
+	<gridobject id="7" />
+	<gridobject id="9" />
+	<gridobject id="9" />
+</config>
+<config id="5" name="Double West Wall">	
+	<gridobject id="3" />
+	<gridobject id="3" />
+	<gridobject id="2" />
+	<gridobject id="2" />
+	<gridobject id="8" />
+	<gridobject id="8" />
+	<gridobject id="7" />
+	<gridobject id="7" />
+</config>
+<config id="6" name="Double N-S Tube">	
+	<gridobject id="3" />
+	<gridobject id="3" />
+	<gridobject id="4" />
+	<gridobject id="4" />
+	<gridobject id="8" />
+	<gridobject id="8" />
+	<gridobject id="9" />
+	<gridobject id="9" />
+</config>
+<config id="7" name="Double E-W Tube">	
+	<gridobject id="6" />
+	<gridobject id="5" />
+	<gridobject id="6" />
+	<gridobject id="5" />
+	<gridobject id="11" />
+	<gridobject id="10" />
+	<gridobject id="11" />
+	<gridobject id="10" />
+</config>
+<config id="8" name="Double NW Corner">	
+	<gridobject id="17" />
+	<gridobject id="3" />
+	<gridobject id="6" />
+	<gridobject id="2" />
+	<gridobject id="13" />
+	<gridobject id="8" />
+	<gridobject id="11" />
+	<gridobject id="7" />
+</config>
+<config id="9" name="Double NE Corner">	
+	<gridobject id="6" />
+	<gridobject id="2" />
+	<gridobject id="19" />
+	<gridobject id="4" />
+	<gridobject id="11" />
+	<gridobject id="7" />
+	<gridobject id="15" />
+	<gridobject id="9" />
+</config>
+<config id="10" name="Double SW Corner">	
+	<gridobject id="3" />
+	<gridobject id="16" />
+	<gridobject id="2" />
+	<gridobject id="5" />
+	<gridobject id="8" />
+	<gridobject id="12" />
+	<gridobject id="7" />
+	<gridobject id="10" />
+</config>
+<config id="11" name="Double SE Corner">	
+	<gridobject id="2" />
+	<gridobject id="5" />
+	<gridobject id="4" />
+	<gridobject id="18" />
+	<gridobject id="7" />
+	<gridobject id="10" />
+	<gridobject id="9" />
+	<gridobject id="14" />
+</config>
+<config id="12" name="SEW Deadend">	<!-- looks like: U -->
+	<gridobject id="3" />
+	<gridobject id="16" />
+	<gridobject id="4" />
+	<gridobject id="18" />
+	<gridobject id="8" />
+	<gridobject id="12" />
+	<gridobject id="9" />
+	<gridobject id="14" />
+</config>
+<config id="13" name="SWN Deadend">	<!-- looks like: U -->
+	<gridobject id="17" />
+	<gridobject id="16" />
+	<gridobject id="6" />
+	<gridobject id="5" />
+	<gridobject id="13" />
+	<gridobject id="12" />
+	<gridobject id="11" />
+	<gridobject id="10" />
+</config>
+<config id="14" name="NEW Deadend">	<!-- looks like: U -->
+	<gridobject id="17" />
+	<gridobject id="3" />
+	<gridobject id="19" />
+	<gridobject id="4" />
+	<gridobject id="13" />
+	<gridobject id="8" />
+	<gridobject id="15" />
+	<gridobject id="9" />
+</config>
+</tileconfigs>
