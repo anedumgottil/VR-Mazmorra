@@ -2,7 +2,11 @@
 <!-- Specify here collections of Tile GridSpace IDs which will be used to build the GridSpaceConfigurations for Tiles used in Room generation -->
 <!-- Each gridobject ID should be specified as it's own element, in standard order of the GridPos enum specified inside the GridSpace class as well as map.key.txt -->
 
+<!-- Standard GridObject orientation: GridPos : byte {LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7} -->
+
 <tileconfigs>
+
+<!-- Double-Height Tiles -->
 <config id="0" name="Double All Walls">	
 	<gridobject id="17" />
 	<gridobject id="16" />
@@ -123,7 +127,7 @@
 	<gridobject id="9" />
 	<gridobject id="14" />
 </config>
-<config id="12" name="SEW Deadend">	<!-- looks like: U -->
+<config id="12" name="Double SEW Deadend">	<!-- looks like: U -->
 	<gridobject id="3" />
 	<gridobject id="16" />
 	<gridobject id="4" />
@@ -133,7 +137,7 @@
 	<gridobject id="9" />
 	<gridobject id="14" />
 </config>
-<config id="13" name="SWN Deadend">	<!-- looks like: U -->
+<config id="13" name="Double SWN Deadend">	<!-- looks like: C -->
 	<gridobject id="17" />
 	<gridobject id="16" />
 	<gridobject id="6" />
@@ -143,7 +147,7 @@
 	<gridobject id="11" />
 	<gridobject id="10" />
 </config>
-<config id="14" name="NEW Deadend">	<!-- looks like: U -->
+<config id="14" name="Double NEW Deadend">	<!-- looks like: upside-down U -->
 	<gridobject id="17" />
 	<gridobject id="3" />
 	<gridobject id="19" />
@@ -153,4 +157,177 @@
 	<gridobject id="15" />
 	<gridobject id="9" />
 </config>
+<config id="15" name="Double NES Deadend">	<!-- looks like: backwards U -->
+	<gridobject id="6" />
+	<gridobject id="5" />
+	<gridobject id="19" />
+	<gridobject id="18" />
+	<gridobject id="11" />
+	<gridobject id="10" />
+	<gridobject id="15" />
+	<gridobject id="14" />
+</config>
+
+<!-- Single-Height Tiles -->
+<config id="16" name="Single All Walls">	
+	<gridobject id="26" />
+	<gridobject id="25" />
+	<gridobject id="28" />
+	<gridobject id="27" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="17" name="Single No Walls">	
+	<gridobject id="20" />
+	<gridobject id="20" />
+	<gridobject id="20" />
+	<gridobject id="20" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="18" name="Single South Wall">	
+	<gridobject id="20" />
+	<gridobject id="23" />
+	<gridobject id="20" />
+	<gridobject id="23" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="19" name="Single North Wall">	
+	<gridobject id="24" />
+	<gridobject id="20" />
+	<gridobject id="24" />
+	<gridobject id="20" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="20" name="Single East Wall">	
+	<gridobject id="20" />
+	<gridobject id="20" />
+	<gridobject id="22" />
+	<gridobject id="22" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="21" name="Single West Wall">	
+	<gridobject id="21" />
+	<gridobject id="21" />
+	<gridobject id="20" />
+	<gridobject id="20" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="22" name="Single N-S Tube">	
+	<gridobject id="21" />
+	<gridobject id="21" />
+	<gridobject id="22" />
+	<gridobject id="22" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="23" name="Single E-W Tube">	
+	<gridobject id="24" />
+	<gridobject id="23" />
+	<gridobject id="24" />
+	<gridobject id="23" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="24" name="Single NW Corner">	
+	<gridobject id="26" />
+	<gridobject id="21" />
+	<gridobject id="24" />
+	<gridobject id="20" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="25" name="Single NE Corner">	
+	<gridobject id="24" />
+	<gridobject id="20" />
+	<gridobject id="28" />
+	<gridobject id="22" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="26" name="Single SW Corner">	
+	<gridobject id="21" />
+	<gridobject id="25" />
+	<gridobject id="20" />
+	<gridobject id="23" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="27" name="Single SE Corner">	
+	<gridobject id="20" />
+	<gridobject id="23" />
+	<gridobject id="22" />
+	<gridobject id="27" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="28" name="Single SEW Deadend">	<!-- looks like: U -->
+	<gridobject id="21" />
+	<gridobject id="25" />
+	<gridobject id="22" />
+	<gridobject id="27" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="29" name="Single SWN Deadend">	<!-- looks like: C -->
+	<gridobject id="26" />
+	<gridobject id="25" />
+	<gridobject id="24" />
+	<gridobject id="23" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="30" name="Single NEW Deadend">	<!-- looks like: upside-down U -->
+	<gridobject id="17" />
+	<gridobject id="21" />
+	<gridobject id="19" />
+	<gridobject id="22" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+<config id="31" name="Single NES Deadend">	<!-- looks like: backwards C -->
+	<gridobject id="24" />
+	<gridobject id="23" />
+	<gridobject id="28" />
+	<gridobject id="27" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+	<gridobject id="-1" />
+</config>
+
 </tileconfigs>
