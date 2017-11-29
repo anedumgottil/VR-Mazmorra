@@ -653,6 +653,8 @@ public class MapLoader : MonoBehaviour
             this.parseBlockMap ();
         }
 
+        Debug.Log ("Reticulating splines...");
+
         this.loadTiles (tileTypes, mainTilePath);
         this.loadTiles (altTileTypes, altTilePath);
 
@@ -667,6 +669,16 @@ public class MapLoader : MonoBehaviour
         mapResourcesLoadComplete = true;
 
         StartCoroutine (generateStarterMap());
+
+        //generate the new 2D Grid
+        Debug.Log("MapLoader: Generating 2D GridView: ");
+        GridGenerator temp = GridGenerator.getInstance ().GetComponent<GridGenerator> ();
+        if (temp != null) {
+            temp.GenerateMap (new Vector2Int (MapGrid.getInstance ().xDimension, MapGrid.getInstance ().yDimension));
+        } else {
+            Debug.LogError ("MapLoader: Couldn't generate 2D grid, couldn't get instance of GridGenerator.");
+        }
+        Debug.Log ("MapLoader: MAP LOADING COMPLETE!");
 
     }
 

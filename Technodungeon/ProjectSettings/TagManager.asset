@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GridObject
   - turret
+  - Entities
   layers:
   - Default
   - TransparentFX
