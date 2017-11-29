@@ -49,7 +49,8 @@ public class GridGenerator : MonoBehaviour {
         {
             Coord randomCoord = GetRandomCoord();
             Vector3 obstaclePosition = CoordToPosition(randomCoord.x, randomCoord.y);
-            Transform newObstacle = Instantiate(obstaclePrefab, obstaclePosition, Quaternion.identity) as Transform;
+            Transform newObstacle = Instantiate(obstaclePrefab, obstaclePosition + Vector3.up * .5f, Quaternion.identity) as Transform;
+            newObstacle.parent = mapHolder;
         }
     }
 
