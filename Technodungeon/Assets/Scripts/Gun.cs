@@ -5,10 +5,14 @@ public class Gun : VRTK_InteractableObject
 {
     [Header("Gun Options", order = 4)]
     public GameObject flashlight = null;
+    public GameObject muzzleFlash = null;
     public AudioClip flashlightClickNoise = null;
+    public AudioClip grabNoise = null;
+    public AudioClip ungrabNoise = null;
     public GameObject bullet = null;
     public float bulletSpeed = 1000f;
     public float bulletLife = 5f;
+    public int bulletDamage = 35;
     public bool flashlightStartOff = true;//start flashlight in off state?
     public AudioClip[] fireSounds;
 
@@ -40,6 +44,9 @@ public class Gun : VRTK_InteractableObject
 
         this.grabbingObject = currentGrabbingObject.gameObject;
         //play pickup sound
+        if (grabNoise != null) {
+            audioSource.PlayOneShot (grabNoise);
+        }
 
         //register flashlight button
         grabbingObject.GetComponent<VRTK_ControllerEvents> ().ButtonTwoPressed += new ControllerInteractionEventHandler (DoButtonTwoPressed);
@@ -63,6 +70,9 @@ public class Gun : VRTK_InteractableObject
         //OUR ungrab code
         this.grabbingObject = null;
         //play drop sound
+        if (ungrabNoise != null) {
+            audioSource.PlayOneShot (ungrabNoise);
+        }
 
         //deregister flashlight button
         previousGrabbingObject.GetComponent<VRTK_ControllerEvents> ().ButtonTwoPressed -= new ControllerInteractionEventHandler (DoButtonTwoPressed);
@@ -96,7 +106,12 @@ public class Gun : VRTK_InteractableObject
         }
         audioSource.pitch = 1.0f;//reset pitch
 
-        np.FireProjectile (this.gameObject, bullet.transform.up, 100, 10);
+        //play muzzleflash ps
+        if (muzzleFlash != null) {
+            muzzleFlash.GetComponent<ParticleSystem> ().Play();
+        }
+
+        np.FireProjectile (this.gameObject, bullet.transform.up, bulletDamage, 10);
     }
 
     //flashlight button

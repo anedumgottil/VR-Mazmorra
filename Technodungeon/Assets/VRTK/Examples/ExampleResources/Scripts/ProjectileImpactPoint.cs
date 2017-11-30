@@ -8,24 +8,24 @@ public class ProjectileImpactPoint : MonoBehaviour {
     public AudioClip[] impactNoises;
     public float pitchModRange = 0.05f;
 
-    private AudioSource audioSource = null;
-    private ParticleSystem particleSys = null;
+    public AudioSource audioSource = null;
+    public ParticleSystem particleSys = null;
 
 
 	// Use this for initialization
     void Start () {
-        audioSource = this.gameObject.GetComponent<AudioSource> ();
-        particleSys = this.gameObject.GetComponent<ParticleSystem> ();
+        if (audioSource == null)
+            audioSource = this.gameObject.GetComponent<AudioSource> ();
+        if (particleSys == null)
+            particleSys = this.gameObject.GetComponent<ParticleSystem> ();
     }
 
-    void onDisable() {
-        Destroy (this);
-    }
 
     //makes the impact point do its thing, then die.
     public void triggerImpactPoint() {
         spitParticles ();
         playSound ();
+        Destroy (this.gameObject, 30f);
     }
 
     private void spitParticles() {

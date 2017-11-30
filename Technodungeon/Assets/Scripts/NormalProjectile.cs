@@ -37,7 +37,7 @@ public class NormalProjectile : BaseProjectile {
         if(otherEnt != null)
 		{
             //here is where we would do damage to the Entity we hit.
-            //otherEnt.damage (m_launcher, m_damage);
+            otherEnt.damage (m_launcher, m_damage);
 		}
         //Play a bullet reflection sound and impact particles
         if (impactObject != null) {
