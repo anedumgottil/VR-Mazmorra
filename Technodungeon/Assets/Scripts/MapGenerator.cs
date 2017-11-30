@@ -364,14 +364,16 @@ public sealed class MapGenerator {
         Debug.Log ("GENERATING MAPZ");
 
         setRoom (new Vector2Int(3,4), MapLoader.getRoom (0));
-        setRoom (new Vector2Int(10,4), MapLoader.getRoom (1));
+        setRoom (new Vector2Int(7,4), MapLoader.getRoom (1));
         setRoom (new Vector2Int(3,7), MapLoader.getRoom (2));
         setRoom (new Vector2Int(4,3), MapLoader.getRoom (3));
+        /*
         setRoom (new Vector2Int(8,3), MapLoader.getRoom (3));
         setRoom (new Vector2Int(14,4), MapLoader.getRoom (3));
         setRoom (new Vector2Int(11,8), MapLoader.getRoom (2));
         setRoom (new Vector2Int(10,12), MapLoader.getRoom (4));
         setRoom (new Vector2Int(3,11), MapLoader.getRoom (4));
+        */
 
         //move player to our map
         if (Player.getInstance () != null) {

@@ -51,13 +51,13 @@
 	</entities>
 </room>
 
-<room name="VerticalHallway" type="1">	
+<room name="HorizontalHallway" type="1">	
 	<gridspace x="0" y="0" config="-1" />
 	<gridspace x="1" y="0" config="-1" />
 	<gridspace x="2" y="0" config="-1" />
 	<gridspace x="3" y="0" config="-1" />
 	<entities>
-		<entity x="1" y="0" name="Gun" offsetx="0.5" offsety="0.5" offsetz="0.5" />
+		<entity x="1" y="0" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 	</entities>
 </room>
 

@@ -6,6 +6,8 @@ using UnityEngine;
 public class MapGeneratorController : DPadController {
     Vector2Int gridCoords = new Vector2Int(5,5);
 
+    public GameObject generatorPointer = null;//spawns when you click the center touchpad, it will go to the position where the Generator is looking.
+
     protected override void doRight() {
         //Debug.Log ("Right Touchpad Press");
         Vector2Int forward = MapGrid.roundVectorToCardinalIgnoreY (Player.getInstance().getHead().transform.right);
@@ -33,13 +35,15 @@ public class MapGeneratorController : DPadController {
 
     protected override void doCenter() {
         //Debug.Log ("Touchpad Deadzone Press");
-        GameObject diamond = GameObject.Find ("Diamondo");
-        if (diamond != null)
-            diamond = Instantiate (diamond);
 
+        if (generatorPointer == null)
+            return;
+        
+        generatorPointer = Instantiate (generatorPointer);
         Vector3 newpos = MapGrid.getInstance ().getWorldCoordsFromGridCoords (gridCoords);
         newpos = new Vector3 (newpos.x + (MapGrid.getSize () / 2), newpos.y + (MapGrid.getSize () / 2), newpos.z + (MapGrid.getSize () / 2));
-        diamond.transform.position = newpos;
+        generatorPointer.transform.position = newpos;
+        Destroy (generatorPointer, 30f);
     }
 
     private static Vector2Int avoidOutOfBounds(Vector2Int v) {
