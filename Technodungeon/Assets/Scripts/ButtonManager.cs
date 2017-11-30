@@ -13,4 +13,13 @@ public class ButtonManager : MonoBehaviour {
     {
         Application.Quit();
     }
+    public void creditsBTN(string Credits)
+    {
+        SceneManager.LoadScene(Credits);
+    }
+    public void BackBTN(string MainMenu)
+    {
+        SceneManager.LoadScene(MainMenu);
+    }
+    
 }
