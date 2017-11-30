@@ -2,19 +2,13 @@
 using System.Collections;
 
 public class NormalProjectile : BaseProjectile {
-    public AudioClip[] impactNoises;
+    public GameObject impactObject;//the object to spawn on impact
 
 	Vector3 m_direction;
 	bool m_fired;
 	GameObject m_launcher;
 	GameObject m_target;
 	int m_damage;
-
-    AudioSource audioSource = null;
-
-    void Start () {
-        audioSource = this.gameObject.GetComponent<AudioSource> ();
-    }
 
 	// Update is called once per frame
 	void Update () {
@@ -45,18 +39,11 @@ public class NormalProjectile : BaseProjectile {
             //here is where we would do damage to the Entity we hit.
             //otherEnt.damage (m_launcher, m_damage);
 		}
-        //Play a bullet reflection sound.
-        if (!audioSource.isActiveAndEnabled) {
-            audioSource.enabled = true;
+        //Play a bullet reflection sound and impact particles
+        if (impactObject != null) {
+            Instantiate (impactObject, other.contacts [0].point, -this.m_direction);
         }
-        audioSource.pitch += ((float) (Random.Range (0,11)*0.01f)) + (-0.05f);//tweak pitch from range (0.05 to -0.05)
-        if (impactNoises != null && impactNoises.Length > 0) {
-            int selectedsound = Random.Range (0, impactNoises.Length);
-            Debug.Log("Playing "+ selectedsound); 
-            audioSource.PlayOneShot (impactNoises[selectedsound]);
-        }
-
 		if(other.gameObject.GetComponent<BaseProjectile>() == null)
-			Destroy(gameObject, 1.0f);
+			Destroy(gameObject);
 	}
 }
