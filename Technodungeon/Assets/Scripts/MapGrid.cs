@@ -150,6 +150,10 @@ public class MapGrid : MonoBehaviour {
         return getWorldCoordsFromGridCoords(v.x, v.y);
     }
 
+    public static Vector2Int getGridCoordsFromWorldCoords(Vector3 v) {
+        return new Vector2Int ((int)v.x/MapGrid.getSize(), (int)v.z/MapGrid.getSize());
+    }
+
     public static float getHeading(Transform t) {
         Vector3 forward = t.forward;
         forward.y = 0;
