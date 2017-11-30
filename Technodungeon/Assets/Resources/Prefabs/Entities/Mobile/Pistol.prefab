@@ -39,6 +39,8 @@ GameObject:
   - component: {fileID: 135137480413493176}
   - component: {fileID: 23871986896004140}
   - component: {fileID: 54562812594746836}
+  - component: {fileID: 114309364848272046}
+  - component: {fileID: 82975280563935818}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -60,7 +62,6 @@ GameObject:
   - component: {fileID: 114698839492765190}
   - component: {fileID: 114877621138542540}
   - component: {fileID: 114151596898267628}
-  - component: {fileID: 114135510591257450}
   - component: {fileID: 82423278522927026}
   m_Layer: 0
   m_Name: Pistol
@@ -68,7 +69,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1499786910811846
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,13 +123,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1326541162991868}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0008, y: 0.0809, z: 0.1114}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.0008, y: 0.0985, z: 0.1114}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children: []
   m_Father: {fileID: 4635090157042202}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4380242886982888
 Transform:
   m_ObjectHideFlags: 1
@@ -179,13 +180,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1499786910811846}
-  m_LocalRotation: {x: -0.21643952, y: 0, z: 0, w: 0.97629607}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.2164396, y: 0, z: 0, w: 0.97629607}
+  m_LocalPosition: {x: 0, y: 0, z: -0.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4635090157042202}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: -25, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
 --- !u!4 &4985954542299644
 Transform:
   m_ObjectHideFlags: 1
@@ -403,6 +404,86 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!82 &82975280563935818
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1326541162991868}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!108 &108652183116705708
 Light:
   m_ObjectHideFlags: 1
@@ -414,8 +495,8 @@ Light:
   m_Type: 0
   m_Color: {r: 0.86764705, g: 0.9397566, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 2
-  m_SpotAngle: 20
+  m_Range: 5
+  m_SpotAngle: 26.1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
@@ -456,54 +537,6 @@ MonoBehaviour:
   throwVelocityWithAttachDistance: 0
   throwMultiplier: 1
   onGrabCollisionDelay: 0
---- !u!114 &114135510591257450
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1432166862016268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eba3cd5456cd79e49948f5ceb58544b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pointerToggleButton: 10
-  pointerSetButton: 10
-  grabToggleButton: 7
-  useToggleButton: 3
-  uiClickButton: 3
-  menuToggleButton: 14
-  axisFidelity: 1
-  triggerClickThreshold: 1
-  triggerForceZeroThreshold: 0.01
-  triggerAxisZeroOnUntouch: 0
-  gripClickThreshold: 1
-  gripForceZeroThreshold: 0.01
-  gripAxisZeroOnUntouch: 0
-  triggerPressed: 0
-  triggerTouched: 0
-  triggerHairlinePressed: 0
-  triggerClicked: 0
-  triggerAxisChanged: 0
-  gripPressed: 0
-  gripTouched: 0
-  gripHairlinePressed: 0
-  gripClicked: 0
-  gripAxisChanged: 0
-  touchpadPressed: 0
-  touchpadTouched: 0
-  touchpadAxisChanged: 0
-  buttonOnePressed: 0
-  buttonOneTouched: 0
-  buttonTwoPressed: 0
-  buttonTwoTouched: 0
-  startMenuPressed: 0
-  pointerPressed: 0
-  grabPressed: 0
-  usePressed: 0
-  uiClickPressed: 0
-  menuPressed: 0
-  controllerVisible: 1
 --- !u!114 &114151596898267628
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -531,7 +564,7 @@ MonoBehaviour:
   holdButtonToUse: 0
   useOnlyIfGrabbed: 1
   pointerActivatesUseAction: 0
-  useOverrideButton: 1
+  useOverrideButton: 0
   allowedUseControllers: 0
   usingState: 0
   flashlight: {fileID: 1099594913761710}
@@ -541,6 +574,28 @@ MonoBehaviour:
   bulletSpeed: 1000
   bulletLife: 2
   flashlightStartOff: 1
+  fireSounds:
+  - {fileID: 8300000, guid: 4a4c2bac1cdfed6428dd0c7e26d76b7a, type: 3}
+  - {fileID: 8300000, guid: 2b4c9582c3b49a44a8a3a3e2f210a0e2, type: 3}
+  - {fileID: 8300000, guid: d7e214410e0e0214dbd61b4bc19c91ba, type: 3}
+--- !u!114 &114309364848272046
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1326541162991868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ebf247e532cd4ea78246faf019e5749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 30
+  impactNoises:
+  - {fileID: 8300000, guid: 06a900dd506198747bd11a8856946d78, type: 3}
+  - {fileID: 8300000, guid: 0e26f05a2060ffc4a94d9bddfdebe2cd, type: 3}
+  - {fileID: 8300000, guid: 1c76d95e874f37d45a5854d01a9ab090, type: 3}
+  - {fileID: 8300000, guid: 0dca0c814341bae438b8676d2c21582e, type: 3}
+  - {fileID: 8300000, guid: 975240f3df53b4d4880bc4e4b168ea67, type: 3}
 --- !u!114 &114698839492765190
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -27,14 +27,19 @@ public class TrackingProjectile : BaseProjectile {
 		transform.position = Vector3.MoveTowards(transform.position, m_lastKnownPosition, speed * Time.deltaTime);
 	}
 
-	public override void FireProjectile(GameObject launcher, GameObject target, int damage, float attackSpeed){
-		if(target){
-			m_target = target;
-			m_lastKnownPosition = target.transform.position;
+    public override void FireProjectile(GameObject launcher, Vector3 normalizedDirection, int damage, float attackSpeed){
+		if(m_target){
+			m_target = m_target;
+			m_lastKnownPosition = m_target.transform.position;
 			m_launcher = launcher;
 			m_damage = damage;
 		}
 	}
+
+    //set tracking target
+    public void setTarget(GameObject target) {
+        m_target = target;
+    }
 
 //	void OnCollisionEnter(Collision other)
 //	{
