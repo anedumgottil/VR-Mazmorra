@@ -6,5 +6,35 @@ using UnityEngine;
 //You should not inherit this class, in most cases, you should inherit from the child classes Stationary and Mobile Entity.
 
 public abstract class Entity : MonoBehaviour {
-    //no methods yet, not really necessary
+    public int startingHealth = 100;
+    protected int health = 100;
+    protected bool alive = true;
+
+    void Start() {
+        health = startingHealth;
+    }
+
+    public void damage(GameObject damageCause, int damageAmount) {
+        health -= damageAmount;
+        if (health <= 0) {
+            this.die ();
+        }
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int healthvalue) {
+        health = healthvalue;
+    }
+
+    public bool isAlive() {
+        return alive;
+    }
+
+    public virtual void die() {
+        alive = false;
+        Destroy (this);
+    }
 }

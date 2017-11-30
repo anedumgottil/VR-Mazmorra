@@ -11,6 +11,7 @@ public class Drone : MobileEntity {
     // Use this for initialization
 
     public float inspectTime = 0.5f;
+    public GameObject deathParticleSystem;
     public Transform player;
     NavMeshAgent navMeshAgent;
     NavMeshPath path;
@@ -28,7 +29,7 @@ public class Drone : MobileEntity {
     void Update()
     {
         if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh)
-            StartCoroutine(DoSomething());
+            StartCoroutine(DoNavigate());
     }
 
     Vector3 getNewRandomPosition()
@@ -40,27 +41,51 @@ public class Drone : MobileEntity {
         return pos;
     }
 
-    IEnumerator DoSomething()
+    IEnumerator DoNavigate()
     {
         inCoRoutine = true;
-        yield return new WaitForSeconds(timeForNewPath);
-        GetNewPath();
-        validPath = navMeshAgent.CalculatePath(target, path);
-        if (!validPath) Debug.Log("Found an invalid Path");
+        if (isAlive()) {
+            yield return new WaitForSeconds (timeForNewPath);
+            GetNewPath ();
+            validPath = navMeshAgent.CalculatePath (target, path);
+            if (!validPath) {
+                //Debug.Log ("Found an invalid Path"); TODO fix this!
+            }
 
-        while (!validPath)
-        {
-            yield return new WaitForSeconds(inspectTime);
-            GetNewPath();
-            validPath = navMeshAgent.CalculatePath(target, path);
+            while (!validPath && isAlive()) {
+                yield return new WaitForSeconds (inspectTime);
+                GetNewPath ();
+                validPath = navMeshAgent.CalculatePath (target, path);
+            }
         }
         inCoRoutine = false;
     }
 
     void GetNewPath()
     {
-        target = getNewRandomPosition();
-        navMeshAgent.SetDestination(target);
+        if (isAlive ()) {
+            target = getNewRandomPosition ();
+            navMeshAgent.SetDestination (target);
+        }
+    }
+
+    public override void die() {
+        this.alive = false; 
+        this.navMeshAgent.enabled = false;
+        Rigidbody rb = this.GetComponent<Rigidbody> ();
+        if (rb != null) {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+
+        Renderer rend = this.GetComponent<Renderer> ();
+        rend.material.color = Color.black;
+
+        if (deathParticleSystem != null) {
+            deathParticleSystem.SetActive (true);
+        }
+
+        Destroy (this.gameObject, 5f);
     }
 
     //NEW CODE
