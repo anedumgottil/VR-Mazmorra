@@ -35,12 +35,12 @@ public class TwoDGridTile : MonoBehaviour {
         Shader purple = Shader.Find("Purple");
         if (purple != null) {
             
-            Material newMaterial = new Material ();
+            //Material newMaterial = new Material ();
 
-            newMaterial.color = startColor;
-            gameObjectRenderer.material = newMaterial;
+            //newMaterial.color = startColor;
+            //gameObjectRenderer.material = newMaterial;
         } else {
-            Debug.LogError ("TwoDGridTile: Cannot find Purple shader");
+            //Debug.LogError ("TwoDGridTile: Cannot find Purple shader");
         }
     }
 

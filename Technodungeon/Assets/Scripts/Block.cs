@@ -95,6 +95,20 @@ public class Block : GridObject {
         return temp;
     }
 
+    public void setColor(Color mbColor) {
+        for (int i = 0; i < mbDivision; i++) {
+            for (int j = 0; j < mbDivision; j++) {
+                for (int k = 0; k < mbDivision; k++) {
+                    MicroBlock mbtemp = this.getMicroBlock (i, j, k);
+                    if (mbtemp != null) {
+                        Renderer rend = mbtemp.getPrimitive ().GetComponent<Renderer> ();
+                        rend.material.color = mbColor;
+                    }
+                }
+            }
+        }
+    }
+
     //returns a position offset for a MicroBlock relative to the origin of it's parent Block, based on it's array coordinates.
     //similar to the Block array, for the MicroBlock array we'll have Y be up, Z be forward, and X be lateral.
     //this function returns the origin position for a MicroBlock, NOT it's midpoint position/center-of-mass.
