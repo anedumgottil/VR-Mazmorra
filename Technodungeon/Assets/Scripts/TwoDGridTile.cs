@@ -44,7 +44,10 @@ public class TwoDGridTile : MonoBehaviour {
     //SHANIL: add handler for click event when the user clicks this GameObject. I think it's a onClickSomething() function you put here, it runs when the user clicks this Tile. look it up, its a unity thing. you need to call
     //MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.ROOM); to spawn a room tile there, for now... later we'll make this drop enemies if its occupied and all that
     //////////////////////////IMPORTANT////////////////////////////
-
+    public void OnMouseDown()
+    {
+        MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Room);
+    }
 
     //main, most important function. MapGenerator will, every second or so, run this for all it's tiles. This will poll the mapgrid and ask what the Tile's state is at the coordinates.
     //Depending on what it returns, we'll set the color of this tile appropriately. I've made an enum to represent the tile states better.
