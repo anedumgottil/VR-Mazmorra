@@ -41,7 +41,11 @@ public class NormalProjectile : BaseProjectile {
 		}
         //Play a bullet reflection sound and impact particles
         if (impactObject != null) {
-            Instantiate (impactObject, other.contacts [0].point, -this.m_direction);
+            GameObject impactObjClone = Instantiate (impactObject, other.contacts [0].point, Quaternion.FromToRotation (Vector3.up, other.contacts[0].normal));
+            ProjectileImpactPoint projImpactPt = impactObjClone.GetComponent<ProjectileImpactPoint> ();
+            if (projImpactPt != null) {
+                projImpactPt.triggerImpactPoint ();
+            }
         }
 		if(other.gameObject.GetComponent<BaseProjectile>() == null)
 			Destroy(gameObject);
