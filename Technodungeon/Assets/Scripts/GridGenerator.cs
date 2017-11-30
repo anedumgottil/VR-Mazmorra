@@ -12,12 +12,14 @@ public class GridGenerator : MonoBehaviour {
     public string containerName;
     private WaitForSeconds waitASecond;
     private Transform containerTransform;
+    
 
     List<Coord> allTileCoords;
     Queue<Coord> shuffledTileCoords;
     public int seed = 10;
 
     public void Start() {
+        
         instance = this;
     }
 
@@ -112,4 +114,5 @@ public class GridGenerator : MonoBehaviour {
 
         }
     }
+    
 }

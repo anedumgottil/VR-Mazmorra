@@ -6,7 +6,7 @@ public class TwoDGridTile : MonoBehaviour {
     private Vector2Int gridPosition; //the placement of this gridtile in integer grid coordinates, corresponds to an actual MapGrid GridObject in our Virtual Reality, set when this Tile is created by the GridGenerator class.
     private bool initialized = false;
     private TwoDGridTileState state = TwoDGridTileState.NONE;//default to NONE, synonym for invalid tile
-
+    private int index = 1;
     public enum TwoDGridTileState : byte {NONE=0, UNOCCUPIED, OCCUPIED, PLAYER, ROOM, CORRIDOR, PORTAL, REACTOR, COOLANT, AICORE, TECHNOCORE, TURRET, MOB};//etc.etc.etc
 
     //call this after you generate these tiles. tile needs to be aware of it's position at all times.
@@ -16,6 +16,7 @@ public class TwoDGridTile : MonoBehaviour {
     }
 
     public Vector2Int getGridPosition() {
+        
         return gridPosition;
     }
 
@@ -28,6 +29,14 @@ public class TwoDGridTile : MonoBehaviour {
     //sets the color of the tile.
     public void setColor(Color c) {
         //access the Renderer component of this.gameObject and set it's color to whatever is specified. hopefully this doesn't affect the other clones
+        
+        Color startColor = new Color(128, 0, 128, 1);
+        MeshRenderer gameObjectRenderer = this.gameObject.GetComponent<MeshRenderer>();
+        Material newMaterial = new Material(Shader.Find("Purple"));
+
+        newMaterial.color = startColor;
+        gameObjectRenderer.material = newMaterial;
+
     }
 
 
@@ -35,7 +44,10 @@ public class TwoDGridTile : MonoBehaviour {
     //SHANIL: add handler for click event when the user clicks this GameObject. I think it's a onClickSomething() function you put here, it runs when the user clicks this Tile. look it up, its a unity thing. you need to call
     //MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.ROOM); to spawn a room tile there, for now... later we'll make this drop enemies if its occupied and all that
     //////////////////////////IMPORTANT////////////////////////////
-
+    public void OnMouseDown()
+    {
+        MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Room);
+    }
 
     //main, most important function. MapGenerator will, every second or so, run this for all it's tiles. This will poll the mapgrid and ask what the Tile's state is at the coordinates.
     //Depending on what it returns, we'll set the color of this tile appropriately. I've made an enum to represent the tile states better.
