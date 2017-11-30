@@ -72,7 +72,7 @@ public class TwoDGridTile : MonoBehaviour {
         }
         //TODO: we only check for the occupied status of the GridSpace in the MapGrid at our corresponding position right now. It would be great if we could get the Player's position, figure out if they're at our GridTile or not
         // and if they are, then color us accordingly. Also, we have to check for all the other types of GridSpace as well, such as Reactors, etc.etc.
-
+        
         updateColor ();
     }
 
