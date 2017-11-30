@@ -6,7 +6,7 @@ public class TwoDGridTile : MonoBehaviour {
     private Vector2Int gridPosition; //the placement of this gridtile in integer grid coordinates, corresponds to an actual MapGrid GridObject in our Virtual Reality, set when this Tile is created by the GridGenerator class.
     private bool initialized = false;
     private TwoDGridTileState state = TwoDGridTileState.NONE;//default to NONE, synonym for invalid tile
-
+    private int index = 1;
     public enum TwoDGridTileState : byte {NONE=0, UNOCCUPIED, OCCUPIED, PLAYER, ROOM, CORRIDOR, PORTAL, REACTOR, COOLANT, AICORE, TECHNOCORE, TURRET, MOB};//etc.etc.etc
 
     //call this after you generate these tiles. tile needs to be aware of it's position at all times.
@@ -16,6 +16,7 @@ public class TwoDGridTile : MonoBehaviour {
     }
 
     public Vector2Int getGridPosition() {
+        
         return gridPosition;
     }
 
@@ -28,6 +29,14 @@ public class TwoDGridTile : MonoBehaviour {
     //sets the color of the tile.
     public void setColor(Color c) {
         //access the Renderer component of this.gameObject and set it's color to whatever is specified. hopefully this doesn't affect the other clones
+        
+        Color startColor = new Color(128, 0, 128, 1);
+        MeshRenderer gameObjectRenderer = this.gameObject.GetComponent<MeshRenderer>();
+        Material newMaterial = new Material(Shader.Find("Purple"));
+
+        newMaterial.color = startColor;
+        gameObjectRenderer.material = newMaterial;
+
     }
 
 
