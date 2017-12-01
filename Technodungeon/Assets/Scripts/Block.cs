@@ -109,6 +109,24 @@ public class Block : GridObject {
         }
     }
 
+    //TODO: genericize this
+    public void addTechnofog() {
+        for (int i = 0; i < mbDivision; i++) {
+            for (int j = 0; j < mbDivision; j++) {
+                for (int k = 0; k < mbDivision; k++) {
+                    MicroBlock mbtemp = this.getMicroBlock (i, j, k);
+                    if (mbtemp != null) {
+                        mbtemp.getPrimitive().AddComponent<Technofog>();
+                        Technofog[] arr = mbtemp.getPrimitive ().GetComponents<Technofog> ();
+                        for( int cc = 0 ; cc < arr.Length; cc++) {
+                            arr[cc].enabled = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     //returns a position offset for a MicroBlock relative to the origin of it's parent Block, based on it's array coordinates.
     //similar to the Block array, for the MicroBlock array we'll have Y be up, Z be forward, and X be lateral.
     //this function returns the origin position for a MicroBlock, NOT it's midpoint position/center-of-mass.
