@@ -70,4 +70,24 @@
 	</entities>
 </room>
 
+<room name="ReactorRoom" type="3">
+	<gridspace x="0" y="0" config="-1" />
+	<gridspace x="1" y="0" config="-1" />
+	<gridspace x="2" y="0" config="-1" />
+	<gridspace x="3" y="0" config="-1" />
+	<gridspace x="0" y="1" config="-1" />
+	<gridspace x="1" y="1" config="-1" />
+	<gridspace x="2" y="1" config="-1" />
+	<gridspace x="3" y="1" config="-1" />
+	<gridspace x="0" y="2" config="-1" />
+	<gridspace x="1" y="2" config="-1" />
+	<gridspace x="2" y="2" config="-1" />
+	<gridspace x="3" y="2" config="-1" />
+	<entities>
+	<entity x="3" y="1" name="Reactor" offsetx="0" offsety="0" offsetz="1.25" />
+	<entity x="0" y="0" name="CoolantLine" offsetx="0.5" offsety="0.01" offsetz="0.5" />
+	<entity x="1" y="0" name="CoolantLine" offsetx="0" offsety="0.01" offsetz="0.5" />
+	</entities>
+</room>
+
 </rooms>

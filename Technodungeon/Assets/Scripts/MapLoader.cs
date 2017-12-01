@@ -28,6 +28,7 @@ public class MapLoader : MonoBehaviour
 
     public string mainTilePath = "Prefabs/Tiles/SciFiTiles/";
     public string altTilePath =  "Prefabs/Tiles/BrickWallTiles/";
+    public string reactorTilePath =  "Prefabs/Tiles/ReactorTiles/";
 
     public bool debugMode = false; //whether or not to dump information to the Log as we process
     public bool generateBlockPrefabsFromFile = false; // generates the Block prefab files from the blocks.txt flatfile that outlines their design, recently factored out, keep false. useless
@@ -43,6 +44,7 @@ public class MapLoader : MonoBehaviour
     private static List<Block> blockTypes = new List<Block>(); //Blocks that make up the Prefab Pool. //TODO: make this a unique pool... considering we now have to use it for generating every block, apparently (serialization fell thru)
                                                         //I recommend defining a hash function and an equality comparison function, maybe a ToString and others for Block or at least GridObject to accomplish this.
     private static List<Tile> tileTypes = new List<Tile>(20);
+    private static List<Tile> reactorTileTypes = new List<Tile>(20);
     private static List<Tile> altTileTypes = new List<Tile>(20); //TODO: this really needs to be stored better.
     private static List<Room> roomTypes = new List<Room>();
     private static HashSet<string> stationaryEntitiesInPool = new HashSet<string>();
@@ -581,6 +583,8 @@ public class MapLoader : MonoBehaviour
             return new Tile (tileTypes [id]);
         } else if (tileBank == GridSpace.GridSpaceType.Corridor) {
             return new Tile (altTileTypes [id]);
+        } else if (tileBank == GridSpace.GridSpaceType.Reactor) {
+            return new Tile (reactorTileTypes [id]);
         } else {
             Debug.LogError ("MapLoader: getTileInstance: Got an invalid tileBank type (" + tileBank + ")");
             return null;
@@ -657,6 +661,7 @@ public class MapLoader : MonoBehaviour
 
         this.loadTiles (tileTypes, mainTilePath);
         this.loadTiles (altTileTypes, altTilePath);
+        this.loadTiles (reactorTileTypes, reactorTilePath);
 
         //TODO: load in all tiles using the prefabs you load in, along with the Tile configuration flatfile (almost done, already)
         //TODO: load in the tile configuration settings from flatfile and feed to MapGenerator via a function so we don't have to hardcode them as an array like they are right now

@@ -86,6 +86,10 @@ public sealed class MapGenerator {
                         prefabInstance.SetActive (true);
                         //prefabInstance.transform.localPosition = entityInfo.Value;
                         stationaryEntityComponent.setGridSpace (current);
+                    } else if (prefabInstance == null) {
+                        Debug.LogWarning ("MapGenerator: setRoom: Attempted to load in an Entity for room, but couldn't get an instance from the Entity database.");
+                    } else if (stationaryEntityComponent == null) {
+                        Debug.LogWarning ("MapGenerator: setRoom: Tried to register an entity to a GridSpace during mapgen that was not a StationaryEntity. ["+prefabInstance.gameObject.name.ToString()+"]");
                     }
                 } else if (hasEntity && mobileEnts.Contains (entityInfo.Key)) {
                     //the entity corresponds to our gridspace and is a MobileEntity
@@ -367,6 +371,7 @@ public sealed class MapGenerator {
         setRoom (new Vector2Int(7,4), MapLoader.getRoom (1));
         setRoom (new Vector2Int(3,7), MapLoader.getRoom (2));
         setRoom (new Vector2Int(4,3), MapLoader.getRoom (3));
+        setRoom (new Vector2Int (1, 11), MapLoader.getRoom (5));
         /*
         setRoom (new Vector2Int(8,3), MapLoader.getRoom (3));
         setRoom (new Vector2Int(14,4), MapLoader.getRoom (3));
