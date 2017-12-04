@@ -47,6 +47,7 @@ public class MapLoader : MonoBehaviour
     private static List<Tile> reactorTileTypes = new List<Tile>(20);
     private static List<Tile> altTileTypes = new List<Tile>(20); //TODO: this really needs to be stored better.
     private static List<Room> roomTypes = new List<Room>();
+	
     private static HashSet<string> stationaryEntitiesInPool = new HashSet<string>();
     private static HashSet<string> mobileEntitiesInPool = new HashSet<string>();
     private static List<int[]> tileConfigs = new List<int[]> ();//the tile gridspace configurations available
@@ -866,6 +867,7 @@ public class MapLoader : MonoBehaviour
             setState(MapLoadState.BLOCK_LOAD);
             this.loadBlocks ();
         }
+		
         Debug.Log ("Reticulating splines...");
         setState (MapLoadState.TILE_LOAD);
         this.loadTiles (tileTypes, mainTilePath);
