@@ -51,7 +51,6 @@ public class MapLoader : MonoBehaviour
     private static HashSet<string> stationaryEntitiesInPool = new HashSet<string>();
     private static HashSet<string> mobileEntitiesInPool = new HashSet<string>();
     private static List<int[]> tileConfigs = new List<int[]> ();//the tile gridspace configurations available
-    private static List<Room> roomTypes = new List<Room>();
 
     private static Dictionary<string, GameObject> gamePrefabs;//These are all the prefabs used in the game, as an object pool. Instantiate these to clone them and use them elsewhere via getPrefabInstance().
     private static GameObject prefabParent;
@@ -361,6 +360,7 @@ public class MapLoader : MonoBehaviour
                 return;
             }
         }
+        bool configInProgress = false;
         int[] current = null;
         int currentgsID = -1;
         int gocount = 0;
@@ -373,7 +373,7 @@ public class MapLoader : MonoBehaviour
                     break;
                 case "config"://a config is an array of 8 griditem configuration IDs - it has an ID number, defining it's configuration ID, and 8 children with IDs defining their selected gridobject
                     //we found an opening config tag.
-                    if (current != null) {
+                    if (configInProgress) {
                         Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an opening Config Tag when we haven't finished the one we're currently working on.");
                         return;
                     }
@@ -384,29 +384,50 @@ public class MapLoader : MonoBehaviour
                         return;
                     }
                     current = new int[8];
+                    configInProgress = true;
                     currentgsID = id;
                     gocount = 0;
-                    if (DEBUG_MODE) Debug.Log ("starting a new GridspaceConfiguration block with id: '" + currentgsID + "'");
+                    if (DEBUG_MODE)
+                        Debug.Log ("starting a new GridspaceConfiguration block with id: '" + currentgsID + "'");
 
                     //parse configuration ID list
                     if (xmlr.ReadToDescendant ("gridobject")) {
                         do {
-                            if (DEBUG_MODE) Debug.Log ("------ found a gridobject element: (" + xmlr.GetAttribute ("id") + ") ");
+                            if (DEBUG_MODE)
+                                Debug.Log ("------ found a gridobjectID config element: (" + xmlr.GetAttribute ("id") + ") ");
                             //Try to parse the attributes
                             int gridobjectid = -1;
-                            if (!int.TryParse (xmlr.GetAttribute ("id"),out gridobjectid)) {
-                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an invalid GridObject attribute [id]");
+                            if (!int.TryParse (xmlr.GetAttribute ("id"), out gridobjectid)) {
+                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an invalid GridObjectID config attribute [id]");
                                 return;
                             }
                             if (gocount > 7) {
-                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Tried to add too many GridObjects to the tileGridspaceConfigs array!");
+                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Tried to add too many GridObject IDs to the tileGridspaceConfigs array!");
                                 return;
                             }
-                            current[gocount] = gridobjectid;
+                            current [gocount] = gridobjectid;
                             gocount++;
                         } while (xmlr.ReadToNextSibling ("gridobject"));
                     }
-                    if (DEBUG_MODE) Debug.Log ("--- ran out of gridobject ids to process, moving on... ");
+                    //TODO: it seems that the above code auto-advances one farther than I'd like, specifically to the closing tag automatically. So I've moved the !xmlr.IsStartElement for config up here to accomodate this.
+                    //Instead it should stay on the last gridobject before advancing naturally in one of the higher up loops, and the lower code should handle it being a closing config tag.
+                    if (xmlr.NodeType == XmlNodeType.EndElement && xmlr.Name.Equals ("config")) {
+                        //duplicate of below code, the below code which never runs because of said bug
+                        if (DEBUG_MODE)
+                            Debug.Log ("ending tileconfig with type: '" + currentgsID + "'");
+                        //closing config block, we're done with this one
+                        if (!configInProgress) {
+                            Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found a closing gridspace config when we haven't even started one.");
+                            return;
+                        }
+
+                        tileConfigs.Add (current);
+                        count++;
+                        current = null;
+                        configInProgress = false;
+                        currentgsID = -1;
+                        break;
+                    }
                     break;
 
                 default:
@@ -417,17 +438,18 @@ public class MapLoader : MonoBehaviour
             } else if (!xmlr.IsStartElement ()) {
                 switch (xmlr.Name) {
                 case "config":
+                    if (DEBUG_MODE)
+                        Debug.Log ("ending tileconfig with type: '" + currentgsID + "'");
                     //closing config block, we're done with this one
-                    if (current == null) {
+                    if (!configInProgress) {
                         Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found a closing gridspace config when we haven't even started one.");
                         return;
                     }
 
-                    tileConfigs [currentgsID] = current;
-                    if (DEBUG_MODE)
-                        Debug.Log ("ending tileconfig with type: '" + currentgsID + "'");
+                    tileConfigs.Add(current);
                     count++;
                     current = null;
+                    configInProgress = false;
                     currentgsID = -1;
                     break;
                 case "tileconfigs":
@@ -441,8 +463,10 @@ public class MapLoader : MonoBehaviour
 
             }//end while
         }//end read
-        Debug.Log("MapLoader: parseTileGridspaceConfigs: finished parsing " + currentgsID + " tile config types.");
-        if (DEBUG_MODE) Debug.Log(tileTypes.Count.ToString ());
+        Debug.Log("MapLoader: parseTileGridspaceConfigs: finished parsing " + tileConfigs.Count.ToString () + " tile config types.");
+        if (DEBUG_MODE) Debug.Log("parseTileGridSpaceConfigs: Listing parsed Tile GridSpace Configurations below: --------");
+        if (DEBUG_MODE)
+            tileConfigs.ForEach (tconfig => Debug.Log("{" + string.Join (", ", Array.ConvertAll (tconfig, convertee=>convertee.ToString ()) ) + "}" ));
     }
 
     //loads Block gridspace configuration definitions into a gridspace configuration array to be used in room generation via the mapgenerator

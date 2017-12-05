@@ -29,7 +29,7 @@ public class TrackingProjectile : BaseProjectile {
 
     public override void FireProjectile(GameObject launcher, Vector3 normalizedDirection, int damage, float attackSpeed){
 		if(m_target){
-			m_target = m_target;//TODO: fix this!
+//			m_target = m_target;//TODO: fix this!
 			m_lastKnownPosition = m_target.transform.position;
 			m_launcher = launcher;
 			m_damage = damage;
