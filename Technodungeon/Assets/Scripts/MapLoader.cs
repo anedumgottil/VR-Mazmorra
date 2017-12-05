@@ -826,6 +826,15 @@ public class MapLoader : MonoBehaviour
         return mobileEntitiesInPool;
     }
 
+    public static int[] getGridSpaceConfiguration(int id) {
+        if (id < 0 || id >= tileConfigs.Count) {
+            Debug.LogError ("MapLoader: getGridSpaceConfiguration: passed invalid gridspace configuration ID number, index does not exist: " + id);
+            return null;
+        }
+
+        return tileConfigs [id];
+    }
+
     /// STATE ///////////////////////////////////////////////////
 
     //returns true if we've correctly loaded all prefabs, and generated all their Blocks and Tiles based on the flatfiles.

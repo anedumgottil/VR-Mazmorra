@@ -16,42 +16,6 @@ public sealed class MapGenerator {
 
     private MapGenerator() {}
 
-    private int[][] spaceTemplates = new[]
-    { //TODO: remove these hardcoded spaceTemplates and specify them in a flatfile see ticket: #17
-        new[]{1, 1, 1, 1, //nothing
-            1, 1, 1, 1}, //0
-        new[]{2, 2, 2, 2, //just a ceiling and floor
-            7, 7, 7, 7}, //1
-        new[]{2, 5, 2, 5, //south wall w/ ceiling and floor
-            7, 10, 7, 10}, //2
-        new[]{6, 2, 6, 2, //north wall w/ ceiling and floor
-            11, 7, 11, 7}, //3
-        new[]{2, 2, 4, 4, //east wall w/ ceiling and floor
-            7, 7, 9, 9}, //4
-        new[]{3, 3, 2, 2, //west wall w/ ceiling and floor
-            8, 8, 7, 7}, //5
-        new[]{3, 3, 4, 4, //two wall tube pointing n/s w/ ceiling and floor
-            8, 8, 9, 9}, //6
-        new[]{6, 5, 6, 5, //two wall tube pointing e/w w/ ceiling and floor
-            11, 10, 11, 10}, //7
-        new[]{17, 3, 6, 2, //north/west corner w/ ceiling and floor
-            13, 8, 11, 7}, //8
-        new[]{6, 2, 19, 4, //north/east corner w/ ceiling and floor
-            11, 7, 15, 9}, //9
-        new[]{3, 16, 2, 5, //south/west corner w/ ceiling and floor
-            8, 12, 7, 10}, //10
-        new[]{2, 5, 4, 18, //south/east corner w/ ceiling and floor
-            7, 10, 9, 14}, //11
-        new[]{3, 16, 4, 18, //south/east/west  deadend w/ ceiling and floor  - looks like: U
-            8, 12, 9, 14}, //12
-        new[]{3, 16, 4, 18, //south/west/north deadend w/ ceiling and floor  - looks like: C
-            8, 12, 9, 14}, //13
-        new[]{17, 3, 19, 4, //north/east/west  deadend w/ ceiling and floor  - looks like: upside-down U
-            13, 8, 15, 9}, //14
-        new[]{6, 5, 19, 18, //north/east/south deadend w/ ceiling and floor  - looks like: backwards C
-            11, 10, 15, 14} //15
-    };
-
     //applies a Room to the MapGrid
     public void setRoom(Vector2Int position, Room r) {
         if (MapGrid.getInstance ().isOccupied (position, position + r.getSize ())) {
@@ -309,7 +273,12 @@ public sealed class MapGenerator {
 
         current.setGridSpaceConfiguration(configuration);
         int reggaeton = 0;
-        foreach (int tileID in spaceTemplates[configuration]) {
+        int[] givenConfiguration = MapLoader.getGridSpaceConfiguration (configuration);
+        if (givenConfiguration == null) {
+            Debug.LogError ("MapGenerator: applyGridSpaceConfiguration: failed to get GridSpace Configuration by ID " + configuration);
+            return;
+        }
+        foreach (int tileID in givenConfiguration) {
             //generate a GridSpace similar to the way that MapLoader does, GridObject by GridObject for each ID.
             if (reggaeton > 7) {
                 //too many positions, this would happen if we loaded in too many indices to our templates, which should be corrected by the MapLoader in advance so... error.
