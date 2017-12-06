@@ -4,65 +4,89 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class TreadBot : MobileEntity {
-    public GameObject deathParticleSystem;
-    public GameObject muzzleflash;
+    public GameObject deathParticleSystem = null;
+    public GameObject muzzleflash = null;
     public GameObject turret = null;
-    public AudioClip trackSound = null;//found player
-    public AudioClip randomSound = null;
-    public AudioClip driveSound = null;
-    public AudioClip deathSound = null;
-    public AudioClip gunSound = null;
+    public AudioSource engineAudioSource = null;
+    public AudioSource SFXAudioSource = null;
+    public AudioClip trackSound = null;//found player sound
+    public AudioClip randomSound = null;//this one is emitted seemingly at random
+    public AudioClip driveSound = null;//emitted as the treadbot moves. should be set in it's audiosource
+    public AudioClip deathSound = null;//explosion or something
+    public AudioClip[] gunSounds = null;//pop pop pop
 
-    NavMeshAgent navMeshAgent;
-    NavMeshPath path;
+    public float fireRate = 2f;
+    public float fireRange = 3f;
+    public float engineStartTime = 1.0f;//acts as kind of a "debounce" for the navmesh
+    public float haltRangeSensitivity = 1.0f;//once the treadbot stops, it'll require more than this sensitivity value to reactivate.
+    public float haltRange = 10f;
     public float timeForNewPath;
-    bool inCoRoutine;
+
+    NavMeshAgent navMeshAgent = null;
+    NavMeshPath path = null;
+    bool inCoRoutine = false;
     Vector3 target;
-    bool validPath;
-    Transform headset;
+    bool shouldNavigate = false;
+    bool validPath = false;
+    Transform headset = null;
     TrackingSystem ts = null;
-    AudioSource audioSource = null;
-    public float lastFireTime = 0.0f;
+    float lastFireTime = 0.0f;
+    float lastEngineStartTime = 0.0f;
+    float originalHaltRange;
 
     void Start()
     {
-        ts = this.GetComponentInChildren<TrackingSystem> ();
+        ts = turret.GetComponentInChildren<TrackingSystem> ();
         if (ts == null) {
             Debug.LogError ("TreadBot: could not find tracking system!");
             this.gameObject.SetActive (false);
         }
         navMeshAgent = GetComponent<NavMeshAgent>();
-        audioSource = this.GetComponent<AudioSource> ();
         path = new NavMeshPath();
         headset = VRTK.VRTK_DeviceFinder.HeadsetTransform ();
         if (headset == null) {
             Debug.LogError ("TreadBot: could not find headset!");
         }
+        originalHaltRange = haltRange;
     }
 
     void Update()
     {
-        if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh)
-            StartCoroutine(DoNavigate());
-
-        if (Vector3.Distance (headset.position, this.transform.position) < 10) {
-            if (Random.Range (0, 3000) == 42) {
-                audioSource.PlayOneShot (trackSound);
+        if (Vector3.Distance (headset.position, this.transform.position) < haltRange) {
+            Debug.Log ("Stopping "+Vector3.Distance (headset.position, this.transform.position));
+            shouldNavigate = false;
+            navMeshAgent.isStopped = true;
+            haltRange = originalHaltRange + haltRangeSensitivity;
+            if (engineAudioSource.isPlaying) {
+                
+                engineAudioSource.Stop ();
             }
+
+            if (Random.Range (0, 3000) == 42) {
+                SFXAudioSource.PlayOneShot (trackSound);
+            }
+
             ts.setTarget (headset.position);
             ts.shouldTrack (true);
             //check if we can shoot the player yet
             RaycastHit rhit;
             //if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, 20f)) {
-            if (Vector3.Distance (headset.position, this.transform.position) < 1) {
+            if (Vector3.Distance (headset.position, this.transform.position) < fireRange) {
                 //if (rhit.collider.gameObject.name.Contains ("Camera") || rhit.collider.gameObject.name.Contains ("Controller")) {
                     //we hit player;
 
                     this.fire ();
                 //}
             }
-        } else {
+        } else if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime)) {
+            haltRange = originalHaltRange;
+            shouldNavigate = true;
+            StartCoroutine(DoNavigate());
+            if (!engineAudioSource.isPlaying) {
+                engineAudioSource.Play ();
+            }
             ts.shouldTrack (false);
+            lastEngineStartTime = Time.time;
         }
 
     }
@@ -70,11 +94,11 @@ public class TreadBot : MobileEntity {
     IEnumerator DoNavigate()
     {
         inCoRoutine = true;
-        if (isAlive()) {
+        if (isAlive() && shouldNavigate) {
             yield return new WaitForSeconds (timeForNewPath);
             if (Random.Range (0, 1000) == 42) {
-                audioSource.volume = 0.5f;
-                audioSource.PlayOneShot (randomSound);
+                SFXAudioSource.volume = 0.5f;
+                SFXAudioSource.PlayOneShot (randomSound);
             }
             GetNewPath ();
             validPath = navMeshAgent.CalculatePath (target, path);
@@ -86,14 +110,6 @@ public class TreadBot : MobileEntity {
         inCoRoutine = false;
     }
 
-    void GetNewPath()
-    {
-        if (isAlive ()) {
-            target = headset.position;
-            navMeshAgent.SetDestination (target);
-        }
-    }
-
     public override void die() {
         this.alive = false; 
         this.navMeshAgent.enabled = false;
@@ -102,7 +118,8 @@ public class TreadBot : MobileEntity {
             rb.isKinematic = false;
             rb.useGravity = true;
         }
-        audioSource.PlayOneShot (deathSound);
+        SFXAudioSource.PlayOneShot (deathSound);
+        SFXAudioSource.Stop ();
         //Renderer rend = this.GetComponent<Renderer> ();
         //rend.material.color = Color.black;
 
@@ -114,10 +131,24 @@ public class TreadBot : MobileEntity {
     }
 
     public void fire() {
-        if (Time.time - 3f >= lastFireTime) {
+        if (Time.time - fireRate >= lastFireTime) {
             muzzleflash.GetComponent<ParticleSystem> ().Play ();
-            this.GetComponent<AudioSource> ().PlayOneShot (gunSound);
+
+            float pitchmod = 0.0f;
+            AudioClip firesound = Utility.randomlySelectAudioClipAndPitch (gunSounds, 0.15f, out pitchmod);
+            SFXAudioSource.pitch += pitchmod;
+            SFXAudioSource.PlayOneShot (firesound);
+            SFXAudioSource.pitch = 1.0f;
+
             lastFireTime = Time.time;
+        }
+    }
+
+    void GetNewPath()
+    {
+        if (isAlive ()) {
+            target = Vector3.MoveTowards (this.transform.position, headset.position, haltRange);//TODO; this halt range stuff doesn't work.
+            navMeshAgent.SetDestination (target);
         }
     }
         

@@ -367,13 +367,14 @@ GameObject:
   - component: {fileID: 54957996562267510}
   - component: {fileID: 114229431193370258}
   - component: {fileID: 82411922965226544}
+  - component: {fileID: 82147992769532756}
   m_Layer: 0
   m_Name: TreadBot
   m_TagString: Entities
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1793711624382656
 GameObject:
   m_ObjectHideFlags: 1
@@ -694,7 +695,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1787021585205904}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.838, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4458014602450764}
@@ -1076,6 +1077,86 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!82 &82147992769532756
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1787021585205904}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: c7cb69c521c53654f99c524f20572913, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.301
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.895
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!82 &82411922965226544
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1087,7 +1168,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 227d5f26c5b40954e879bec12d246a51, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 0.188
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1171,13 +1252,22 @@ MonoBehaviour:
   deathParticleSystem: {fileID: 1374783093240408}
   muzzleflash: {fileID: 1909570705988890}
   turret: {fileID: 1064910034160270}
+  engineAudioSource: {fileID: 82411922965226544}
+  SFXAudioSource: {fileID: 82147992769532756}
   trackSound: {fileID: 8300000, guid: 4531c23bdda148a4ba8317bf2eca2933, type: 3}
   randomSound: {fileID: 8300000, guid: 630b775ad0b51fa4ca0a3c3719607363, type: 3}
   driveSound: {fileID: 8300000, guid: 227d5f26c5b40954e879bec12d246a51, type: 3}
   deathSound: {fileID: 8300000, guid: 0a3dbd9711af7334b8c122b2acef5140, type: 3}
-  gunSound: {fileID: 8300000, guid: 4a4c2bac1cdfed6428dd0c7e26d76b7a, type: 3}
+  gunSounds:
+  - {fileID: 8300000, guid: 4a4c2bac1cdfed6428dd0c7e26d76b7a, type: 3}
+  - {fileID: 8300000, guid: 2b4c9582c3b49a44a8a3a3e2f210a0e2, type: 3}
+  - {fileID: 8300000, guid: d7e214410e0e0214dbd61b4bc19c91ba, type: 3}
+  fireRate: 2
+  fireRange: 3
+  engineStartTime: 1
+  haltRangeSensitivity: 1
+  haltRange: 2
   timeForNewPath: 1
-  lastFireTime: 0
 --- !u!114 &114586994752249680
 MonoBehaviour:
   m_ObjectHideFlags: 1

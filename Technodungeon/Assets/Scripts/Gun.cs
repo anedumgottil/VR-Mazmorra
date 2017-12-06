@@ -98,12 +98,11 @@ public class Gun : VRTK_InteractableObject
         bulletClone.SetActive(true);
         NormalProjectile np = bulletClone.GetComponent<NormalProjectile>();
 
+        float pitchmod = 0.0f;
+        AudioClip selectedSound = Utility.randomlySelectAudioClipAndPitch (fireSounds, 0.05f, out pitchmod);
         //play fire sound
-        audioSource.pitch += ((float) (Random.Range (0,11)*0.01f)) + (-0.05f);//tweak pitch from range (0.05 to -0.05)
-        if (fireSounds != null && fireSounds.Length > 0) {
-            int selectedsound = Random.Range (0, fireSounds.Length);
-            audioSource.PlayOneShot (fireSounds[selectedsound]);
-        }
+        audioSource.pitch += pitchmod;
+        audioSource.PlayOneShot (selectedSound);
         audioSource.pitch = 1.0f;//reset pitch
 
         //play muzzleflash ps

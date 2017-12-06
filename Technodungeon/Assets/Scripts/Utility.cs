@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 public static class Utility{
 
@@ -14,4 +15,13 @@ public static class Utility{
         }
         return array;
     } 
+        
+    public static AudioClip randomlySelectAudioClipAndPitch(AudioClip[] arr, float pitchRange, out float pitchmod) {
+        int selectedsound = -1;
+        pitchmod = ((float) (Random.Range (0,11)*(pitchRange * 2))) + (-pitchRange);//tweak pitch from range (0.05 to -0.05)
+        if (arr != null && arr.Length > 0) {
+            selectedsound = Random.Range (0, arr.Length);
+        }
+        return arr [selectedsound];
+    }
 }
