@@ -22,24 +22,25 @@ public class TreadBot : MobileEntity {
     public float haltRange = 10f;
     public float timeForNewPath;
 
-    NavMeshAgent navMeshAgent = null;
-    NavMeshPath path = null;
-    bool inCoRoutine = false;
-    Vector3 target;
-    bool shouldNavigate = false;
-    bool validPath = false;
-    Transform headset = null;
-    TrackingSystem ts = null;
-    float lastFireTime = 0.0f;
-    float lastEngineStartTime = 0.0f;
-    float originalHaltRange;
+    private NavMeshAgent navMeshAgent = null;
+    private NavMeshPath path = null;
+    private bool inCoRoutine = false;
+    private Vector3 target;
+    private bool shouldNavigate = false;
+    private bool validPath = false;
+    private Transform headset = null;
+    private TrackingSystem ts = null;
+    private float lastFireTime = 0.0f;
+    private float lastEngineStartTime = 0.0f;
+    private float originalHaltRange;
+    private Gun turretGun = null;
 
     void Start()
     {
         ts = turret.GetComponentInChildren<TrackingSystem> ();
+        turretGun = turret.GetComponent<Gun> ();
         if (ts == null) {
             Debug.LogError ("TreadBot: could not find tracking system!");
-            this.gameObject.SetActive (false);
         }
         navMeshAgent = GetComponent<NavMeshAgent>();
         path = new NavMeshPath();
@@ -52,8 +53,11 @@ public class TreadBot : MobileEntity {
 
     void Update()
     {
+        if (headset == null) {
+            return;
+        }
         if (Vector3.Distance (headset.position, this.transform.position) < haltRange) {
-            Debug.Log ("Stopping "+Vector3.Distance (headset.position, this.transform.position));
+            //Debug.Log ("Stopping "+Vector3.Distance (headset.position, this.transform.position));
             shouldNavigate = false;
             navMeshAgent.isStopped = true;
             haltRange = originalHaltRange + haltRangeSensitivity;
@@ -119,7 +123,7 @@ public class TreadBot : MobileEntity {
             rb.useGravity = true;
         }
         SFXAudioSource.PlayOneShot (deathSound);
-        SFXAudioSource.Stop ();
+        engineAudioSource.Stop ();
         //Renderer rend = this.GetComponent<Renderer> ();
         //rend.material.color = Color.black;
 
@@ -132,13 +136,7 @@ public class TreadBot : MobileEntity {
 
     public void fire() {
         if (Time.time - fireRate >= lastFireTime) {
-            muzzleflash.GetComponent<ParticleSystem> ().Play ();
-
-            float pitchmod = 0.0f;
-            AudioClip firesound = Utility.randomlySelectAudioClipAndPitch (gunSounds, 0.15f, out pitchmod);
-            SFXAudioSource.pitch += pitchmod;
-            SFXAudioSource.PlayOneShot (firesound);
-            SFXAudioSource.pitch = 1.0f;
+            turretGun.fireBullet ();
 
             lastFireTime = Time.time;
         }

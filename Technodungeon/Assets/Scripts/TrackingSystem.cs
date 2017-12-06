@@ -3,9 +3,9 @@ using System.Collections;
 
 public class TrackingSystem : MonoBehaviour {
 	public float speed = 3.0f;
-    public bool rotateXaxis = true;
-    public bool rotateYaxis = true;
-    public bool rotateZaxis = true;
+    public bool rotateXAxis = true;
+    public bool rotateYAxis = true;
+    public bool rotateZAxis = true;
 
 	GameObject m_target = null;
     Vector3 m_target_vector;
@@ -20,17 +20,18 @@ public class TrackingSystem : MonoBehaviour {
                 m_lastKnownPosition = m_target_vector;
                 m_lookAtRotation = Quaternion.LookRotation (m_lastKnownPosition - transform.position);
             }
-
+            Vector3 lookAtRotEulers = m_lookAtRotation.eulerAngles;
             if (transform.rotation != m_lookAtRotation) {
-                if (!rotateXaxis) {
-                    m_lookAtRotation.x = transform.rotation.x;
+                if (!rotateXAxis) {
+                    lookAtRotEulers.x = 0;
                 }
-                if (!rotateYaxis) {
-                    m_lookAtRotation.y = transform.rotation.y;
+                if (!rotateYAxis) {
+                    lookAtRotEulers.y = 0;
                 }
-                if (!rotateZaxis) {
-                    m_lookAtRotation.z = transform.rotation.z;
+                if (!rotateZAxis) {
+                    lookAtRotEulers.z = 0;
                 }
+                m_lookAtRotation.eulerAngles = lookAtRotEulers;
                 transform.rotation = Quaternion.RotateTowards (transform.rotation, m_lookAtRotation, speed * Time.deltaTime);
             }
         }

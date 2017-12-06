@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 54562812594746836}
   - component: {fileID: 114309364848272046}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: PistolBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,7 +140,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1326541162991868}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.0008, y: 0.0985, z: 0.1114}
+  m_LocalPosition: {x: -0.0008, y: 0.0985, z: 0.122}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children: []
   m_Father: {fileID: 4635090157042202}
@@ -166,9 +166,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1432166862016268}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.184338, y: -5.8795624, z: 10.721795}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4250923361591864}
   - {fileID: 4380242886982888}
@@ -238,7 +238,7 @@ MeshRenderer:
   m_GameObject: {fileID: 1326541162991868}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -508,8 +508,8 @@ MonoBehaviour:
   validDrop: 1
   grabOverrideButton: 0
   allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 0}
-  secondaryGrabActionScript: {fileID: 0}
+  grabAttachMechanicScript: {fileID: 114077289339704152}
+  secondaryGrabActionScript: {fileID: 114698839492765190}
   isUsable: 1
   holdButtonToUse: 0
   useOnlyIfGrabbed: 1
@@ -518,13 +518,14 @@ MonoBehaviour:
   allowedUseControllers: 0
   usingState: 0
   flashlight: {fileID: 1099594913761710}
-  muzzleFlash: {fileID: 0}
+  muzzleFlash: {fileID: 1919398694845368}
+  audioSource: {fileID: 0}
   flashlightClickNoise: {fileID: 8300000, guid: c7cb69c521c53654f99c524f20572913,
     type: 3}
   grabNoise: {fileID: 8300000, guid: 69aaa65221a78664096ca647104b71fa, type: 3}
   ungrabNoise: {fileID: 8300000, guid: 4c459c18dbaa76b4891a653dfc97b3db, type: 3}
   bullet: {fileID: 1326541162991868}
-  bulletSpeed: 1000
+  bulletSpeed: 13
   bulletLife: 2
   bulletDamage: 35
   flashlightStartOff: 1
@@ -543,7 +544,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ebf247e532cd4ea78246faf019e5749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 30
   impactObject: {fileID: 1481396975789428, guid: e6be0ac65360bb641b96a00eab3c86f6,
     type: 2}
 --- !u!114 &114698839492765190
@@ -590,7 +590,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198149647325999880
 ParticleSystem:

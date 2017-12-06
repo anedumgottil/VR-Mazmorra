@@ -6,6 +6,7 @@ public class Gun : VRTK_InteractableObject
     [Header("Gun Options", order = 4)]
     public GameObject flashlight = null;
     public GameObject muzzleFlash = null;
+    public AudioSource audioSource = null;
     public AudioClip flashlightClickNoise = null;
     public AudioClip grabNoise = null;
     public AudioClip ungrabNoise = null;
@@ -17,13 +18,12 @@ public class Gun : VRTK_InteractableObject
     public AudioClip[] fireSounds;
 
     private bool flashlightState = false;
-    private AudioSource audioSource = null;
     private GameObject grabbingObject = null;
 
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
-        FireBullet();
+        fireBullet();
     }
 
     public override void Grabbed(VRTK_InteractGrab currentGrabbingObject) {
@@ -44,7 +44,7 @@ public class Gun : VRTK_InteractableObject
 
         this.grabbingObject = currentGrabbingObject.gameObject;
         //play pickup sound
-        if (grabNoise != null) {
+        if (grabNoise != null && audioSource != null) {
             audioSource.PlayOneShot (grabNoise);
         }
 
@@ -70,7 +70,7 @@ public class Gun : VRTK_InteractableObject
         //OUR ungrab code
         this.grabbingObject = null;
         //play drop sound
-        if (ungrabNoise != null) {
+        if (ungrabNoise != null && audioSource != null) {
             audioSource.PlayOneShot (ungrabNoise);
         }
 
@@ -80,7 +80,9 @@ public class Gun : VRTK_InteractableObject
 
     protected void Start()
     {
-        audioSource = this.gameObject.GetComponent<AudioSource> ();
+        if (audioSource == null) {
+            Debug.LogWarning ("Cannot find Gun audiosource!");
+        }
         if (flashlight != null) {//setup flashlight
             flashlight.SetActive (!flashlightStartOff);
             flashlightState = !flashlightStartOff;
@@ -90,7 +92,7 @@ public class Gun : VRTK_InteractableObject
         }
     }
 
-    private void FireBullet()
+    public void fireBullet()
     {
         if (bullet == null)
             return;
@@ -98,18 +100,20 @@ public class Gun : VRTK_InteractableObject
         bulletClone.SetActive(true);
         NormalProjectile np = bulletClone.GetComponent<NormalProjectile>();
 
-        float pitchmod = 0.0f;
-        AudioClip selectedSound = Utility.randomlySelectAudioClipAndPitch (fireSounds, 0.05f, out pitchmod);
-        //play fire sound
-        audioSource.pitch += pitchmod;
-        audioSource.PlayOneShot (selectedSound);
-        audioSource.pitch = 1.0f;//reset pitch
+        if (audioSource != null) {
+            float pitchmod = 0.0f;
+            AudioClip selectedSound = Utility.randomlySelectAudioClipAndPitch (fireSounds, 0.15f, out pitchmod);
+            //play fire sound
+            audioSource.pitch += pitchmod;
+            audioSource.PlayOneShot (selectedSound);
+            audioSource.pitch = 1.0f;//reset pitch
+        }
 
         //play muzzleflash ps
         if (muzzleFlash != null) {
             muzzleFlash.GetComponent<ParticleSystem> ().Play();
         }
-
+        np.setSpeed (bulletSpeed);
         np.FireProjectile (this.gameObject, bullet.transform.up, bulletDamage, 10);
     }
 
@@ -123,7 +127,9 @@ public class Gun : VRTK_InteractableObject
                 flashlight.SetActive (!flashlightState);
                 flashlightState = !flashlightState;
                 //play click noise
-                audioSource.PlayOneShot (flashlightClickNoise);
+                if (audioSource != null) {
+                    audioSource.PlayOneShot (flashlightClickNoise);
+                }
             } else {
                 Debug.Log("Gun: Tried to activate a flashlight with the wrong controller. This should not happen: "+e.controllerReference.scriptAlias.name.ToString () + " =/= "+ this.grabbingObject.name.ToString());
             }
