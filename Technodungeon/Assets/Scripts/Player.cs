@@ -74,19 +74,14 @@ public class Player : MobileEntity {
         //trigger endgame event
     }
 
-    public virtual void damage(GameObject damageCause, int damageAmount) {
+    public override void damage(GameObject damageCause, int damageAmount) {
+        base.damage (damageCause, damageAmount);
+        //play injury sound
         if (damageAmount >= 100) {
             audioSource.PlayOneShot (groanShort);
         } else if (health - damageAmount <= startingHealth / 8) {
             audioSource.PlayOneShot (groanShort);
         }
-            
-        health -= damageAmount;
-        if (health <= 0) {
-            this.die ();
-        }
-        //play injury sound
-
     }
 
     //teleport to the grid location, but only if there exists a GridSpace there. Update our gridX and Y accordingly.

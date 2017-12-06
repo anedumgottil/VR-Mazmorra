@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class NormalProjectile : BaseProjectile {
+    public static bool LogCollisions = true;
+
     public GameObject impactObject;//the object to spawn on impact
 
 	Vector3 m_direction;
@@ -30,14 +32,28 @@ public class NormalProjectile : BaseProjectile {
 
 	void OnCollisionEnter(Collision other)
 	{
+        if (LogCollisions) {
+            Debug.Log ("NORMALPROJECTILE COLLISION: " + other.gameObject.ToString ());
+        }
         ProjectileImpactPoint.ImpactType impactType = ProjectileImpactPoint.ImpactType.METAL;
-        if (other.gameObject.Equals (m_launcher)) {
-            return;//it'll probably collide with the gun on the way out, ignore it.
+        if (m_launcher != null && other.gameObject.Equals (m_launcher) || other.transform.IsChildOf (m_launcher.transform) || m_launcher.transform.IsChildOf (other.transform)) {
+            return;//ignore any collisions that may come from an object that is a parent of, child of, or literally is the launcher.
         }
         if (other.collider.transform.gameObject.name.Equals ("Player")) {
             //we hit the player
             impactType = ProjectileImpactPoint.ImpactType.FLESH;
         }
+
+        EntityPart otherEntPart = other.gameObject.GetComponent<EntityPart> ();
+        if (otherEntPart == null && other.transform.parent != null) {
+            //this object may not have had the Entity Part, but it's parent might. check that too!
+            otherEntPart = other.transform.parent.GetComponent<EntityPart> ();
+        }
+        if (otherEntPart != null) {
+            //here is where we do damage to the EntityPart we hit, which will handle passing this damage to it's parent entity.
+            otherEntPart.damage (m_launcher, m_damage);
+        }
+
         Entity otherEnt = other.gameObject.GetComponent<Entity> ();
         if(otherEnt != null)
 		{

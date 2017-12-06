@@ -62,6 +62,7 @@ public class ProjectileImpactPoint : MonoBehaviour {
             Debug.LogWarning ("ProjectileImpactPoint: playSound: specified unknown ImpactType");
             break;
         }
+        pitchModRange = 1.0f;
     }
 
     public void setImpactType(ImpactType type) {

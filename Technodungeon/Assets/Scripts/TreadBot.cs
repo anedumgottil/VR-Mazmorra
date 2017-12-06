@@ -10,9 +10,10 @@ public class TreadBot : MobileEntity {
     public AudioSource engineAudioSource = null;
     public AudioSource SFXAudioSource = null;
     public AudioClip trackSound = null;//found player sound
-    public AudioClip randomSound = null;//this one is emitted seemingly at random
+    public AudioClip componentDamageSound = null;//this one is emitted when one of it's entityparts receive enough damage to die
     public AudioClip driveSound = null;//emitted as the treadbot moves. should be set in it's audiosource
     public AudioClip deathSound = null;//explosion or something
+    public AudioClip armorDeathSound = null;//armor piece destroyed sound
     public AudioClip[] gunSounds = null;//pop pop pop
 
     public float fireRate = 2f;
@@ -34,6 +35,8 @@ public class TreadBot : MobileEntity {
     private float lastEngineStartTime = 0.0f;
     private float originalHaltRange;
     private Gun turretGun = null;
+    private bool turretDisabled = false;
+    private bool treadsDisabled = false;
 
     void Start()
     {
@@ -57,36 +60,40 @@ public class TreadBot : MobileEntity {
         if (headset == null) {
             return;
         }
+        //we're within range of the player:
         if (Vector3.Distance (headset.position, this.transform.position) < haltRange) {
             //Debug.Log ("Stopping "+Vector3.Distance (headset.position, this.transform.position));
             shouldNavigate = false;
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent.isOnNavMesh)
+                navMeshAgent.isStopped = true;
             haltRange = originalHaltRange + haltRangeSensitivity;
             if (engineAudioSource.isPlaying) {
                 
                 engineAudioSource.Stop ();
-            }
-
-            turretGun.setFlashlightState (true);
-
-            if (Random.Range (0, 3000) == 42) {
                 SFXAudioSource.PlayOneShot (trackSound);
             }
 
-            ts.setTarget (headset.position);
-            ts.shouldTrack (true);
-            //check if we can shoot the player yet
-            RaycastHit rhit;
-            if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, fireRange)) {
+            //set up turret
+            if (!turretDisabled) {
+                turretGun.setFlashlightState (true);
+                ts.setTarget (headset.position);
+                ts.shouldTrack (true);
+                //check if we can shoot the player yet
                 if (Vector3.Distance (headset.position, this.transform.position) < fireRange) {
-                    //if (rhit.collider.gameObject.name.Contains ("Camera") || rhit.collider.gameObject.name.Contains ("Controller")) {
-                    //we hit player;
+                    //we're within firing range of the player
+                    RaycastHit rhit;
+                    if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, fireRange)) {
+                        //raycast hit something
 
-                    this.fire ();
-                    //}
+                        if (rhit.collider.gameObject.name.Contains ("Player") || rhit.collider.gameObject.name.Contains ("Controller")) {
+                            //we raycast hit player; only shoots player:
+                            this.fire ();
+                        }
+                    }
                 }
             }
-        } else if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime)) {
+            //we're not in stopping range of the player, start the engines:
+        } else if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime) && !treadsDisabled) {
             haltRange = originalHaltRange;
             shouldNavigate = true;
             StartCoroutine(DoNavigate());
@@ -103,12 +110,8 @@ public class TreadBot : MobileEntity {
     IEnumerator DoNavigate()
     {
         inCoRoutine = true;
-        if (isAlive() && shouldNavigate) {
+        if (isAlive() && shouldNavigate && !treadsDisabled) {
             yield return new WaitForSeconds (timeForNewPath);
-            if (Random.Range (0, 1000) == 42) {
-                SFXAudioSource.volume = 0.5f;
-                SFXAudioSource.PlayOneShot (randomSound);
-            }
             GetNewPath ();
             validPath = navMeshAgent.CalculatePath (target, path);
             if (!validPath) {
@@ -117,6 +120,42 @@ public class TreadBot : MobileEntity {
                 
         }
         inCoRoutine = false;
+    }
+
+    public override void damage (GameObject damageCause, int damageAmount) {
+        base.damage (damageCause, damageAmount);
+
+        //some damageCauses only trigger once - when a EntityPart of ours dies. Handle these:
+        if (damageCause.transform.IsChildOf (this.transform) && damageCause.name.Contains ("Armor")) {//one of our armor plates broke.
+            if (armorDeathSound != null)
+                SFXAudioSource.PlayOneShot (armorDeathSound);
+            //Treads and MainBody have their colliders off by default, but now that the armor is detached/killed, we should turn them on to receive damage.
+            BoxCollider bodyCollider = null;
+            if (damageCause.name.Equals ("TreadArmor L")) {
+                bodyCollider = this.transform.Find ("Tread L").GetComponentInChildren<BoxCollider> ();
+                bodyCollider.enabled = true;
+            } else if (damageCause.name.Equals ("TreadArmor R")) {
+                bodyCollider = this.transform.Find ("Tread R").GetComponentInChildren<BoxCollider> ();
+                bodyCollider.enabled = true;
+            } else if (damageCause.name.Equals ("FrontArmor")) {
+                bodyCollider = this.transform.Find ("MainBody").GetComponentInChildren<BoxCollider> ();
+                bodyCollider.enabled = true;
+            } else {
+                Debug.LogWarning("TreadBot: damage: could not handle armor of type: "+damageCause.name);
+                //some other armor part.
+            }
+        }
+        if (damageCause.transform.IsChildOf (this.transform) && damageCause.name.Contains ("Tread") && !damageCause.name.Contains ("Armor")) {//one of our actual Treads broke.
+            if (componentDamageSound != null)
+                SFXAudioSource.PlayOneShot (componentDamageSound);
+            disableTreads ();
+        }
+        if (damageCause.transform.IsChildOf (this.transform) && damageCause.name.Contains ("Turret")) {//our turret broke.
+            if (componentDamageSound != null)
+                SFXAudioSource.PlayOneShot (componentDamageSound);
+            disableTurret ();
+        }
+            
     }
 
     public override void die() {
@@ -140,6 +179,9 @@ public class TreadBot : MobileEntity {
     }
 
     public void fire() {
+        if (turretDisabled) {
+            return;
+        }
         if (Time.time - fireRate >= lastFireTime) {
             turretGun.fireBullet ();
 
@@ -159,5 +201,33 @@ public class TreadBot : MobileEntity {
     {
         navMeshAgent.destination = targetPoint;
         navMeshAgent.isStopped = false;
+    }
+
+    //tells the TreadBot it's Turret is destroyed or otherwise out of service
+    public void disableTurret() {
+        this.turretDisabled = true;
+        //play a disable sound?
+        //play disable particles?
+        ts.shouldTrack (false);
+        ts.enabled = false;//disable tracking system for good.
+        //knocks out it's light
+        turretGun.setFlashlightState (false);
+
+        //set up the turret VRTK interectable object to make it work when the player goes to grab it.
+        turretGun.isGrabbable = true;
+        turretGun.isUsable = true;
+        turretGun.touchHighlightColor = Color.magenta;
+    }
+
+    //tells the TreadBot it's Treads/engine is destroyed or otherwise out of service
+    public void disableTreads() {
+        this.treadsDisabled = true;
+        //play a disable sound?
+        //play disable particles?
+        this.engineAudioSource.Stop();
+        navMeshAgent.isStopped = true;
+        this.engineAudioSource.mute = true;
+        shouldNavigate = false;
+        //no engine sounds play when it's treads are disabled.
     }
 }

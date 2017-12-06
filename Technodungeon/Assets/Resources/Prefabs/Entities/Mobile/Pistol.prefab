@@ -519,7 +519,7 @@ MonoBehaviour:
   usingState: 0
   flashlight: {fileID: 1099594913761710}
   muzzleFlash: {fileID: 1919398694845368}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 82423278522927026}
   flashlightClickNoise: {fileID: 8300000, guid: c7cb69c521c53654f99c524f20572913,
     type: 3}
   grabNoise: {fileID: 8300000, guid: 69aaa65221a78664096ca647104b71fa, type: 3}
