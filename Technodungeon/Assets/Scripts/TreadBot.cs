@@ -49,6 +49,7 @@ public class TreadBot : MobileEntity {
             Debug.LogError ("TreadBot: could not find headset!");
         }
         originalHaltRange = haltRange;
+        turretGun.setFlashlightState (false);
     }
 
     void Update()
@@ -66,6 +67,8 @@ public class TreadBot : MobileEntity {
                 engineAudioSource.Stop ();
             }
 
+            turretGun.setFlashlightState (true);
+
             if (Random.Range (0, 3000) == 42) {
                 SFXAudioSource.PlayOneShot (trackSound);
             }
@@ -74,13 +77,14 @@ public class TreadBot : MobileEntity {
             ts.shouldTrack (true);
             //check if we can shoot the player yet
             RaycastHit rhit;
-            //if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, 20f)) {
-            if (Vector3.Distance (headset.position, this.transform.position) < fireRange) {
-                //if (rhit.collider.gameObject.name.Contains ("Camera") || rhit.collider.gameObject.name.Contains ("Controller")) {
+            if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, fireRange)) {
+                if (Vector3.Distance (headset.position, this.transform.position) < fireRange) {
+                    //if (rhit.collider.gameObject.name.Contains ("Camera") || rhit.collider.gameObject.name.Contains ("Controller")) {
                     //we hit player;
 
                     this.fire ();
-                //}
+                    //}
+                }
             }
         } else if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime)) {
             haltRange = originalHaltRange;
@@ -90,6 +94,7 @@ public class TreadBot : MobileEntity {
                 engineAudioSource.Play ();
             }
             ts.shouldTrack (false);
+            turretGun.setFlashlightState (false);
             lastEngineStartTime = Time.time;
         }
 

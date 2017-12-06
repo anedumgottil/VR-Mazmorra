@@ -124,8 +124,7 @@ public class Gun : VRTK_InteractableObject
             //is this the same controller that we're being grabbed by?
             if (e.controllerReference.scriptAlias.Equals (this.grabbingObject)) {
                 //toggle the flashlight state
-                flashlight.SetActive (!flashlightState);
-                flashlightState = !flashlightState;
+                toggleFlashlight();
                 //play click noise
                 if (audioSource != null) {
                     audioSource.PlayOneShot (flashlightClickNoise);
@@ -134,6 +133,16 @@ public class Gun : VRTK_InteractableObject
                 Debug.Log("Gun: Tried to activate a flashlight with the wrong controller. This should not happen: "+e.controllerReference.scriptAlias.name.ToString () + " =/= "+ this.grabbingObject.name.ToString());
             }
         }
+    }
+
+    public void toggleFlashlight() {
+        flashlight.SetActive (!flashlightState);
+        flashlightState = !flashlightState;
+    }
+
+    public void setFlashlightState(bool state) {
+        flashlight.SetActive (state);
+        flashlightState = state;
     }
 
 }
