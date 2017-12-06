@@ -30,8 +30,13 @@ public class NormalProjectile : BaseProjectile {
 
 	void OnCollisionEnter(Collision other)
 	{
+        ProjectileImpactPoint.ImpactType impactType = ProjectileImpactPoint.ImpactType.METAL;
         if (other.gameObject.Equals (m_launcher)) {
             return;//it'll probably collide with the gun on the way out, ignore it.
+        }
+        if (other.collider.transform.gameObject.name.Equals ("Player")) {
+            //we hit the player
+            impactType = ProjectileImpactPoint.ImpactType.FLESH;
         }
         Entity otherEnt = other.gameObject.GetComponent<Entity> ();
         if(otherEnt != null)
@@ -44,6 +49,7 @@ public class NormalProjectile : BaseProjectile {
             GameObject impactObjClone = Instantiate (impactObject, other.contacts [0].point, Quaternion.FromToRotation (Vector3.up, other.contacts[0].normal));
             ProjectileImpactPoint projImpactPt = impactObjClone.GetComponent<ProjectileImpactPoint> ();
             if (projImpactPt != null) {
+                projImpactPt.setImpactType (impactType);
                 projImpactPt.triggerImpactPoint ();
             }
         }

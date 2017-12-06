@@ -269,12 +269,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45c5bd4f757212340961a121816c6817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impactNoises:
-  - {fileID: 8300000, guid: 06a900dd506198747bd11a8856946d78, type: 3}
-  - {fileID: 8300000, guid: 0e26f05a2060ffc4a94d9bddfdebe2cd, type: 3}
-  - {fileID: 8300000, guid: 1c76d95e874f37d45a5854d01a9ab090, type: 3}
-  - {fileID: 8300000, guid: 0dca0c814341bae438b8676d2c21582e, type: 3}
-  - {fileID: 8300000, guid: 975240f3df53b4d4880bc4e4b168ea67, type: 3}
+  metalImpactClips: []
+  fleshImpactClips:
+  - {fileID: 8300000, guid: 50b2f931e49b38c4b8699a9bec69b481, type: 3}
+  - {fileID: 8300000, guid: 39433182d0902a0429b8b93a6c45310a, type: 3}
   pitchModRange: 0.05
   audioSource: {fileID: 82516400831423572}
   particleSys: {fileID: 198330789634027878}
@@ -350,7 +348,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1095759204
+  randomSeed: 1300088633
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3688,7 +3686,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1253607028
+  randomSeed: -1911578235
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6906,7 +6904,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 271180673
+  randomSeed: -2038790563
   InitialModule:
     serializedVersion: 3
     enabled: 1

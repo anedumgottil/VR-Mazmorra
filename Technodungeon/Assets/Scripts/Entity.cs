@@ -14,7 +14,7 @@ public abstract class Entity : MonoBehaviour {
         health = startingHealth;
     }
 
-    public void damage(GameObject damageCause, int damageAmount) {
+    public virtual void damage(GameObject damageCause, int damageAmount) {
         health -= damageAmount;
         if (health <= 0) {
             this.die ();

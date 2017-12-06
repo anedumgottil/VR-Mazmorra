@@ -13,10 +13,14 @@ public class Player : MobileEntity {
 
     private Transform head = null;
     private VRTK_BasicTeleport teleporter = null;
+    private CapsuleCollider ccollider = null;
+    AudioSource audioSource = null;
 
     public GameObject rController = null;//VRTK Right Controller Alias
     public GameObject lController = null;//VRTK Left Controller Alias
     public GameObject playArea = null;//VRTK PlayArea Alias GameObject.
+    public AudioClip groanLong = null;
+    public AudioClip groanShort = null;
 
     void OnEnable() {
         //Check if instance already exists
@@ -47,8 +51,42 @@ public class Player : MobileEntity {
             Debug.LogError ("Player: unable to find the headset!");
             return;
         }
+        ccollider = this.gameObject.GetComponent<CapsuleCollider> ();
+        if (ccollider == null) {
+            Debug.LogError ("Player: unable to find the collider!");
+            return;
+        }
+        //set capsule size
+        ccollider.height = this.transform.position.y+(this.transform.lossyScale.y/8);
+        ccollider.center = new Vector3 (0, -((this.transform.position.y + (this.transform.lossyScale.y / 8)) / 2) + (this.transform.lossyScale.y / 8), 0);
+        audioSource = this.gameObject.GetComponent<AudioSource> ();
+        if (audioSource == null || groanLong == null || groanShort == null) {
+            Debug.LogError ("Player: unable to find the audio sources or audio clips!");
+            return;
+        }
         isInit = true;
         Debug.Log ("Player initialized");
+    }
+
+    public override void die() {
+        this.alive = false; 
+        audioSource.PlayOneShot (groanLong);
+        //trigger endgame event
+    }
+
+    public virtual void damage(GameObject damageCause, int damageAmount) {
+        if (damageAmount >= 100) {
+            audioSource.PlayOneShot (groanShort);
+        } else if (health - damageAmount <= startingHealth / 8) {
+            audioSource.PlayOneShot (groanShort);
+        }
+            
+        health -= damageAmount;
+        if (health <= 0) {
+            this.die ();
+        }
+        //play injury sound
+
     }
 
     //teleport to the grid location, but only if there exists a GridSpace there. Update our gridX and Y accordingly.
