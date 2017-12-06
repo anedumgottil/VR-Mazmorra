@@ -12,7 +12,7 @@ public class TrackingProjectile : BaseProjectile {
 	// Update is called once per frame
 	void Update () {
         if (Player.getInstance() != null)//TODO: getting an instance of Player every single frame is going to waste resources... load this once, and only after Player has been loaded... use a Async IEnumerator?
-            m_target = Player.getInstance ().getHead ();
+            m_target = Player.getInstance ().getHead ().gameObject;//TODO: not even sure if getting the gameobject of the headset transform is workable, now that we're on VRTK. should probably make target a transform.
 		if(m_target){
 			m_lastKnownPosition = m_target.transform.position;
 		}

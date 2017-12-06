@@ -20,6 +20,7 @@ public class MapLoader : MonoBehaviour
 {
     public GameObject VRTKSDKManagerGO = null;
     public int SDKLoaderTimeout = 5;
+    public GameObject playerGameObject = null;
     private VRTK_SDKManager VRTKSDKManager = null;
 
     private string blocksPath;//old block flatfile path
@@ -957,6 +958,18 @@ public class MapLoader : MonoBehaviour
                     count++;
                 }
                 //generate the map, we have a loadedSetup != null
+                //initialize player
+                if (playerGameObject == null) {
+                    Debug.LogError ("MapLoader: Unable to find player object! cannot initialize player.");
+                } else {
+                    Player p = playerGameObject.GetComponent<Player> ();
+                    if (p == null) {
+                        Debug.LogError ("MapLoader: Unable to initialize player!");
+                    } else {
+                        Debug.Log ("Initializing Player...");
+                        p.initialize ();
+                    }
+                }
                 Debug.Log("MapLoader: Wait ended. SDK setup found. Generating starter map...");
                 MapGenerator.Instance.generateStarterMap (); //generate immediately.
                 StartCoroutine (navmeshUpdateSequence()); //update the navmesh every 5 seconds, now that mapgen is accomplished.

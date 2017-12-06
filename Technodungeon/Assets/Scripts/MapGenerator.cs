@@ -350,7 +350,7 @@ public sealed class MapGenerator {
         */
 
         //move player to our map
-        if (Player.getInstance () != null) {
+        if (Player.getInstance ().isInitialized ()) {
             Player.getInstance ().teleportToGridLocation (5, 5);
         } else {
             Debug.LogError ("Error: MapGenerator - Player was null when we tried to move them to the map.");

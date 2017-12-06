@@ -52,7 +52,7 @@ public class Drone : MobileEntity {
                 //Debug.Log ("Found an invalid Path"); TODO fix this!
             }
 
-            while (!validPath && isAlive()) {
+            while (!validPath && isAlive() && navMeshAgent.isOnNavMesh) {
                 yield return new WaitForSeconds (inspectTime);
                 GetNewPath ();
                 validPath = navMeshAgent.CalculatePath (target, path);
