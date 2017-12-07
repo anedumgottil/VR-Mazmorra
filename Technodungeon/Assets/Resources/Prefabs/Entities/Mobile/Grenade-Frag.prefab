@@ -54,12 +54,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4272143703383100}
   - component: {fileID: 54722890246749756}
-  - component: {fileID: 114863482471166738}
   - component: {fileID: 114515739513912318}
   - component: {fileID: 114585743662890570}
   - component: {fileID: 114557970842331782}
   - component: {fileID: 136189664052076428}
   - component: {fileID: 82958665592695288}
+  - component: {fileID: 114326991611778948}
   m_Layer: 0
   m_Name: Grenade-Frag
   m_TagString: Entities
@@ -403,6 +403,27 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114326991611778948
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1513586622987440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99490d2901160b540b6ce6a321816a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  precisionGrab: 0
+  rightSnapHandle: {fileID: 0}
+  leftSnapHandle: {fileID: 0}
+  throwVelocityWithAttachDistance: 0
+  throwMultiplier: 2
+  onGrabCollisionDelay: 0
+  destroyImmediatelyOnThrow: 1
+  breakForce: 1500
+  strength: 500
+  damper: 50
 --- !u!114 &114515739513912318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -435,7 +456,7 @@ MonoBehaviour:
   validDrop: 1
   grabOverrideButton: 0
   allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 114863482471166738}
+  grabAttachMechanicScript: {fileID: 114326991611778948}
   secondaryGrabActionScript: {fileID: 114515739513912318}
   isUsable: 1
   holdButtonToUse: 0
@@ -463,25 +484,6 @@ MonoBehaviour:
   deathParticleSystem: {fileID: 1095001612738422}
   grenadeLight: {fileID: 108781641443739248}
   numBlocksToSpawn: 5
---- !u!114 &114863482471166738
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1513586622987440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8afa0b205791c9f4496bf2814aeac078, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  precisionGrab: 0
-  rightSnapHandle: {fileID: 0}
-  leftSnapHandle: {fileID: 0}
-  throwVelocityWithAttachDistance: 1
-  throwMultiplier: 1.5
-  onGrabCollisionDelay: 0
-  destroyImmediatelyOnThrow: 1
-  breakForce: 1500
 --- !u!136 &136189664052076428
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -342,8 +342,8 @@ public sealed class MapGenerator {
         setRoom (new Vector2Int(3,15), MapLoader.getRoom (5));
         setRoom (new Vector2Int(15,3), MapLoader.getRoom (6));
         //setRoom (new Vector2Int (1, 11), MapLoader.getRoom (5));
-        /*
-        setRoom (new Vector2Int(8,3), MapLoader.getRoom (3));
+
+        setRoom (new Vector2Int(8,3), MapLoader.getRoom (3));/*
         setRoom (new Vector2Int(14,4), MapLoader.getRoom (3));
         setRoom (new Vector2Int(11,8), MapLoader.getRoom (2));
         setRoom (new Vector2Int(10,12), MapLoader.getRoom (4));

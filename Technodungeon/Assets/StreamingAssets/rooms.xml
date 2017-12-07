@@ -19,6 +19,7 @@
 	<gridspace x="3" y="4" config="-1" />
 	<entities>
 		<entity x="3" y="4" name="Technoshard" offsetx="1.0" offsety="1.0" offsetz="1.0" />
+		<entity x="3" y="3" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 	</entities>
 </room>
 
@@ -58,9 +59,7 @@
 	<gridspace x="2" y="0" config="-1" />
 	<gridspace x="3" y="0" config="-1" />
 	<entities>
-		<entity x="1" y="0" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 		<entity x="2" y="0" name="Grenade-Standard" offsetx="0.4" offsety="0.4" offsetz="0.4" />
-		<entity x="3" y="0" name="Grenade-Frag" offsetx="0.4" offsety="0.4" offsetz="0.4" />
 	</entities>
 </room>
 
@@ -86,6 +85,7 @@
 	<entities>
 	<entity x="2" y="1" name="Reactor" offsetx="0" offsety="0" offsetz="1.25" />
 	<entity x="2" y="0" name="TreadBot" offsetx="0.5" offsety="0.5" offsetz="0.5" />
+	<entity x="2" y="2" name="Grenade-Frag" offsetx="0.4" offsety="0.4" offsetz="0.4" />
 	</entities>
 </room>
 
@@ -106,6 +106,7 @@
 	<entity x="1" y="1" name="CoolantLine" offsetx="0" offsety="0" offsetz="1.25" />
 	<entity x="1" y="2" name="CoolantLine" offsetx="0" offsety="0" offsetz="0.5" />
 	<entity x="2" y="0" name="TreadBot" offsetx="0.5" offsety="0.5" offsetz="0.5" />
+	<entity x="3" y="2" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 	</entities>
 </room>
 
