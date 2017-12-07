@@ -72,7 +72,7 @@ public class MapGeneratorController : DPadController {
     private static Vector2Int avoidOutOfBounds(Vector2Int v) {
         if (v.x >= MapGrid.getInstance().xDimension || v.x < 0 || v.y >= MapGrid.getInstance().yDimension || v.y < 0) {
             //if we go out of bounds, just set the current mapgen tile to the player's grid coords (player should never go out of bounds, so its always valid.)
-            return Player.getInstance ().getGridLocation ();
+            return Player.getInstance ().getTeleporterGridLocation ();
         }
         return v;
     }

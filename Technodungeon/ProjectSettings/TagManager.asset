@@ -7,6 +7,8 @@ TagManager:
   - GridObject
   - turret
   - Entities
+  - Fire
+  - TeleportIgnore
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - 
   - 
   - Environment
-  - 
+  - GridView
   - 
   - 
   - 

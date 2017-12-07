@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TwoDGridTile : MonoBehaviour {
+    public static bool TwoDGridTile_Debug = true;
     private Vector2Int gridPosition; //the placement of this gridtile in integer grid coordinates, corresponds to an actual MapGrid GridObject in our Virtual Reality, set when this Tile is created by the GridGenerator class.
     private bool initialized = false;
     private TwoDGridTileState state = TwoDGridTileState.NONE;//default to NONE, synonym for invalid tile
@@ -24,34 +25,55 @@ public class TwoDGridTile : MonoBehaviour {
     public bool isInitialized() {
         return initialized;
     }
-
-    //SHANIL FILL THIS OUT: you're almost there! just need the important functions. I would do it but I'm swamped! :)
+        
     //sets the color of the tile.
     public void setColor(Color c) {
         //access the Renderer component of this.gameObject and set it's color to whatever is specified. hopefully this doesn't affect the other clones
-        
-        Color startColor = new Color(128, 0, 128, 1);
-        MeshRenderer gameObjectRenderer = this.gameObject.GetComponent<MeshRenderer>();
-        Shader purple = Shader.Find("Purple");
-        if (purple != null) {
-            
-            //Material newMaterial = new Material ();
 
-            //newMaterial.color = startColor;
-            //gameObjectRenderer.material = newMaterial;
+        MeshRenderer gameObjectRenderer = this.gameObject.GetComponent<MeshRenderer>();
+        if (gameObjectRenderer != null) {
+            gameObjectRenderer.material.color = c;
+        }
+
+    }
+        
+    public void OnMouseDown()
+    {
+        if (TwoDGridTile_Debug) Debug.Log ("Mouse click on Tile : " + this.gridPosition.ToString ());
+        Vector3 entitySpawnOffset = new Vector3 (0.5f, 0.5f, 0.5f);
+
+        GridSpace atOurLocation = MapGrid.getInstance ().getGridSpace (this.gridPosition.x, this.gridPosition.y);
+        if (atOurLocation == null) {//no corresponding grid tile
+            MapGenerator.Instance.setGridSpace (this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Corridor);
         } else {
-            //Debug.LogError ("TwoDGridTile: Cannot find Purple shader");
+            createMobileEntity (atOurLocation, "TreadBot", entitySpawnOffset);
         }
     }
 
+    private void createStationaryEntity(GridSpace ourGS, string name, Vector3 pos) {
+        GameObject prefabInstance = MapLoader.getPrefabInstance (name);
+        StationaryEntity stationaryEntityComponent = prefabInstance.GetComponent<StationaryEntity> ();
+        if (prefabInstance != null && stationaryEntityComponent != null) {
+            prefabInstance.transform.position = ourGS.getWorldPosition () + pos;
+            prefabInstance.SetActive (true);
+            stationaryEntityComponent.setGridSpace (ourGS);
+            if (TwoDGridTile_Debug) Debug.Log ("2DGridTile Created StationaryEntity ["+prefabInstance.gameObject.name.ToString()+"] at world position: " + prefabInstance.transform.position.ToString () + " and tile position: " + gridPosition.ToString ()+" registered to GridSpace: "+ourGS.getGridPosition ().ToString ());
+        } else if (prefabInstance == null) {
+            Debug.LogWarning ("TwoDGridTile: click event: Attempted to load in an Entity for GridSpace, but couldn't get an instance from the Entity database.");
+        } else if (stationaryEntityComponent == null) {
+            Debug.LogWarning ("TwoDGridTile: click event Tried to register an entity to a GridSpace during click that was not a StationaryEntity. ["+prefabInstance.gameObject.name.ToString()+"]");
+        }
+    }
 
-    //////////////////////////IMPORTANT////////////////////////////
-    //SHANIL: add handler for click event when the user clicks this GameObject. I think it's a onClickSomething() function you put here, it runs when the user clicks this Tile. look it up, its a unity thing. you need to call
-    //MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.ROOM); to spawn a room tile there, for now... later we'll make this drop enemies if its occupied and all that
-    //////////////////////////IMPORTANT////////////////////////////
-    public void OnMouseDown()
-    {
-        MapGenerator.Instance.setGridSpace(this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Room);
+    private void createMobileEntity(GridSpace ourGS, string name, Vector3 pos) {
+        GameObject prefabInstance = MapLoader.getPrefabInstance (name);
+        if (prefabInstance != null) {
+            prefabInstance.transform.position = ourGS.getWorldPosition () + pos;
+            prefabInstance.SetActive (true);
+            if (TwoDGridTile_Debug) Debug.Log ("2DGridTile Created MobileEntity ["+prefabInstance.gameObject.name.ToString()+"] at world position: " + prefabInstance.transform.position.ToString () + " and tile position: " + gridPosition.ToString ());
+        } else {
+            Debug.LogWarning ("TwoDGridTile: click event: Attempted to load in an Entity for GridSpace, but couldn't get an instance from the Entity database.");
+        }
     }
 
     //main, most important function. MapGenerator will, every second or so, run this for all it's tiles. This will poll the mapgrid and ask what the Tile's state is at the coordinates.
@@ -70,15 +92,28 @@ public class TwoDGridTile : MonoBehaviour {
                 state = TwoDGridTileState.ROOM;
             } else if (ourGS.getGridSpaceType () == GridSpace.GridSpaceType.Corridor) {
                 state = TwoDGridTileState.CORRIDOR;
+            } else if (ourGS.getGridSpaceType () == GridSpace.GridSpaceType.Reactor) {
+                state = TwoDGridTileState.REACTOR;
             } else {
                 state = TwoDGridTileState.OCCUPIED;
                 //Debug.Log ("Found occupied Tile");
             }
         }
-        //TODO: we only check for the occupied status of the GridSpace in the MapGrid at our corresponding position right now. It would be great if we could get the Player's position, figure out if they're at our GridTile or not
-        // and if they are, then color us accordingly. Also, we have to check for all the other types of GridSpace as well, such as Reactors, etc.etc.
+        //TODO: we only check for the occupied status of the GridSpace in the MapGrid at our corresponding position right now.
+        //we have to check for all the other types of GridSpace as well, such as Reactors, etc.etc.
         
         updateColor ();
+    }
+
+    //allows us to react to the players position
+    public void updateStatus(bool isPlayerTile) {
+        if (isPlayerTile) {
+            //we have player
+            state = TwoDGridTileState.PLAYER;
+            updateColor ();
+        } else {
+            updateStatus ();//normal status update
+        }
     }
 
     public void updateColor() {

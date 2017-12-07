@@ -137,7 +137,7 @@ public class Player : MobileEntity {
         }
     }
 
-    public Vector2Int getGridLocation() {
+    public Vector2Int getTeleporterGridLocation() {
         return new Vector2Int(gridX, gridY);
     }
 

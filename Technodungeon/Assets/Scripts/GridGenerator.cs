@@ -100,14 +100,22 @@ public class GridGenerator : MonoBehaviour {
 
     IEnumerator updateTiles() {
         //iterate over container Child prefabs... clones of tiles.
+
         while (instance != null) {
             //Debug.Log ("Updating 2DGridTiles.");
+            //get the player position so we can color it accordingly.
+            Vector2Int playerLoc = new Vector2Int(-1,-1);
+            playerLoc = MapGrid.getGridCoordsFromWorldCoords (Player.getInstance ().transform.position);
+            //Debug.Log ("player loc : " + playerLoc.ToString ());
             foreach (Transform t in containerTransform) {
                 TwoDGridTile tdgt = t.GetComponent<TwoDGridTile> () as TwoDGridTile;
                 if (tdgt == null)
                     continue;
-                
-                tdgt.updateStatus ();
+                if (tdgt.getGridPosition ().Equals (playerLoc)) {
+                    tdgt.updateStatus (true);
+                } else {
+                    tdgt.updateStatus ();
+                }
             }
 
             yield return waitASecond;

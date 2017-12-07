@@ -769,9 +769,9 @@ public class MapLoader : MonoBehaviour
             Debug.LogError ("MapLoader: getTileInstance: fed out of range id");
             return null;
         }
-        if (tileBank == GridSpace.GridSpaceType.Room) {
+        if (tileBank == GridSpace.GridSpaceType.Corridor) {
             return new Tile (tileTypes [id]);
-        } else if (tileBank == GridSpace.GridSpaceType.Corridor) {
+        } else if (tileBank == GridSpace.GridSpaceType.Room) {
             return new Tile (altTileTypes [id]);
         } else if (tileBank == GridSpace.GridSpaceType.Reactor) {
             return new Tile (reactorTileTypes [id]);
