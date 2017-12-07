@@ -6,19 +6,22 @@ using VRTK;
 public class GrabbablePlugEnd : VRTK_InteractableObject {
 
     public Reactor reactorScript = null;
+    public CoolantLine coolantScript = null;
     public GameObject plugParticleEffect = null;
 
     void Start() {
-        if (reactorScript == null) {
-            Debug.LogError ("Grabbable Plug End not given a ReactorScript!");
-        }
         if (plugParticleEffect == null) {
             Debug.LogError ("Grabbable Plug End not given a plugParticleEffect!");
         }
     }
 
     void OnJointBreak() {
-        reactorScript.goCritical ();
+        if (reactorScript != null) {
+            reactorScript.goCritical ();
+        }
+        if (coolantScript != null) {
+            coolantScript.goCritical ();
+        }
         plugParticleEffect.SetActive (true);
     }
 }

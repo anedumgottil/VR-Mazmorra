@@ -1,4 +1,6 @@
-﻿Shader "Shader/PlasmaShader" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Shader/PlasmaShader" {
 	Properties {
 		_MainTexture ("Lava texture", 2D) = "white" {}
 		_Size ("Size", float) = 256.0
@@ -70,7 +72,7 @@
 			VertexShaderOutput VertexShaderFunction (VertexShaderInput input) 
 			{
 				VertexShaderOutput output;
-				output.Position = mul(UNITY_MATRIX_MVP, input.Position);
+				output.Position = UnityObjectToClipPos(input.Position);
 				output.UV = half2(0.5, 0.5) * input.UV;
 				return output;
 			}
