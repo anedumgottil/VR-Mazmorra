@@ -4,6 +4,9 @@ using UnityEngine;
 
 //Base class for the DPad-type Controller in-game. Uses VRTK Events to detect controller Touchpad input, and maps it to four axes. Can be extended.
 public class MapGeneratorController : DPadController {
+    public AudioClip centerPressSound = null;
+    GridSpace.GridSpaceType currentType = GridSpace.GridSpaceType.Corridor;
+
     Vector2Int gridCoords = new Vector2Int(5,5);
 
     public GameObject generatorPointer = null;//spawns when you click the center touchpad, it will go to the position where the Generator is looking.
@@ -35,6 +38,26 @@ public class MapGeneratorController : DPadController {
 
     protected override void doCenter() {
         //Debug.Log ("Touchpad Deadzone Press");
+
+        AudioSource playerAudio = Player.getInstance ().GetComponent<AudioSource> ();
+        if (playerAudio != null && centerPressSound != null) {
+            playerAudio.PlayOneShot (centerPressSound);
+        }
+        //toggle the type of grid to spawn
+        switch (currentType) {
+        case (GridSpace.GridSpaceType.Corridor):
+            currentType = GridSpace.GridSpaceType.Room;
+            break;
+        case (GridSpace.GridSpaceType.Room):
+            currentType = GridSpace.GridSpaceType.Reactor;
+            break;
+        case(GridSpace.GridSpaceType.Reactor):
+            currentType = GridSpace.GridSpaceType.Corridor;
+            break;
+        default:
+            currentType = GridSpace.GridSpaceType.Corridor;
+            break;
+        }
 
         if (generatorPointer == null)
             return;

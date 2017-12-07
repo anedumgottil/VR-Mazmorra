@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Reactor : StationaryEntity {
 
+    public AudioSource reactorMainAudioSource = null;
+    public AudioClip alarmClip = null;
     public GameObject grabbablePlugEnd = null;
     public Renderer coreRenderer = null;
     public Material criticalMaterial = null;
@@ -53,6 +55,10 @@ public class Reactor : StationaryEntity {
             Debug.LogError ("Reactor: Was not given coreParticles! Cannot function!");
             return;
         }
+        if (reactorMainAudioSource == null) {
+            Debug.LogError ("Reactor: Was not given main audio source! Cannot function!");
+            return;
+        }
         alive = true;
 	}
 
@@ -62,6 +68,12 @@ public class Reactor : StationaryEntity {
             coreRenderer.material = criticalMaterial;
         }
         ventParticles.SetActive (true);
+        reactorMainAudioSource.Stop ();
+        if (alarmClip != null) {
+            reactorMainAudioSource.clip = alarmClip;
+            reactorMainAudioSource.volume = 0.15f;
+            reactorMainAudioSource.Play ();
+        }
     }
 
     public bool isCritical() {

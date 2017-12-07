@@ -608,7 +608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1728380259771588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,6 +2697,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 10000
+  reactorMainAudioSource: {fileID: 82635528770309700}
+  alarmClip: {fileID: 8300000, guid: 64535f565401ebc458d9cb534a78dd1e, type: 3}
   grabbablePlugEnd: {fileID: 1333301820546720}
   coreRenderer: {fileID: 23520113204868182}
   criticalMaterial: {fileID: 2100000, guid: b78e21c46a526a44694da70e137cbf7d, type: 2}
