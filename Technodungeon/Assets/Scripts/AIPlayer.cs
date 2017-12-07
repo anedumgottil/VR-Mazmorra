@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AIPlayer : MonoBehaviour {
 
-    public int energy = 100;
+    public static int energy = 100;
     public int reactorsAvailable = 0;
     public int reactorsConnected = 0;
     public float energyRegenerationRate = 5.0f;
@@ -22,7 +22,7 @@ public class AIPlayer : MonoBehaviour {
         
     }
 
-    public bool spendEnergy(int energyCost) {
+    public static bool spendEnergy(int energyCost) {
         if (energyCost >= energy) {
             return false;
         }

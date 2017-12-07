@@ -44,9 +44,23 @@ public class TwoDGridTile : MonoBehaviour {
 
         GridSpace atOurLocation = MapGrid.getInstance ().getGridSpace (this.gridPosition.x, this.gridPosition.y);
         if (atOurLocation == null) {//no corresponding grid tile
-            MapGenerator.Instance.setGridSpace (this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Corridor);
+            if (AIPlayer.spendEnergy (5)) {
+                MapGenerator.Instance.setGridSpace (this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Corridor);
+            }
+
         } else {
-            createMobileEntity (atOurLocation, "TreadBot", entitySpawnOffset);
+            if (!AIUIManager.getSelection ().Equals ("None")) {
+                if (AIUIManager.getSelection ().Equals ("TreadBot")) {
+                    if (AIPlayer.spendEnergy (75)) {
+                        createMobileEntity (atOurLocation, "TreadBot", entitySpawnOffset);
+                    }
+                }
+                if (AIUIManager.getSelection ().Equals ("Drone")) {
+                    if (AIPlayer.spendEnergy (33)) {
+                        createMobileEntity (atOurLocation, "Drone", entitySpawnOffset);
+                    }
+                }
+            }
         }
     }
 

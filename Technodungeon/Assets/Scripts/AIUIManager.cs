@@ -9,9 +9,9 @@ public class AIUIManager : MonoBehaviour {
     public bool treadbotAvailable = true;
     public bool turretAvailable = false;
 
-    public bool droneSelected = false;
-    public bool treadbotSelected = false;
-    public bool turretSelected = false;
+    public static bool droneSelected = false;
+    public static bool treadbotSelected = false;
+    public static bool turretSelected = false;
 
     bool shouldUpdate = false;
     private WaitForSeconds waitASecond;
@@ -116,12 +116,25 @@ public class AIUIManager : MonoBehaviour {
                 treadbotUnitGroup.SetActive (false);
             }
                 
-            energyLevel.text = aiPlayer.getEnergy ().ToString();
+            energyLevel.text = aiPlayer.getEnergy ().ToString ();
 
 
 
             yield return waitASecond;
 
         }
+    }
+
+    public static string getSelection() {
+        if (droneSelected) {
+            return "Drone";
+        }
+        if (treadbotSelected) {
+            return "TreadBot";
+        }
+        if (turretSelected) {
+            return "Turret";
+        }
+        return "None";
     }
 }
