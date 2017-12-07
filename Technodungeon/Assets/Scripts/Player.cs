@@ -35,6 +35,12 @@ public class Player : MobileEntity {
         }
     }
 
+    public void Update() {
+        //set capsule size
+        ccollider.height = this.transform.position.y+(this.transform.lossyScale.y/8);
+        ccollider.center = new Vector3 (0, -((this.transform.position.y + (this.transform.lossyScale.y / 8)) / 2) + (this.transform.lossyScale.y / 8), 0);
+    }
+
     public void initialize() {
         head = VRTK_DeviceFinder.HeadsetTransform ();
         if (playArea != null) {

@@ -60,6 +60,7 @@
 	<entities>
 		<entity x="1" y="0" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 		<entity x="2" y="0" name="Grenade-Standard" offsetx="0.4" offsety="0.4" offsetz="0.4" />
+		<entity x="3" y="0" name="Grenade-Frag" offsetx="0.4" offsety="0.4" offsetz="0.4" />
 	</entities>
 </room>
 
@@ -89,6 +90,7 @@
 	<entity x="3" y="1" name="Reactor" offsetx="0" offsety="0" offsetz="1.25" />
 	<entity x="0" y="0" name="CoolantLine" offsetx="0.5" offsety="0.01" offsetz="0.5" />
 	<entity x="1" y="0" name="CoolantLine" offsetx="0" offsety="0.01" offsetz="0.5" />
+	<entity x="2" y="0" name="TreadBot" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 	</entities>
 </room>
 

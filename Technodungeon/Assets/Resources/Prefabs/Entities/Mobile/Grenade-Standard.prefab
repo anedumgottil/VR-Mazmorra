@@ -195,9 +195,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1525384940525558}
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 13.605419, y: -1.0497594, z: 4.9491215}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4651378067518918}
   - {fileID: 4140826008049106}
@@ -440,6 +440,7 @@ MonoBehaviour:
   grenadeExplosion: {fileID: 8300000, guid: c1d8a398cdc89e04d99ffbc89b8472c1, type: 3}
   deathParticleSystem: {fileID: 1525384940525558}
   grenadeLight: {fileID: 108195059608553550}
+  numBlocksToSpawn: 1
 --- !u!114 &114862000242346464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -554,7 +555,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -583138159
+  randomSeed: 315757830
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7086,7 +7087,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1563697846
+  randomSeed: -311413841
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10403,7 +10404,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 352017374
+  randomSeed: -1414525051
   InitialModule:
     serializedVersion: 3
     enabled: 1

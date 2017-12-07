@@ -13,6 +13,7 @@ public class Grenade : MobileEntity {
     private AudioSource audioSource = null;
     public GameObject deathParticleSystem;
     public Light grenadeLight = null;
+    public int numBlocksToSpawn = 1;
    
    
 
@@ -34,17 +35,39 @@ public class Grenade : MobileEntity {
         audioSource.PlayOneShot (grenadeExplosion);
         Renderer rend = this.GetComponentInChildren<Renderer> ();
         rend.material.color = Color.black;
+        if (numBlocksToSpawn > 5) {
+            numBlocksToSpawn = 5;
+        }
 
-        Block newBlock = MapLoader.getBlockInstance (0);
-        newBlock.setPosition (this.gameObject.transform.position);
-        newBlock.setColor (Color.white);
-        newBlock.addTechnofog ();
+        for (int i = 0; i < numBlocksToSpawn; i++) {
+            Block newBlock = MapLoader.getBlockInstance (0);
+            newBlock.setPosition (this.gameObject.transform.position + blockOffset (i));
+            newBlock.setColor (Color.white);
+            newBlock.addTechnofog ();
+        }
 
         if (deathParticleSystem != null) {
             deathParticleSystem.SetActive (true);
         }
 
         Destroy (this.gameObject, 5f);
+    }
+
+    public Vector3 blockOffset(int index) {
+        switch (index) {
+        case 0:
+            return new Vector3 (0f, 0f, 0f);
+        case 1:
+            return new Vector3 (0.5f, 0f, 0f);
+        case 2:
+            return new Vector3 (-0.5f, 0f, 0f);
+        case 3:
+            return new Vector3 (0f, 0f, 0.5f);
+        case 4:
+            return new Vector3 (0f, 0f, -0.5f);
+        default:
+            return new Vector3 ();
+        }
     }
 
     IEnumerator grenadeTimer()
