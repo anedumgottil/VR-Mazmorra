@@ -21,6 +21,9 @@ public class AIUIManager : MonoBehaviour {
     public GameObject droneUnitGroup = null;
     public GameObject treadbotUnitGroup = null;
     public GameObject turretUnitGroup = null;
+    public AIPlayer aiPlayer = null;
+
+    Color defaultEnergyColor;
 
 	// Use this for initialization
 	void Start () {
@@ -39,10 +42,15 @@ public class AIUIManager : MonoBehaviour {
         if (turretUnitGroup == null) {
             Debug.LogError ("AIUIManager: could not find button required!");
         }
+        if (aiPlayer == null) {
+            Debug.LogError ("AIUIManager: could not find button required!");
+        }
 
         waitASecond = new WaitForSeconds (1f);
         shouldUpdate = true;
         StartCoroutine (updateUI ());
+
+        defaultEnergyColor = energyLevel.color;
 	}
 	
 	// Update is called once per frame
@@ -107,6 +115,10 @@ public class AIUIManager : MonoBehaviour {
             } else if (!treadbotAvailable && treadbotUnitGroup.activeSelf) {
                 treadbotUnitGroup.SetActive (false);
             }
+                
+            energyLevel.text = aiPlayer.getEnergy ().ToString();
+
+
 
             yield return waitASecond;
 

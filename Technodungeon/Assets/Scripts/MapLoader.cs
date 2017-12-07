@@ -775,6 +775,8 @@ public class MapLoader : MonoBehaviour
             return new Tile (altTileTypes [id]);
         } else if (tileBank == GridSpace.GridSpaceType.Reactor) {
             return new Tile (reactorTileTypes [id]);
+        } else if (tileBank == GridSpace.GridSpaceType.Coolant) {
+            return new Tile (reactorTileTypes [id]);
         } else {
             Debug.LogError ("MapLoader: getTileInstance: Got an invalid tileBank type (" + tileBank + ")");
             return null;

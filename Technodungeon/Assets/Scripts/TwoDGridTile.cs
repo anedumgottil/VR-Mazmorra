@@ -94,6 +94,8 @@ public class TwoDGridTile : MonoBehaviour {
                 state = TwoDGridTileState.CORRIDOR;
             } else if (ourGS.getGridSpaceType () == GridSpace.GridSpaceType.Reactor) {
                 state = TwoDGridTileState.REACTOR;
+            } else if (ourGS.getGridSpaceType () == GridSpace.GridSpaceType.Coolant) {
+                state = TwoDGridTileState.COOLANT;
             } else {
                 state = TwoDGridTileState.OCCUPIED;
                 //Debug.Log ("Found occupied Tile");
