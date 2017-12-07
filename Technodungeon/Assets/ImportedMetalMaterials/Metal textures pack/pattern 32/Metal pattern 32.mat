@@ -28,13 +28,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
         m_Texture: {fileID: 2800000, guid: 541d71b5313bd834c8e4e50899f670d6, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 5, y: 4.2}
+        m_Offset: {x: 0, y: 1.07}
     m_Floats:
-    - _Shift: 53.7
+    - _Shift: 7.07
     - _Shininess: 0.21697056
-    - _Size: 345.4
-    - _Speed: 3.05
+    - _Size: 99.8
+    - _Speed: 2.9
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
