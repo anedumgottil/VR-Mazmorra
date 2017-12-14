@@ -19,7 +19,7 @@
 	<gridspace x="3" y="4" config="-1" />
 	<entities>
 		<entity x="3" y="4" name="Technoshard" offsetx="1.0" offsety="1.0" offsetz="1.0" />
-		<entity x="3" y="3" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
+		<entity x="3" y="5" name="Pistol" offsetx="0.5" offsety="0.5" offsetz="0.5" />
 	</entities>
 </room>
 

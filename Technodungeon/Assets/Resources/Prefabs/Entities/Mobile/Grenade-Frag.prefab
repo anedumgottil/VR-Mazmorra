@@ -59,14 +59,14 @@ GameObject:
   - component: {fileID: 114557970842331782}
   - component: {fileID: 136189664052076428}
   - component: {fileID: 82958665592695288}
-  - component: {fileID: 114326991611778948}
+  - component: {fileID: 114645245715044290}
   m_Layer: 0
   m_Name: Grenade-Frag
   m_TagString: Entities
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1573305127304914
 GameObject:
   m_ObjectHideFlags: 1
@@ -154,7 +154,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1513586622987440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 11.757471, y: -3.8808272, z: 16.417402}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4409980883657086}
@@ -403,27 +403,6 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114326991611778948
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1513586622987440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99490d2901160b540b6ce6a321816a4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  precisionGrab: 0
-  rightSnapHandle: {fileID: 0}
-  leftSnapHandle: {fileID: 0}
-  throwVelocityWithAttachDistance: 0
-  throwMultiplier: 2
-  onGrabCollisionDelay: 0
-  destroyImmediatelyOnThrow: 1
-  breakForce: 1500
-  strength: 500
-  damper: 50
 --- !u!114 &114515739513912318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,7 +435,7 @@ MonoBehaviour:
   validDrop: 1
   grabOverrideButton: 0
   allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 114326991611778948}
+  grabAttachMechanicScript: {fileID: 114645245715044290}
   secondaryGrabActionScript: {fileID: 114515739513912318}
   isUsable: 1
   holdButtonToUse: 0
@@ -484,6 +463,23 @@ MonoBehaviour:
   deathParticleSystem: {fileID: 1095001612738422}
   grenadeLight: {fileID: 108781641443739248}
   numBlocksToSpawn: 5
+--- !u!114 &114645245715044290
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1513586622987440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec2ac476f2fc9a45a4e69712580a603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  precisionGrab: 0
+  rightSnapHandle: {fileID: 0}
+  leftSnapHandle: {fileID: 0}
+  throwVelocityWithAttachDistance: 1
+  throwMultiplier: 2
+  onGrabCollisionDelay: 0
 --- !u!136 &136189664052076428
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -493,8 +489,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.021
-  m_Height: 0.08
+  m_Radius: 0.05
+  m_Height: 0.2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198283531661301604

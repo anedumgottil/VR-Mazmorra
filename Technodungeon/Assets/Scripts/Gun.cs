@@ -11,6 +11,7 @@ public class Gun : VRTK_InteractableObject
     public AudioClip grabNoise = null;
     public AudioClip ungrabNoise = null;
     public GameObject bullet = null;
+    public float fireRate = 0;//set to zero for no fire rate enforcement.
     public float bulletSpeed = 1000f;
     public float bulletLife = 5f;
     public int bulletDamage = 35;
@@ -19,6 +20,7 @@ public class Gun : VRTK_InteractableObject
 
     private bool flashlightState = false;
     private GameObject grabbingObject = null;
+    private float lastFireTime = 0;
 
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
@@ -90,12 +92,16 @@ public class Gun : VRTK_InteractableObject
         if (bullet != null) {//setup bullets
             bullet.SetActive (false);
         }
+        lastFireTime = fireRate;
     }
 
     public void fireBullet()
     {
         if (bullet == null)
             return;
+        if (fireRate + lastFireTime > Time.time)
+            return;
+        lastFireTime = Time.time;
         GameObject bulletClone = Instantiate(bullet, bullet.transform.position, bullet.transform.rotation) as GameObject;
         bulletClone.SetActive(true);
         NormalProjectile np = bulletClone.GetComponent<NormalProjectile>();

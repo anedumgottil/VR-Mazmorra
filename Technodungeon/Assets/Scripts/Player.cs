@@ -145,6 +145,10 @@ public class Player : MobileEntity {
         return head;
     }
 
+    public Collider getCollider() {
+        return ccollider;
+    }
+
     public static Player getInstance() {
         return instance;
     }

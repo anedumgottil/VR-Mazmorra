@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class AIUIManager : MonoBehaviour {
 
+    public float updateRate = 0.5f;
+
     public bool droneAvailable = true;
     public bool treadbotAvailable = true;
     public bool turretAvailable = false;
@@ -12,6 +14,9 @@ public class AIUIManager : MonoBehaviour {
     public static bool droneSelected = false;
     public static bool treadbotSelected = false;
     public static bool turretSelected = false;
+
+    public int lowEnergyThreshold = 0;
+    public Color lowEnergyWarningColor;
 
     bool shouldUpdate = false;
     private WaitForSeconds waitASecond;
@@ -28,25 +33,25 @@ public class AIUIManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         if (energyLevel == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find energyLevel!");
         }
         if (selectedUnit == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find selectedUnit!");
         }
         if (droneUnitGroup == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find droneUnitGroup!");
         }
         if (treadbotUnitGroup == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find treadbotUnitGroup!");
         }
         if (turretUnitGroup == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find turretUnitGroup!");
         }
         if (aiPlayer == null) {
-            Debug.LogError ("AIUIManager: could not find button required!");
+            Debug.LogError ("AIUIManager: could not find aiPlayer!");
         }
 
-        waitASecond = new WaitForSeconds (1f);
+        waitASecond = new WaitForSeconds (updateRate);
         shouldUpdate = true;
         StartCoroutine (updateUI ());
 
@@ -116,7 +121,13 @@ public class AIUIManager : MonoBehaviour {
                 treadbotUnitGroup.SetActive (false);
             }
                 
+            //TODO: this color stuff is called every UI update, even when it doesn't need to tween since we're already tweened. not sure if it's worth making an edge trigger with state here.
             energyLevel.text = aiPlayer.getEnergy ().ToString ();
+            if (aiPlayer.getEnergy () < lowEnergyThreshold) {
+                energyLevel.CrossFadeColor (lowEnergyWarningColor, 0.5f, false, false);
+            } else {
+                energyLevel.CrossFadeColor (defaultEnergyColor, 0.5f, false, false);
+            }
 
 
 

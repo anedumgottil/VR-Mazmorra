@@ -4,11 +4,50 @@ using UnityEngine;
 
 public class TwoDGridTile : MonoBehaviour {
     public static bool TwoDGridTile_Debug = true;
+    private static Ray mouseRay;
+    private static RaycastHit mouseRaycast;
+    private static Camera twoDCamera = null;
     private Vector2Int gridPosition; //the placement of this gridtile in integer grid coordinates, corresponds to an actual MapGrid GridObject in our Virtual Reality, set when this Tile is created by the GridGenerator class.
     private bool initialized = false;
     private TwoDGridTileState state = TwoDGridTileState.NONE;//default to NONE, synonym for invalid tile
-    private int index = 1;
     public enum TwoDGridTileState : byte {NONE=0, UNOCCUPIED, OCCUPIED, PLAYER, ROOM, CORRIDOR, PORTAL, REACTOR, COOLANT, AICORE, TECHNOCORE, TURRET, MOB};//etc.etc.etc
+
+    void Update() {
+        //we only want to generate raycasts and rays from camera once, so this update function is careful to use the static variables so all 400+ tiles can share the same rays and casts.
+        if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonDown (1)) {//click
+            if (mouseRaycast.point.Equals (Block.DEFAULT_POSITION) || mouseRay.origin.Equals (Block.DEFAULT_POSITION)) {
+                if (TwoDGridTile_Debug)
+                    Debug.Log ("TwoDGridTile: Raycasting to tile...");
+                mouseRay = twoDCamera.ScreenPointToRay (Input.mousePosition);
+                Physics.Raycast (mouseRay, out mouseRaycast);
+            } 
+            if (mouseRaycast.collider != null && mouseRaycast.collider.gameObject.Equals (this.gameObject)) {
+                if (Input.GetMouseButtonDown (0))//left click
+                    this.mouseTrigger (0);
+                if (Input.GetMouseButtonDown (1))//right click
+                    this.mouseTrigger (1);
+            }
+        } else {
+            //no click, invalidate rays.
+            if (!mouseRaycast.point.Equals (Block.DEFAULT_POSITION) || !mouseRay.origin.Equals (Block.DEFAULT_POSITION)) {
+                mouseRaycast.point = Block.DEFAULT_POSITION;
+                mouseRay.origin = Block.DEFAULT_POSITION;
+            }
+        }
+    }
+
+    void Start() {
+        if (twoDCamera == null) {
+            foreach (Camera c in Camera.allCameras) {
+                if (c.targetDisplay == DisplayInitializer.getTwoDDisplay()) {
+                    twoDCamera = c;
+                }
+            }
+            if (twoDCamera == null) {
+                Debug.LogError ("TwoDGridTile: Error, could not locate the 2d camera!");
+            }
+        }
+    }
 
     //call this after you generate these tiles. tile needs to be aware of it's position at all times.
     public void setGridPosition(Vector2Int vint) {
@@ -37,30 +76,35 @@ public class TwoDGridTile : MonoBehaviour {
 
     }
         
-    public void OnMouseDown()
+    public void mouseTrigger(int type)
     {
-        if (TwoDGridTile_Debug) Debug.Log ("Mouse click on Tile : " + this.gridPosition.ToString ());
-        Vector3 entitySpawnOffset = new Vector3 (0.5f, 0.5f, 0.5f);
+        if (type == 0) {
+            if (TwoDGridTile_Debug)
+                Debug.Log ("Left Mouse click on Tile : " + this.gridPosition.ToString ());
+            Vector3 entitySpawnOffset = new Vector3 (0.5f, 0.5f, 0.5f);
 
-        GridSpace atOurLocation = MapGrid.getInstance ().getGridSpace (this.gridPosition.x, this.gridPosition.y);
-        if (atOurLocation == null) {//no corresponding grid tile
-            if (AIPlayer.spendEnergy (5)) {
-                MapGenerator.Instance.setGridSpace (this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Corridor);
-            }
+            GridSpace atOurLocation = MapGrid.getInstance ().getGridSpace (this.gridPosition.x, this.gridPosition.y);
+            if (atOurLocation == null) {//no corresponding grid tile
+                if (AIPlayer.spendEnergy (5)) {
+                    MapGenerator.Instance.setGridSpace (this.gridPosition.x, this.gridPosition.y, GridSpace.GridSpaceType.Corridor);
+                }
 
-        } else {
-            if (!AIUIManager.getSelection ().Equals ("None")) {
-                if (AIUIManager.getSelection ().Equals ("TreadBot")) {
-                    if (AIPlayer.spendEnergy (75)) {
-                        createMobileEntity (atOurLocation, "TreadBot", entitySpawnOffset);
+            } else {
+                if (!AIUIManager.getSelection ().Equals ("None")) {
+                    if (AIUIManager.getSelection ().Equals ("TreadBot")) {
+                        if (AIPlayer.spendEnergy (75)) {
+                            createMobileEntity (atOurLocation, "TreadBot", entitySpawnOffset);
+                        }
+                    }
+                    if (AIUIManager.getSelection ().Equals ("Drone")) {
+                        if (AIPlayer.spendEnergy (33)) {
+                            createMobileEntity (atOurLocation, "Drone", entitySpawnOffset);
+                        }
                     }
                 }
-                if (AIUIManager.getSelection ().Equals ("Drone")) {
-                    if (AIPlayer.spendEnergy (33)) {
-                        createMobileEntity (atOurLocation, "Drone", entitySpawnOffset);
-                    }
-                }
             }
+        } else if (type == 1) {
+            //right mouse click
         }
     }
 

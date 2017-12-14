@@ -511,7 +511,7 @@ MonoBehaviour:
   grabAttachMechanicScript: {fileID: 114077289339704152}
   secondaryGrabActionScript: {fileID: 114698839492765190}
   isUsable: 1
-  holdButtonToUse: 0
+  holdButtonToUse: 1
   useOnlyIfGrabbed: 1
   pointerActivatesUseAction: 0
   useOverrideButton: 0
@@ -525,6 +525,7 @@ MonoBehaviour:
   grabNoise: {fileID: 8300000, guid: 69aaa65221a78664096ca647104b71fa, type: 3}
   ungrabNoise: {fileID: 8300000, guid: 4c459c18dbaa76b4891a653dfc97b3db, type: 3}
   bullet: {fileID: 1326541162991868}
+  fireRate: 0.33
   bulletSpeed: 13
   bulletLife: 2
   bulletDamage: 35

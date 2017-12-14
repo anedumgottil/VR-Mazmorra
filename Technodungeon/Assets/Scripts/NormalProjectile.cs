@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class NormalProjectile : BaseProjectile {
-    public static bool LogCollisions = true;
+    public static bool LogCollisions = false;
 
     public GameObject impactObject;//the object to spawn on impact
 

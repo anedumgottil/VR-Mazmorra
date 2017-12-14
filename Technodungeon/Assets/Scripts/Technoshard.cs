@@ -23,14 +23,7 @@ public class Technoshard : StationaryEntity {
         //SetCollidingObject(other);
     }
 
-    public void Update() {
-        if (myobj != null) {
-            if (myobj.IsTouched ()) {
-                gemNoise.PlayOneShot (gemClip);
-            }
-            Destroy (this.gameObject);
-        }
-    }
+//TODO: please implement touch-destroy for Technoshard.
 
     public void Start() {
         myobj = this.gameObject.GetComponent<VRTK_InteractableObject> ();

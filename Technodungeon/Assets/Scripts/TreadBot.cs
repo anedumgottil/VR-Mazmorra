@@ -28,7 +28,6 @@ public class TreadBot : MobileEntity {
     private bool inCoRoutine = false;
     private Vector3 target;
     private bool shouldNavigate = false;
-    private bool validPath = false;
     private Transform headset = null;
     private TrackingSystem ts = null;
     private float lastFireTime = 0.0f;
@@ -52,6 +51,11 @@ public class TreadBot : MobileEntity {
             Debug.LogError ("TreadBot: could not find headset!");
         }
         originalHaltRange = haltRange;
+        //initialize tracking system
+        ts.setTarget (Player.getInstance ().getCollider().gameObject, fireRange);
+        ts.addExtraTargetByName ("Player");
+        ts.addExtraTargetByName ("Controller R");
+        ts.addExtraTargetByName ("Controller L");//TODO: controller detection untested.
         turretGun.setFlashlightState (false);
     }
 
@@ -73,23 +77,14 @@ public class TreadBot : MobileEntity {
                 SFXAudioSource.PlayOneShot (trackSound);
             }
 
-            //set up turret
+            //rotate turret
             if (!turretDisabled) {
                 turretGun.setFlashlightState (true);
-                ts.setTarget (headset.position);
                 ts.shouldTrack (true);
                 //check if we can shoot the player yet
-                if (Vector3.Distance (headset.position, this.transform.position) < fireRange) {
+                if (Vector3.Distance (headset.position, this.transform.position ) < fireRange && ts.targetAcquired()) {
                     //we're within firing range of the player
-                    RaycastHit rhit;
-                    if (Physics.Raycast (turret.transform.position, transform.forward, out rhit, fireRange)) {
-                        //raycast hit something
-
-                        if (rhit.collider.gameObject.name.Contains ("Player") || rhit.collider.gameObject.name.Contains ("Controller")) {
-                            //we raycast hit player; only shoots player:
-                            this.fire ();
-                        }
-                    }
+                    this.fire();
                 }
             }
             //we're not in stopping range of the player, start the engines:
@@ -113,10 +108,7 @@ public class TreadBot : MobileEntity {
         if (isAlive() && shouldNavigate && !treadsDisabled) {
             yield return new WaitForSeconds (timeForNewPath);
             GetNewPath ();
-            validPath = navMeshAgent.CalculatePath (target, path);
-            if (!validPath) {
-                //Debug.Log ("Found an invalid Path"); TODO fix this!
-            }
+            navMeshAgent.CalculatePath (target, path);
                 
         }
         inCoRoutine = false;
@@ -168,7 +160,7 @@ public class TreadBot : MobileEntity {
         }
         SFXAudioSource.PlayOneShot (deathSound);
         engineAudioSource.Stop ();
-        //Renderer rend = this.GetComponent<Renderer> ();
+        //Renderer rend = this.turret.GetComponentInChildren<Renderer> ();
         //rend.material.color = Color.black;
 
         if (deathParticleSystem != null) {
@@ -192,7 +184,7 @@ public class TreadBot : MobileEntity {
     void GetNewPath()
     {
         if (isAlive ()) {
-            target = Vector3.MoveTowards (this.transform.position, headset.position, haltRange);//TODO; this halt range stuff doesn't work.
+            target = Vector3.MoveTowards (this.transform.position, headset.position, haltRange);
             navMeshAgent.SetDestination (target);
         }
     }

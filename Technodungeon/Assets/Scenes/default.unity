@@ -1108,7 +1108,6 @@ GameObject:
   - component: {fileID: 408215276}
   - component: {fileID: 408215275}
   - component: {fileID: 408215279}
-  - component: {fileID: 408215280}
   m_Layer: 0
   m_Name: RightController
   m_TagString: Untagged
@@ -1236,37 +1235,6 @@ MonoBehaviour:
   threshold: 0.3
   centerPressSound: {fileID: 8300000, guid: c7cb69c521c53654f99c524f20572913, type: 3}
   generatorPointer: {fileID: 0}
---- !u!114 &408215280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 408215273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24a9c9ae8b1fb1542b78598ac955afe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  triggerText: Use Object
-  gripText: Grab Object
-  touchpadText: 
-  buttonOneText: 
-  buttonTwoText: Object Secondary (flashlights)
-  startMenuText: 
-  tipBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
-  tipTextColor: {r: 1, g: 1, b: 1, a: 1}
-  tipLineColor: {r: 0, g: 0, b: 0, a: 1}
-  trigger: {fileID: 0}
-  grip: {fileID: 0}
-  touchpad: {fileID: 0}
-  buttonOne: {fileID: 0}
-  buttonTwo: {fileID: 0}
-  startMenu: {fileID: 0}
-  controllerEvents: {fileID: 0}
-  headsetControllerAware: {fileID: 0}
-  hideWhenNotInView: 1
-  retryInitMaxTries: 10
-  retryInitCounter: 0.1
 --- !u!1 &438202137
 GameObject:
   m_ObjectHideFlags: 0
@@ -2176,9 +2144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15950145b62e20e4880a62054c564091, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateRate: 1
   droneAvailable: 1
   treadbotAvailable: 1
   turretAvailable: 0
+  lowEnergyThreshold: 50
+  lowEnergyWarningColor: {r: 1, g: 0, b: 0, a: 0}
   energyLevel: {fileID: 1061216562}
   selectedUnit: {fileID: 1624606276}
   droneUnitGroup: {fileID: 163549846}
@@ -2220,8 +2191,8 @@ MonoBehaviour:
   autoManageVRSettings: 1
   autoLoadSetup: 1
   setups:
-  - {fileID: 1270122896}
   - {fileID: 2082947144}
+  - {fileID: 1270122896}
 --- !u!4 &828054664
 Transform:
   m_ObjectHideFlags: 0
@@ -2896,7 +2867,6 @@ GameObject:
   - component: {fileID: 1112747261}
   - component: {fileID: 1112747263}
   - component: {fileID: 1112747262}
-  - component: {fileID: 1112747264}
   m_Layer: 0
   m_Name: LeftController
   m_TagString: Untagged
@@ -3087,37 +3057,6 @@ MonoBehaviour:
   controller: {fileID: 0}
   interactUse: {fileID: 0}
   customOrigin: {fileID: 0}
---- !u!114 &1112747264
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1112747255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24a9c9ae8b1fb1542b78598ac955afe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  triggerText: Use Object
-  gripText: Grab Object
-  touchpadText: Directional Teleport (look-based)
-  buttonOneText: 
-  buttonTwoText: Aimpoint Teleport
-  startMenuText: 
-  tipBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
-  tipTextColor: {r: 1, g: 1, b: 1, a: 1}
-  tipLineColor: {r: 0, g: 0, b: 0, a: 1}
-  trigger: {fileID: 0}
-  grip: {fileID: 0}
-  touchpad: {fileID: 0}
-  buttonOne: {fileID: 0}
-  buttonTwo: {fileID: 0}
-  startMenu: {fileID: 0}
-  controllerEvents: {fileID: 0}
-  headsetControllerAware: {fileID: 0}
-  hideWhenNotInView: 1
-  retryInitMaxTries: 10
-  retryInitCounter: 0.1
 --- !u!1 &1157082324
 GameObject:
   m_ObjectHideFlags: 0
