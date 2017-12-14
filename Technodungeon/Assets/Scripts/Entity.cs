@@ -9,9 +9,11 @@ public abstract class Entity : MonoBehaviour {
     public int startingHealth = 100;
     protected int health = 100;
     protected bool alive = true;
+    protected Animator animator = null;
 
     void Start() {
         health = startingHealth;
+        animator = this.GetComponent<Animator> ();
     }
 
     public virtual void damage(GameObject damageCause, int damageAmount) {
@@ -33,6 +35,11 @@ public abstract class Entity : MonoBehaviour {
 
     public bool isAlive() {
         return alive;
+    }
+
+    //this function handles all of the state-driven logic for our Entity, if it has any.
+    public virtual void StateMachineEvent(string stateAction, string stateName, Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+        //Do nothing.
     }
 
     public virtual void die() {

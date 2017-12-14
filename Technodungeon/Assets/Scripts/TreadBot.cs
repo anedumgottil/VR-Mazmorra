@@ -57,6 +57,12 @@ public class TreadBot : MobileEntity {
         ts.addExtraTargetByName ("Controller R");
         ts.addExtraTargetByName ("Controller L");//TODO: controller detection untested.
         turretGun.setFlashlightState (false);
+
+        animator = this.GetComponent<Animator> ();
+        if (animator == null) {
+            Debug.LogError ("TreadBot: could not find animator component!");
+        }
+        animator.SetTrigger ("Moving");
     }
 
     void Update()
@@ -67,37 +73,10 @@ public class TreadBot : MobileEntity {
         //we're within range of the player:
         if (Vector3.Distance (headset.position, this.transform.position) < haltRange) {
             //Debug.Log ("Stopping "+Vector3.Distance (headset.position, this.transform.position));
-            shouldNavigate = false;
-            if (navMeshAgent.isOnNavMesh)
-                navMeshAgent.isStopped = true;
-            haltRange = originalHaltRange + haltRangeSensitivity;
-            if (engineAudioSource.isPlaying) {
-                
-                engineAudioSource.Stop ();
-                SFXAudioSource.PlayOneShot (trackSound);
-            }
-
-            //rotate turret
-            if (!turretDisabled) {
-                turretGun.setFlashlightState (true);
-                ts.shouldTrack (true);
-                //check if we can shoot the player yet
-                if (Vector3.Distance (headset.position, this.transform.position ) < fireRange && ts.targetAcquired()) {
-                    //we're within firing range of the player
-                    this.fire();
-                }
-            }
+            animator.SetTrigger ("Tracking");
             //we're not in stopping range of the player, start the engines:
         } else if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime) && !treadsDisabled) {
-            haltRange = originalHaltRange;
-            shouldNavigate = true;
-            StartCoroutine(DoNavigate());
-            if (!engineAudioSource.isPlaying) {
-                engineAudioSource.Play ();
-            }
-            ts.shouldTrack (false);
-            turretGun.setFlashlightState (false);
-            lastEngineStartTime = Time.time;
+            animator.SetTrigger ("Moving");
         }
 
     }
@@ -112,6 +91,96 @@ public class TreadBot : MobileEntity {
                 
         }
         inCoRoutine = false;
+    }
+
+    //this function handles all of the state-driven logic for our Entity, if it has any.
+    public override void StateMachineEvent(string stateAction, string stateName, Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+        ///////////////////////// ENTER //////////////////////////
+        if (stateAction == "Enter") {
+            switch (stateName) {
+            case "MoveToTarget":
+                if (!engineAudioSource.isPlaying) {
+                    engineAudioSource.Play ();
+                }
+                break;
+            case "TrackTarget":
+                shouldNavigate = false;
+                if (navMeshAgent.isOnNavMesh)
+                    navMeshAgent.isStopped = true;
+                if (engineAudioSource.isPlaying) {
+                    engineAudioSource.Stop ();
+                    SFXAudioSource.PlayOneShot (trackSound);
+                }
+                break;
+            case "ShootTarget":
+                if (ts.targetAcquired ()) {
+                    this.fire ();
+                }
+                break;
+            default:
+                Debug.LogWarning ("TreadBot: Warning, TreadBot changed to an unhandled FSM Enter state");
+                break;
+            }
+        }
+        ///////////////////////// UPDATE //////////////////////////
+        if (stateAction == "Update") {
+            switch (stateName) {
+            case "MoveToTarget":
+                if (!inCoRoutine && navMeshAgent != null && navMeshAgent.isOnNavMesh && (Time.time - engineStartTime >= lastEngineStartTime) && !treadsDisabled) {
+                    haltRange = originalHaltRange;
+                    shouldNavigate = true;
+                    StartCoroutine (DoNavigate ());
+                    ts.shouldTrack (false);
+                    turretGun.setFlashlightState (false);
+                    lastEngineStartTime = Time.time;
+                }
+                break;
+            case "TrackTarget":
+                haltRange = originalHaltRange + haltRangeSensitivity;
+                //rotate turret
+                if (!turretDisabled) {
+                    turretGun.setFlashlightState (true);
+                    ts.shouldTrack (true);
+                    //check if we can shoot the player yet
+                    if (Vector3.Distance (headset.position, this.transform.position) < fireRange && ts.targetAcquired ()) {
+                        //we're within firing range of the player
+                        animator.SetTrigger ("Shooting");
+                    } else if (Vector3.Distance (headset.position, this.transform.position) > fireRange) {
+                        //outside of firing range, move
+                        animator.SetTrigger ("Moving");
+                    }
+                }
+                break;
+            case "ShootTarget":
+                if (Vector3.Distance (headset.position, this.transform.position) < fireRange && ts.targetAcquired ()) {
+                    this.fire ();
+                } else if (Vector3.Distance (headset.position, this.transform.position) > fireRange) {
+                    //outside of firing range, move
+                    animator.SetTrigger ("Moving");
+                } else {
+                    //target not locked, track
+                    animator.SetTrigger ("Tracking");
+                }
+                break;
+            default:
+                Debug.LogWarning ("TreadBot: Warning, TreadBot changed to an unhandled FSM Update state");
+                break;
+            }
+        }
+        ///////////////////////// EXIT //////////////////////////
+        if (stateAction == "Exit") {
+            switch (stateName) {
+            case "MoveToTarget":
+                break;
+            case "TrackTarget":
+                break;
+            case "ShootTarget":
+                break;
+            default:
+                Debug.LogWarning ("TreadBot: Warning, TreadBot changed to an unhandled FSM Exit state");
+                break;
+            }
+        }
     }
 
     public override void damage (GameObject damageCause, int damageAmount) {

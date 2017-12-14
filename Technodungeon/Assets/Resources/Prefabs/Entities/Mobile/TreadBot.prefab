@@ -459,13 +459,14 @@ GameObject:
   - component: {fileID: 114229431193370258}
   - component: {fileID: 82411922965226544}
   - component: {fileID: 82147992769532756}
+  - component: {fileID: 95911996964610102}
   m_Layer: 0
   m_Name: TreadBot
   m_TagString: Entities
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1793711624382656
 GameObject:
   m_ObjectHideFlags: 1
@@ -1955,6 +1956,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!95 &95911996964610102
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1787021585205904}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4438f7e6f6041dd4ca21228035450fa9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!108 &108711204678090074
 Light:
   m_ObjectHideFlags: 1
@@ -2042,10 +2060,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d50da194060994c919439337799b1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 200
+  startingHealth: 400
   parentEntity: {fileID: 0}
   passDamageOnDeath: 1
-  damageMultiplyer: 0.15
+  damageMultiplyer: 0.1
   killParentOnDeath: 0
   destroyOnDeath: 1
   breakawayDestroyWaitTime: 5
@@ -2075,10 +2093,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d50da194060994c919439337799b1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 300
+  startingHealth: 550
   parentEntity: {fileID: 0}
-  passDamageOnDeath: 1
-  damageMultiplyer: 1
+  passDamageOnDeath: 0
+  damageMultiplyer: 0.1
   killParentOnDeath: 0
   destroyOnDeath: 1
   breakawayDestroyWaitTime: 2
@@ -2095,7 +2113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5977d5b019461264aa62810448d82445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 650
+  startingHealth: 1000
   deathParticleSystem: {fileID: 1374783093240408}
   muzzleflash: {fileID: 1909570705988890}
   turret: {fileID: 1064910034160270}
@@ -2209,10 +2227,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d50da194060994c919439337799b1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 200
+  startingHealth: 400
   parentEntity: {fileID: 0}
   passDamageOnDeath: 1
-  damageMultiplyer: 0.15
+  damageMultiplyer: 0.1
   killParentOnDeath: 0
   destroyOnDeath: 1
   breakawayDestroyWaitTime: 5
@@ -2232,7 +2250,7 @@ MonoBehaviour:
   startingHealth: 125
   parentEntity: {fileID: 0}
   passDamageOnDeath: 1
-  damageMultiplyer: 1
+  damageMultiplyer: 0.5
   killParentOnDeath: 0
   destroyOnDeath: 0
   breakawayDestroyWaitTime: 5
