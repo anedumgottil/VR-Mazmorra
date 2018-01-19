@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-<!-- Specify here collections of Tile GridSpace IDs which will be used to build the GridSpaceConfigurations for Tiles used in Room generation -->
-<!-- Each gridobject ID should be specified as it's own element, in standard order of the GridPos enum specified inside the GridSpace class as well as map.key.txt -->
+<!-- Specify here collections of Tile GridSpace Configuration ID Numbers which will be used to build the GridSpaceConfigurations for Tiles used in Room generation -->
+<!-- Each GridObject Configuration ID should be specified as it's own element, in standard order of the GridPos enum specified inside the GridSpace class as well as the enum in GridObject.cs -->
 
 <!-- Standard GridObject orientation: GridPos : byte {LoNW = 0, LoSW = 1, LoNE = 2, LoSE = 3, HiNW = 4, HiSW = 5, HiNE = 6, HiSE = 7} -->
 

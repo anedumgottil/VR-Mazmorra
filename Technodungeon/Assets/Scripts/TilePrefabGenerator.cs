@@ -32,7 +32,7 @@ public class TilePrefabGenerator {
         }
         for (int i = indexMin; i < indexMax; i++) {
             Debug.Log ("Generating Prefab Index " + i.ToString ("D2") + " at path \"" + path+"\"...");
-            generatePrefab (parentFloorPrefab, parentCeilingPrefab, i, path, tileName, shouldOverwrite);
+            generatePrefab (parentFloorPrefab, parentCeilingPrefab, (GridObject.GridObjectConfiguration) i, path, tileName, shouldOverwrite);
         }
         Debug.Log ("Finished Generating Prefabs for " + tileName + ".\t--------------");
     }
@@ -60,54 +60,55 @@ public class TilePrefabGenerator {
         }
     }
 
-    private static void generatePrefab(GameObject parentFloorFab, GameObject parentCeilingFab, int gridObjectID, string path, string tilename, bool shouldOverwrite) {
-        if (gridObjectID >= 0 && gridObjectID <= 1) {
+    private static void generatePrefab(GameObject parentFloorFab, GameObject parentCeilingFab, GridObject.GridObjectConfiguration gridObjectConfig, string path, string tilename, bool shouldOverwrite) {
+        short comparableGridObjectConfig = (short)gridObjectConfig;
+        if (comparableGridObjectConfig >= 0 && comparableGridObjectConfig <= 1) {
             //if it's tile zero or one, we do not need to generate a prefab from it, it already exists to create this TilePrefabGenerator.
             //remember that one can simply be a copy of zero, and all of this is for naught, but we aren't going to bother checking for that case since the outcome will be the same anyways.
             return;
-        } else if (gridObjectID > 1 && gridObjectID <= 6) {
+        } else if (comparableGridObjectConfig > 1 && comparableGridObjectConfig <= 6) {
             //2 - 6? use the floor prefab. we don't want the wall tiling on double-high's to be messed up if we use the ceiling one.
-            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
-        } else if (gridObjectID > 6 && gridObjectID <= 15) {
+            generatePrefab (parentFloorFab, gridObjectConfig, path, tilename, shouldOverwrite);
+        } else if (comparableGridObjectConfig > 6 && comparableGridObjectConfig <= 15) {
             //7- 15, we have a ceiling tile.
-            generatePrefab (parentCeilingFab, gridObjectID, path, tilename, shouldOverwrite);
-        } else if (gridObjectID > 15 && gridObjectID <= 19) {
+            generatePrefab (parentCeilingFab, gridObjectConfig, path, tilename, shouldOverwrite);
+        } else if (comparableGridObjectConfig > 15 && comparableGridObjectConfig <= 19) {
             //16-19 we have a floor tile again.
-            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
-        } else if (gridObjectID > 19 && gridObjectID <= 28) {
+            generatePrefab (parentFloorFab, gridObjectConfig, path, tilename, shouldOverwrite);
+        } else if (comparableGridObjectConfig > 19 && comparableGridObjectConfig <= 28) {
             //20-28 we have the half-sized tiles, always will exist on floor (we'll never have a floating room or "second floor")
-            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
+            generatePrefab (parentFloorFab, gridObjectConfig, path, tilename, shouldOverwrite);
         } else {
-            Debug.LogWarning ("TilePrefabGenerator: generatePrefab: passed unknown gridObjectID number, not sure if it's a ceiling or floor-walled tile, assuming floor");
-            generatePrefab (parentFloorFab, gridObjectID, path, tilename, shouldOverwrite);
+            Debug.LogWarning ("TilePrefabGenerator: generatePrefab: passed unknown gridObjectID number ["+comparableGridObjectConfig+"], not sure if it's a ceiling or floor-walled tile, assuming floor");
+            generatePrefab (parentFloorFab, gridObjectConfig, path, tilename, shouldOverwrite);
         }
     }
 
     //give the parent tile prefab to base the child prefab off of, the gridObjectID, a path to the folder of these tiles (e.g. "Assets/Prefabs/Tiles/SciFiTiles/",  note the leading slash) and the tile name (e.g. "SciFiTile")
-    public static void generatePrefab(GameObject parentFab, int gridObjectID, string path, string tilename, bool shouldOverwrite) {
+    public static void generatePrefab(GameObject parentFab, GridObject.GridObjectConfiguration gridObjectConfig, string path, string tilename, bool shouldOverwrite) {
         //first check if the file already exists. If it does, we can just leave right now, assuming we don't want to overwrite
         if (!shouldOverwrite) {
             //technically, loading twice as a check is an inefficient way of determining the file existence, but it's just easier and this code is only run rarely.
-            if (Resources.Load (path + tilename + "_" + gridObjectID.ToString("D2")) != null) {
-                if (DEBUG) {Debug.Log("TilePrefabGenerator: Skipping pre-existing " + path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab");}
+            if (Resources.Load (path + tilename + "_" + ((short)gridObjectConfig).ToString("D2")) != null) {
+                if (DEBUG) {Debug.Log("TilePrefabGenerator: Skipping pre-existing " + path + tilename + "_" + ((short)gridObjectConfig).ToString("D2") + ".prefab");}
                 return;
             }
         }
 
         GameObject temp = (GameObject)GameObject.Instantiate (parentFab); 
         bool removalSuccess = false;
-        switch (gridObjectID) {
-        case 0://Master Tile with floor-type walls
+        switch (gridObjectConfig) {
+        case GridObject.GridObjectConfiguration.FloorMaster://Master Tile with floor-type walls
             GameObject.Destroy (temp);
             return;
             //if it's tile zero, we do not need to generate a prefab from it, it already exists to create this TilePrefabGenerator.
 
-        case 1://Master Tile with ceiling-type walls
+        case GridObject.GridObjectConfiguration.CeilingMaster://Master Tile with ceiling-type walls
             GameObject.Destroy (temp);
             return;
             //same as above
 
-        case 2://Floor
+        case GridObject.GridObjectConfiguration.Floor://Floor
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -120,7 +121,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 3://Floor West Wall
+        case GridObject.GridObjectConfiguration.FloorWest://Floor West Wall
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -131,7 +132,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 4://Floor East Wall
+        case GridObject.GridObjectConfiguration.FloorEast://Floor East Wall
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -142,7 +143,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 5://Floor South Wall
+        case GridObject.GridObjectConfiguration.FloorSouth://Floor South Wall
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
@@ -153,7 +154,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 6://Floor North Wall
+        case GridObject.GridObjectConfiguration.FloorNorth://Floor North Wall
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -164,7 +165,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 7://Ceiling
+        case GridObject.GridObjectConfiguration.Ceiling://Ceiling
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -177,7 +178,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 8://Ceiling West Wall
+        case GridObject.GridObjectConfiguration.CeilingWest://Ceiling West Wall
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -188,7 +189,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 9://Ceiling East Wall
+        case GridObject.GridObjectConfiguration.CeilingEast://Ceiling East Wall
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -199,7 +200,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 10://Ceiling South Wall
+        case GridObject.GridObjectConfiguration.CeilingSouth://Ceiling South Wall
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
@@ -210,7 +211,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 11://Ceiling North Wall
+        case GridObject.GridObjectConfiguration.CeilingNorth://Ceiling North Wall
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -221,7 +222,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 12://Ceiling West/South Corner
+        case GridObject.GridObjectConfiguration.CeilingWestSouth://Ceiling West/South Corner
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
@@ -230,7 +231,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 13://Ceiling West/North Corner
+        case GridObject.GridObjectConfiguration.CeilingWestNorth://Ceiling West/North Corner
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -239,7 +240,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 14://Ceiling East/South Corner
+        case GridObject.GridObjectConfiguration.CeilingEastSouth://Ceiling East/South Corner
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove North Wall from object:
@@ -248,7 +249,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 15://Ceiling East/North Corner
+        case GridObject.GridObjectConfiguration.CeilingEastNorth://Ceiling East/North Corner
             //remove floor from object:
             if (!removeType(temp, "Floor")) {break;}
             //remove South Wall from object:
@@ -257,7 +258,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 16://Floor West/South Corner
+        case GridObject.GridObjectConfiguration.FloorWestSouth://Floor West/South Corner
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
@@ -266,7 +267,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 17://Floor West/North Corner
+        case GridObject.GridObjectConfiguration.FloorWestNorth://Floor West/North Corner
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -275,7 +276,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
            removalSuccess = true; break;
 
-        case 18://Floor East/South Corner
+        case GridObject.GridObjectConfiguration.FloorEastSouth://Floor East/South Corner
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove North Wall from object:
@@ -284,7 +285,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 19://Floor East/North Corner
+        case GridObject.GridObjectConfiguration.FloorEastNorth://Floor East/North Corner
             //remove ceiling from object:
             if (!removeType(temp, "Ceiling")) {break;}
             //remove South Wall from object:
@@ -293,7 +294,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
            removalSuccess = true; break;
 
-        case 20://Floor and Ceiling
+        case GridObject.GridObjectConfiguration.Half://Floor and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
@@ -304,7 +305,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
             removalSuccess = true; break;
 
-        case 21://Floor West Wall and Ceiling
+        case GridObject.GridObjectConfiguration.HalfWest://Floor West Wall and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
@@ -313,7 +314,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall E")) {break;}
             removalSuccess = true; break;
 
-        case 22://Floor East Wall and Ceiling
+        case GridObject.GridObjectConfiguration.HalfEast://Floor East Wall and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove North Wall from object:
@@ -322,7 +323,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
             removalSuccess = true; break;
 
-        case 23://Floor South Wall and Ceiling
+        case GridObject.GridObjectConfiguration.HalfSouth://Floor South Wall and Ceiling
             //remove North Wall from object:
             if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
@@ -331,7 +332,7 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
             removalSuccess = true; break;
 
-        case 24://Floor North Wall and Ceiling
+        case GridObject.GridObjectConfiguration.HalfNorth://Floor North Wall and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
@@ -340,28 +341,28 @@ public class TilePrefabGenerator {
             if (!removeType(temp, "Wall W")) {break;}
             removalSuccess = true; break;
 
-        case 25://Floor West/South Corner and Ceiling
+        case GridObject.GridObjectConfiguration.HalfWestSouth://Floor West/South Corner and Ceiling
             //remove North Wall from object:
             if (!removeType(temp, "Wall N")) {break;}
             //remove East Wall from object:
             if (!removeType(temp, "Wall E")) {break;}
             removalSuccess = true; break;
 
-        case 26://Floor West/North Corner and Ceiling
+        case GridObject.GridObjectConfiguration.HalfWestNorth://Floor West/North Corner and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove East Wall from object:
             if (!removeType(temp, "Wall E")) {break;}
             removalSuccess = true; break;
 
-        case 27://Floor East/South Corner and Ceiling
+        case GridObject.GridObjectConfiguration.HalfEastSouth://Floor East/South Corner and Ceiling
             //remove North Wall from object:
             if (!removeType(temp, "Wall N")) {break;}
             //remove West Wall from object:
             if (!removeType(temp, "Wall W")) {break;}
             removalSuccess = true; break;
 
-        case 28://Floor East/North Corner and Ceiling
+        case GridObject.GridObjectConfiguration.HalfEastNorth://Floor East/North Corner and Ceiling
             //remove South Wall from object:
             if (!removeType(temp, "Wall S")) {break;}
             //remove West Wall from object:
@@ -369,7 +370,7 @@ public class TilePrefabGenerator {
             removalSuccess = true; break;
 
         default://not found
-            Debug.LogError ("PrefabGenerator: gridObjectID given not specified in possible gridObjectID list");
+            Debug.LogError ("PrefabGenerator: implementation for given GridObjectConfiguration not defined for TilePrefabGenerator");
             GameObject.Destroy (temp);
             return;
         }
@@ -377,8 +378,8 @@ public class TilePrefabGenerator {
         #if UNITY_EDITOR
         if (removalSuccess) {
             temp.SetActive (true);
-            PrefabUtility.CreatePrefab ("Assets/Resources/"+path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab", temp);
-            if (DEBUG) {Debug.Log("TilePrefabGenerator: Generated " + path + tilename + "_" + gridObjectID.ToString("D2") + ".prefab");}
+            PrefabUtility.CreatePrefab ("Assets/Resources/"+path + tilename + "_" + ((short)gridObjectConfig).ToString("D2") + ".prefab", temp);
+            if (DEBUG) {Debug.Log("TilePrefabGenerator: Generated " + path + tilename + "_" + ((short)gridObjectConfig).ToString("D2") + ".prefab");}
         }
         #else
         Debug.LogWarning("TilePrefabGenerator: generatePrefab ran when we're not in the editor and do not have access to editor libraries.");

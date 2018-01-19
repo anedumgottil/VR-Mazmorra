@@ -271,6 +271,7 @@ public class MapLoader : MonoBehaviour
             addPrefab (tile.name, tile);
             //tile.transform.SetParent (prefabParent.transform);//TODO: the tiles can't have their parent set because of "corruption" so they clutter up the inspector... find a way to group them and hide them after Resources.LoadAll...
             Tile t = new Tile ((GridSpace)null);
+            t.setConfiguration ((GridObject.GridObjectConfiguration) i);
             t.setGameObj (tile);
             tilePool.Add (t);
             i++;
@@ -397,13 +398,17 @@ public class MapLoader : MonoBehaviour
                             if (DEBUG_MODE)
                                 Debug.Log ("------ found a gridobjectID config element: (" + xmlr.GetAttribute ("id") + ") ");
                             //Try to parse the attributes
-                            int gridobjectid = -1;
-                            if (!int.TryParse (xmlr.GetAttribute ("id"), out gridobjectid)) {
-                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an invalid GridObjectID config attribute [id]");
+                            short gridobjectid = -1;
+                            if (!Int16.TryParse (xmlr.GetAttribute ("id"), out gridobjectid)) {
+                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an invalid GridObjectConfiguration config attribute [id]");
+                                return;
+                            }
+                            if (!Enum.IsDefined (typeof(GridObject.GridObjectConfiguration), (short) gridobjectid) && gridobjectid != -1) {//if not in enum AND not the special -1 configuration used to specify N/A or nonexistent
+                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Found an unspecified GridObjectConfiguration config attribute [id] (ID not in GridObjectConfiguration enum): "+gridobjectid);
                                 return;
                             }
                             if (gocount > 7) {
-                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Tried to add too many GridObject IDs to the tileGridspaceConfigs array!");
+                                Debug.LogError ("MapLoader: parseTileGridspaceConfigs: Tried to add too many GridObjectConfigurations to the tileGridspaceConfigs array!");
                                 return;
                             }
                             current [gocount] = gridobjectid;

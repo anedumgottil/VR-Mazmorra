@@ -65,7 +65,7 @@ public sealed class MapGenerator {
             } else {
                 GridSpace toGrid = new GridSpace (adjustedCoords);
                 toGrid.setGridSpaceType (r.getType ());
-                toGrid.setGridSpaceConfiguration (entry.Value);
+                toGrid.setConfiguration (entry.Value);
                 //entities
                 GameObject prefabInstance = null;
                 if (hasEntity) {
@@ -271,7 +271,7 @@ public sealed class MapGenerator {
             return;
         }
 
-        current.setGridSpaceConfiguration(configuration);
+        current.setConfiguration(configuration);
         int reggaeton = 0;
         int[] givenConfiguration = MapLoader.getGridSpaceConfiguration (configuration);
         if (givenConfiguration == null) {

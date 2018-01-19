@@ -13,7 +13,7 @@ public class GridSpace {
     private Vector2 gridPosition; //integer positions for grid
     private Vector3 worldPosition; //world space (scaled by grid size)
     private GridSpaceType gridSpaceType = GridSpaceType.None;//set to none for now
-    private int gridSpaceConfiguration = 0;
+    private int gridSpaceConfiguration = 0; //I would use an enum for this like we do for GridObject, but we defined the GridSpaceConfigurations in a flat xml file, because it's easier to store the associated Tile indices. Perhaps we can autogenerate an enum somehow from it. But for now, Ints.
     //the above variable is used during map generation to define the configuration of walls/floors/ceilings this GridSpace has //TODO: this index will eventually map to a keyfile ID for GridSpace Configurations.... use flatfile to generate it? hmmm.... see ticket: #17
 
     //below is where references to all immobile entities attached to this GridSpace will be stored
@@ -39,6 +39,7 @@ public class GridSpace {
     //Empty should never be used and is just there to define an undefined room type for possible future programmatical reasons
     //Corridor is an empty corridor used to connect rooms together. it might not actually be a corridor by the definition of the word (like, it might be shaped like a room, but it's still a corridor type)
     //Room is used for the automatic generation of room areas and should probably not be used manually, it will eventually use a custom tile prefab (rooms will have special floors and walls and stuff)
+        
 
     //sets the specified Block to this GridSpace in the appropriate position
     //overwrites whatever Block was at that position
@@ -123,11 +124,11 @@ public class GridSpace {
         }
     }
 
-    public int getGridSpaceConfiguration() {
+    public int getConfiguration() {
         return gridSpaceConfiguration;
     }
     //this is used by the MapGenerator to define the type of GridSpaceConfiguration this is, see top of file for definition
-    public void setGridSpaceConfiguration(int gsc) {
+    public void setConfiguration(int gsc) {
         gridSpaceConfiguration = gsc;
     }
 
@@ -136,6 +137,7 @@ public class GridSpace {
     }
 
     public void setGridSpaceType(GridSpaceType gst) {
+        //possibly auto-detect and set GridSpaceType by matching stored GridObject Configurations with TileConfig/BlockConfig data dragged in from XML?
         gridSpaceType = gst;
     }
 
