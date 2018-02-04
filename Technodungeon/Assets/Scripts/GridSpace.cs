@@ -15,6 +15,7 @@ public class GridSpace {
     private GridSpaceType gridSpaceType = GridSpaceType.None;//set to none for now
     private int gridSpaceConfiguration = 0; //I would use an enum for this like we do for GridObject, but we defined the GridSpaceConfigurations in a flat xml file, because it's easier to store the associated Tile indices. Perhaps we can autogenerate an enum somehow from it. But for now, Ints.
     //the above variable is used during map generation to define the configuration of walls/floors/ceilings this GridSpace has //TODO: this index will eventually map to a keyfile ID for GridSpace Configurations.... use flatfile to generate it? hmmm.... see ticket: #17
+    private GridSpaceShape gridSpaceShape = GridSpaceShape.None;
 
     //below is where references to all immobile entities attached to this GridSpace will be stored
     List<StationaryEntity> stationaries = new List<StationaryEntity> (1);
@@ -34,6 +35,8 @@ public class GridSpace {
     //you'll notice: index >= 4 , guaranteed to be higher block
     //               index % 2 == 0, guaranteed to be northern block
     //               and vice versa.
+
+    public enum GridSpaceShape : byte {None = 0, Full = 1, Half = 2, Manifold = 3}; //whether or not they're a double-size, full-height tile, or a half-sized single-height tile, or a manifold between the two.
 
     public enum GridSpaceType : byte {None = 0, Corridor = 1, Room = 2, Reactor = 3, Coolant = 4};
     //Empty should never be used and is just there to define an undefined room type for possible future programmatical reasons
@@ -139,6 +142,14 @@ public class GridSpace {
     public void setGridSpaceType(GridSpaceType gst) {
         //possibly auto-detect and set GridSpaceType by matching stored GridObject Configurations with TileConfig/BlockConfig data dragged in from XML?
         gridSpaceType = gst;
+    }
+
+    public GridSpaceShape getGridSpaceShape() {
+        return gridSpaceShape;
+    }
+
+    public void setGridSpaceShape(GridSpaceShape gst) {
+        gridSpaceShape = gst;
     }
 
     //destroys the whole GridSpace
